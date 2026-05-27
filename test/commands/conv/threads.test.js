@@ -72,6 +72,75 @@ describe('hs conv threads', () => {
     expect(scope.isDone()).toBe(true)
   })
 
+  it('truncates long body text in table', async () => {
+    const longBody = 'A'.repeat(100)
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/100/threads')
+      .reply(200, {
+        _embedded: {
+          threads: [
+            { id: 1, type: 'note', body: longBody, createdAt: '2024-01-01T00:00:00Z' },
+          ],
+        },
+      })
+
+    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    expect(stdout).toContain('...')
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('uses text field when body is missing', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/100/threads')
+      .reply(200, {
+        _embedded: {
+          threads: [
+            { id: 1, type: 'message', text: 'Text field content', createdAt: '2024-01-01T00:00:00Z' },
+          ],
+        },
+      })
+
+    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    expect(stdout).toContain('Text field content')
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('handles threads with no body or text', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/100/threads')
+      .reply(200, {
+        _embedded: {
+          threads: [
+            { id: 1, type: 'lineitem', createdAt: '2024-01-01T00:00:00Z' },
+          ],
+        },
+      })
+
+    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    expect(stdout).toContain('lineitem')
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('handles empty thread list', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/100/threads')
+      .reply(200, { _embedded: { threads: [] } })
+
+    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    expect(stdout).toContain('No results')
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('handles response with no _embedded', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/100/threads')
+      .reply(200, {})
+
+    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    expect(stdout).toContain('No results')
+    expect(scope.isDone()).toBe(true)
+  })
+
   it('renders threads in table format', async () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/conversations/100/threads')

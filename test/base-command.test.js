@@ -77,6 +77,13 @@ describe('BaseCommand', () => {
     expect(process.env.DEBUG).toContain('hs:')
   })
 
+  it('appends hs:* to existing DEBUG when --verbose flag is passed', async () => {
+    process.env.DEBUG = 'other:*'
+    await captureLogs(ProfileCurrentCommand, ['--verbose'])
+    expect(process.env.DEBUG).toContain('other:*')
+    expect(process.env.DEBUG).toContain('hs:*')
+  })
+
   it('sets FORCE_COLOR=0 when --no-color flag is passed', async () => {
     await captureLogs(ProfileCurrentCommand, ['--no-color'])
     expect(process.env.FORCE_COLOR).toBe('0')

@@ -134,4 +134,38 @@ describe('hs conv tag', () => {
     expect(getScope.isDone()).toBe(true)
     expect(putScope.isDone()).toBe(true)
   })
+
+  it('handles conversation with no existing tags', async () => {
+    const getScope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/400')
+      .reply(200, { id: 400 })
+
+    const putScope = nock('https://api.helpscout.net')
+      .put('/v2/conversations/400/tags', (body) => {
+        return body.tags.length === 1 && body.tags[0] === 'new'
+      })
+      .reply(204)
+
+    const stdout = await runCmd(ConvTagCommand, ['400', '--add', 'new'])
+
+    expect(stdout).toContain('Tags updated')
+    expect(getScope.isDone()).toBe(true)
+    expect(putScope.isDone()).toBe(true)
+  })
+
+  it('shows empty tags when all removed', async () => {
+    const getScope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/500')
+      .reply(200, { id: 500, tags: ['only'] })
+
+    const putScope = nock('https://api.helpscout.net')
+      .put('/v2/conversations/500/tags', (body) => body.tags.length === 0)
+      .reply(204)
+
+    const stdout = await runCmd(ConvTagCommand, ['500', '--remove', 'only'])
+
+    expect(stdout).toContain('Tags updated')
+    expect(getScope.isDone()).toBe(true)
+    expect(putScope.isDone()).toBe(true)
+  })
 })

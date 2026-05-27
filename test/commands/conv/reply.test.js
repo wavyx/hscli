@@ -107,6 +107,19 @@ describe('hs conv reply', () => {
     expect(scope.isDone()).toBe(true)
   })
 
+  it('falls back to createdBy when primaryCustomer missing', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/400')
+      .reply(200, { createdBy: { id: 99 } })
+      .post('/v2/conversations/400/reply', (body) => body.customer.id === 99)
+      .reply(201)
+
+    const stdout = await runCmd(ConvReplyCommand, ['400', '--body', 'text'])
+
+    expect(stdout).toContain('Replied to conversation #400')
+    expect(scope.isDone()).toBe(true)
+  })
+
   it('supports draft flag', async () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/conversations/300')

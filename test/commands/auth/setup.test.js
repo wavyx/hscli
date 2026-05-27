@@ -115,6 +115,30 @@ describe('hs auth setup', () => {
     expect(stdout).toContain('configured and validated')
   })
 
+  it('validates input prompts reject empty values', async () => {
+    mockInput.mockImplementation(async (opts) => {
+      expect(opts.validate('')).toBe('App ID is required')
+      expect(opts.validate('  ')).toBe('App ID is required')
+      expect(opts.validate('valid-id')).toBe(true)
+      return 'valid-id'
+    })
+    mockPassword.mockImplementation(async (opts) => {
+      expect(opts.validate('')).toBe('App Secret is required')
+      expect(opts.validate('valid-secret')).toBe(true)
+      return 'valid-secret'
+    })
+
+    nock('https://api.helpscout.net').post('/v2/oauth2/token').reply(200, {
+      access_token: 'tok',
+      expires_in: 172800,
+    })
+
+    await runCmd(SetupCommand, [])
+
+    expect(mockInput).toHaveBeenCalled()
+    expect(mockPassword).toHaveBeenCalled()
+  })
+
   it('shows error when validation fails', async () => {
     mockInput.mockResolvedValue('bad-id')
     mockPassword.mockResolvedValue('bad-secret')
