@@ -30,9 +30,11 @@ export default class ConvAssignCommand extends BaseCommand {
       userId = me.id
     }
 
-    await this.apiClient.jsonPatch(`/v2/conversations/${args.id}`, [
-      { op: 'replace', path: '/assignTo', value: userId },
-    ])
+    await this.apiClient.jsonPatch(`/v2/conversations/${args.id}`, {
+      op: 'replace',
+      path: '/assignTo',
+      value: userId,
+    })
 
     this.log(`Conversation #${args.id} assigned to user ${userId}`)
   }

@@ -56,11 +56,14 @@ describe('hs conv reply', () => {
 
   it('replies to a conversation', async () => {
     const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/123')
+      .reply(200, { primaryCustomer: { id: 42 } })
       .post('/v2/conversations/123/reply', (body) => {
         return (
           body.type === 'reply' &&
           body.text === 'Test body content' &&
-          body.draft === false
+          body.draft === false &&
+          body.customer.id === 42
         )
       })
       .reply(201)
@@ -77,6 +80,8 @@ describe('hs conv reply', () => {
 
   it('includes cc and bcc when provided', async () => {
     const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/200')
+      .reply(200, { primaryCustomer: { id: 42 } })
       .post('/v2/conversations/200/reply', (body) => {
         return (
           body.cc.length === 2 &&
@@ -104,6 +109,8 @@ describe('hs conv reply', () => {
 
   it('supports draft flag', async () => {
     const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/300')
+      .reply(200, { primaryCustomer: { id: 42 } })
       .post('/v2/conversations/300/reply', (body) => body.draft === true)
       .reply(201)
 

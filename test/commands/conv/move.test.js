@@ -54,10 +54,9 @@ describe('hs conv move', () => {
     const scope = nock('https://api.helpscout.net')
       .patch('/v2/conversations/123', (body) => {
         return (
-          Array.isArray(body) &&
-          body[0].op === 'replace' &&
-          body[0].path === '/mailboxId' &&
-          body[0].value === 456
+          body.op === 'replace' &&
+          body.path === '/mailboxId' &&
+          body.value === 456
         )
       })
       .reply(204)
@@ -71,7 +70,7 @@ describe('hs conv move', () => {
   it('sends JSON patch with correct content type', async () => {
     const scope = nock('https://api.helpscout.net')
       .patch('/v2/conversations/789', (body) => {
-        return body[0].path === '/mailboxId' && body[0].value === 10
+        return body.path === '/mailboxId' && body.value === 10
       })
       .reply(204)
 

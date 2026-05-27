@@ -54,10 +54,9 @@ describe('hs conv assign', () => {
     const scope = nock('https://api.helpscout.net')
       .patch('/v2/conversations/123', (body) => {
         return (
-          Array.isArray(body) &&
-          body[0].op === 'replace' &&
-          body[0].path === '/assignTo' &&
-          body[0].value === 456
+          body.op === 'replace' &&
+          body.path === '/assignTo' &&
+          body.value === 456
         )
       })
       .reply(204)
@@ -75,7 +74,7 @@ describe('hs conv assign', () => {
 
     const patchScope = nock('https://api.helpscout.net')
       .patch('/v2/conversations/100', (body) => {
-        return body[0].value === 789
+        return body.value === 789
       })
       .reply(204)
 

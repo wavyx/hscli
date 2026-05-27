@@ -21,9 +21,11 @@ export default class ConvMoveCommand extends BaseCommand {
   async run() {
     const { args, flags } = await this.parse(ConvMoveCommand)
 
-    await this.apiClient.jsonPatch(`/v2/conversations/${args.id}`, [
-      { op: 'replace', path: '/mailboxId', value: flags['to-mailbox'] },
-    ])
+    await this.apiClient.jsonPatch(`/v2/conversations/${args.id}`, {
+      op: 'replace',
+      path: '/mailboxId',
+      value: flags['to-mailbox'],
+    })
 
     this.log(`Conversation #${args.id} moved to mailbox ${flags['to-mailbox']}`)
   }

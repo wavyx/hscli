@@ -25,9 +25,11 @@ export default class ConvStatusCommand extends BaseCommand {
   async run() {
     const { args, flags } = await this.parse(ConvStatusCommand)
 
-    await this.apiClient.jsonPatch(`/v2/conversations/${args.id}`, [
-      { op: 'replace', path: '/status', value: flags.set },
-    ])
+    await this.apiClient.jsonPatch(`/v2/conversations/${args.id}`, {
+      op: 'replace',
+      path: '/status',
+      value: flags.set,
+    })
 
     this.log(`Conversation #${args.id} status → ${flags.set}`)
   }

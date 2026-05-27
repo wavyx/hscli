@@ -54,10 +54,9 @@ describe('hs conv status', () => {
     const scope = nock('https://api.helpscout.net')
       .patch('/v2/conversations/123', (body) => {
         return (
-          Array.isArray(body) &&
-          body[0].op === 'replace' &&
-          body[0].path === '/status' &&
-          body[0].value === 'closed'
+          body.op === 'replace' &&
+          body.path === '/status' &&
+          body.value === 'closed'
         )
       })
       .reply(204)
@@ -72,7 +71,7 @@ describe('hs conv status', () => {
   it('sets conversation status to pending', async () => {
     const scope = nock('https://api.helpscout.net')
       .patch('/v2/conversations/456', (body) => {
-        return body[0].value === 'pending'
+        return body.value === 'pending'
       })
       .reply(204)
 

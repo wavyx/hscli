@@ -28,10 +28,12 @@ export default class ConvReplyCommand extends BaseCommand {
   async run() {
     const { args, flags } = await this.parse(ConvReplyCommand)
     const text = await resolveBody(flags)
+    const conv = await this.apiClient.get(`/v2/conversations/${args.id}`)
 
     const payload = {
       type: 'reply',
       text,
+      customer: { id: conv.primaryCustomer?.id || conv.createdBy?.id },
       draft: flags.draft,
     }
 
