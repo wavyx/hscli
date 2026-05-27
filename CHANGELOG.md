@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Write commands**: `conv create`, `reply`, `note`, `status`, `assign`, `tag`, `move`, `delete`
+- **Write commands**: `conv create`, `reply`, `note`, `status`, `assign`, `tag`, `move`, `delete`, `threads`, `edit-note`
 - **Customer commands**: `customer create`, `customer update`
 - **Auth setup wizard**: `hs auth setup` for BYO OAuth app configuration (interactive + non-interactive)
 - **Body input helper**: `--body` supports inline text, `@file` paths, and stdin pipe
@@ -27,6 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Embedded OAuth credentials (`embedded-credentials.js`) — dead code
 - Kill-switch manifest check (`kill-switch.js`) — unnecessary without embedded app
+
+### Fixed
+
+- Reply endpoint requires `customer` field — CLI now fetches conversation first
+- Conversation PATCH uses single JSON Patch object, not array
+- ISO dates stripped of milliseconds for Help Scout compatibility
 
 ## [0.1.0] - 2026-05-27
 
