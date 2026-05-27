@@ -1,0 +1,21 @@
+{
+  "id": 100,
+  "number": 1001,
+  "subject": "Need help with billing",
+  "status": "active",
+  "mailboxId": 42,
+  "assignee": { "id": 1, "first": "Jane", "last": "Doe" },
+  "primaryCustomer": { "id": 201, "email": "customer@example.com" },
+  "createdAt": "2024-06-15T09:00:00Z",
+  "closedAt": null,
+  "_embedded": {
+    "threads": [
+      {
+        "id": 5001,
+        "type": "customer",
+        "body": "I need help understanding my invoice",
+        "createdAt": "2024-06-15T09:00:00Z"
+      }
+    ]
+  }
+}

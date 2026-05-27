@@ -1,0 +1,7 @@
+{
+  "logRef": "abc-123",
+  "message": "Authentication required",
+  "_embedded": {
+    "errors": [{ "message": "The access token is invalid" }]
+  }
+}

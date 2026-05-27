@@ -1,0 +1,124 @@
+{
+  "name": "hscli",
+  "version": "0.1.0",
+  "description": "CLI for Help Scout Inbox API 2.0",
+  "type": "module",
+  "license": "MIT",
+  "author": "Eric Rodriguez",
+  "homepage": "https://github.com/wavyx/hscli",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wavyx/hscli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wavyx/hscli/issues"
+  },
+  "bin": {
+    "hs": "./bin/run.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "oclif.manifest.json"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "helpscout",
+    "help-scout",
+    "cli",
+    "oclif",
+    "support",
+    "customer-support",
+    "inbox"
+  ],
+  "oclif": {
+    "bin": "hs",
+    "dirname": "hscli",
+    "commands": {
+      "strategy": "pattern",
+      "target": "./src/commands",
+      "globPatterns": [
+        "**/*.js",
+        "!**/*.test.js"
+      ]
+    },
+    "topicSeparator": " ",
+    "topics": {
+      "auth": {
+        "description": "Authentication and OAuth management"
+      },
+      "conv": {
+        "description": "Conversations"
+      },
+      "mailbox": {
+        "description": "Mailboxes"
+      },
+      "customer": {
+        "description": "Customers"
+      },
+      "user": {
+        "description": "Team members"
+      },
+      "tag": {
+        "description": "Tags"
+      },
+      "profile": {
+        "description": "Profile management"
+      },
+      "config": {
+        "description": "Configuration"
+      }
+    },
+    "hooks": {
+      "init": "./src/hooks/init",
+      "prerun": "./src/hooks/prerun"
+    },
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-plugins",
+      "@oclif/plugin-autocomplete",
+      "@oclif/plugin-not-found"
+    ]
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7",
+    "@napi-rs/keyring": "^1",
+    "@oclif/core": "^4",
+    "@oclif/plugin-autocomplete": "^3",
+    "@oclif/plugin-help": "^6",
+    "@oclif/plugin-not-found": "^3",
+    "@oclif/plugin-plugins": "^5",
+    "chalk": "^5",
+    "cli-table3": "^0.6",
+    "conf": "^13",
+    "debug": "^4",
+    "js-yaml": "^4",
+    "node-jq": "^6",
+    "open": "^10",
+    "ora": "^8",
+    "undici": "^7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9",
+    "@oclif/test": "^4.1.18",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9",
+    "globals": "^16",
+    "nock": "^14",
+    "oclif": "^4",
+    "prettier": "^3",
+    "vitest": "^3"
+  },
+  "scripts": {
+    "build": "oclif manifest",
+    "lint": "eslint . && prettier --check .",
+    "lint:fix": "eslint --fix . && prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepare": "npm run build",
+    "postpack": "rm -f oclif.manifest.json"
+  }
+}

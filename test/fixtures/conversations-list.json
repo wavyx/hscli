@@ -1,0 +1,39 @@
+{
+  "_embedded": {
+    "conversations": [
+      {
+        "id": 100,
+        "number": 1001,
+        "subject": "Need help with billing",
+        "status": "active",
+        "mailboxId": 42,
+        "assignee": { "id": 1, "first": "Jane", "last": "Doe" },
+        "primaryCustomer": { "id": 201, "email": "customer@example.com" },
+        "createdAt": "2024-06-15T09:00:00Z",
+        "closedAt": null
+      },
+      {
+        "id": 101,
+        "number": 1002,
+        "subject": "API integration question",
+        "status": "active",
+        "mailboxId": 42,
+        "assignee": null,
+        "primaryCustomer": { "id": 202, "email": "dev@example.com" },
+        "createdAt": "2024-06-14T14:30:00Z",
+        "closedAt": null
+      }
+    ]
+  },
+  "_links": {
+    "self": { "href": "/v2/conversations?page=1" },
+    "first": { "href": "/v2/conversations?page=1" },
+    "last": { "href": "/v2/conversations?page=1" }
+  },
+  "page": {
+    "size": 25,
+    "totalElements": 2,
+    "totalPages": 1,
+    "number": 1
+  }
+}
