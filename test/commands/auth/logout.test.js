@@ -8,7 +8,7 @@ vi.mock('../../../src/lib/keychain.js', () => ({
     refreshToken: 'test-refresh',
     expiresAt: Date.now() + 86400000,
     authMode: 'authorization_code',
-    credentialSource: 'embedded',
+    credentialSource: 'byo',
   }),
   setTokens: vi.fn().mockResolvedValue(undefined),
   deleteTokens: mockDeleteTokens,

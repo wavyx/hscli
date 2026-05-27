@@ -15,7 +15,7 @@ vi.mock('../../../src/lib/keychain.js', () => ({
     refreshToken: 'test-refresh',
     expiresAt: Date.now() + 86400000,
     authMode: 'authorization_code',
-    credentialSource: 'embedded',
+    credentialSource: 'byo',
   }),
   setTokens: vi.fn().mockResolvedValue(undefined),
   deleteTokens: vi.fn().mockResolvedValue(undefined),
@@ -43,7 +43,7 @@ vi.mock('../../../src/lib/auth.js', () => ({
   resolveCredentials: vi.fn().mockReturnValue({
     clientId: 'test-client-id',
     clientSecret: 'test-client-secret',
-    source: 'embedded',
+    source: 'profile',
   }),
   refreshAccessToken: vi.fn().mockResolvedValue({
     accessToken: 'refreshed-token',

@@ -46,7 +46,7 @@ export default class LoginCommand extends BaseCommand {
       profile: this.activeProfile,
     })
 
-    const credentialSource = source === 'embedded' ? 'embedded' : 'byo'
+    const credentialSource = 'byo'
     const spinner = ora()
 
     try {

@@ -4,11 +4,7 @@ import open from 'open'
 import createDebug from 'debug'
 import { getTokens, setTokens } from './keychain.js'
 import { getProfileConfig } from './config.js'
-import {
-  clientId as embeddedClientId,
-  clientSecret as embeddedClientSecret,
-} from './embedded-credentials.js'
-import { ApiError, CliError } from './errors.js'
+import { ApiError, CliError, ConfigError } from './errors.js'
 
 const debug = createDebug('hs:auth')
 const TOKEN_URL = 'https://api.helpscout.net/v2/oauth2/token'
@@ -20,7 +16,7 @@ const REFRESH_BUFFER_MS = 5 * 60 * 1000
  * @typedef {object} ResolvedCredentials
  * @property {string} clientId
  * @property {string} clientSecret
- * @property {'flags' | 'env' | 'profile' | 'config' | 'embedded'} source
+ * @property {'flags' | 'env' | 'profile'} source
  */
 
 /**
@@ -56,11 +52,7 @@ export function resolveCredentials({ flags, profile } = {}) {
     }
   }
 
-  return {
-    clientId: embeddedClientId,
-    clientSecret: embeddedClientSecret,
-    source: 'embedded',
-  }
+  throw new ConfigError('No OAuth app configured. Run: hs auth setup')
 }
 
 /**

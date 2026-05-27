@@ -32,7 +32,7 @@ vi.mock('../../../src/lib/auth.js', () => ({
   resolveCredentials: vi.fn().mockReturnValue({
     clientId: 'test-id',
     clientSecret: 'test-secret',
-    source: 'embedded',
+    source: 'profile',
   }),
   refreshAccessToken: mockRefreshAccessToken,
   authorizationCodeFlow: vi.fn(),
@@ -54,7 +54,7 @@ describe('hs auth refresh', () => {
       refreshToken: 'old-refresh',
       expiresAt: Date.now() + 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
     mockRefreshAccessToken.mockResolvedValue({
       accessToken: 'new-token',
@@ -88,7 +88,7 @@ describe('hs auth refresh', () => {
       refreshToken: undefined,
       expiresAt: Date.now() + 86400000,
       authMode: 'client_credentials',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     await runCmd(RefreshCommand)

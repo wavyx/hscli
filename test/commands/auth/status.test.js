@@ -50,7 +50,7 @@ describe('hs auth status', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net')
@@ -83,7 +83,7 @@ describe('hs auth status', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() - 1000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const stdout = await runCmd(StatusCommand)
@@ -97,7 +97,7 @@ describe('hs auth status', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net')
@@ -119,7 +119,7 @@ describe('hs auth status', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net')
@@ -141,7 +141,7 @@ describe('hs auth status', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 45 * 60 * 1000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net')
@@ -162,7 +162,7 @@ describe('hs auth status', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 30 * 1000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net')
@@ -183,7 +183,7 @@ describe('hs auth status', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 5 * 60 * 60 * 1000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net')
@@ -202,7 +202,7 @@ describe('hs auth status', () => {
       accessToken: 'test-token',
       expiresAt: Date.now() + 3 * 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     nock('https://api.helpscout.net')
@@ -231,7 +231,7 @@ describe('hs auth status', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net')

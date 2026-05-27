@@ -69,9 +69,10 @@ describe('resolveCredentials', () => {
     expect(result.source).toBe('flags')
   })
 
-  it('falls back to embedded credentials', () => {
-    const result = resolveCredentials({})
-    expect(result.source).toBe('embedded')
+  it('throws ConfigError when no credentials configured', () => {
+    expect(() => resolveCredentials({})).toThrow(
+      'No OAuth app configured. Run: hs auth setup',
+    )
   })
 })
 
@@ -187,6 +188,9 @@ describe('getValidToken', () => {
   })
 
   it('refreshes token when within 5-minute expiry buffer', async () => {
+    getProfileConfig
+      .mockReturnValueOnce('profile-id')
+      .mockReturnValueOnce('profile-secret')
     getTokens.mockResolvedValueOnce({
       accessToken: 'expiring-token',
       refreshToken: 'my-refresh-token',
@@ -221,6 +225,9 @@ describe('getValidToken', () => {
   })
 
   it('re-authenticates via client_credentials when token expired and no refresh token', async () => {
+    getProfileConfig
+      .mockReturnValueOnce('profile-id')
+      .mockReturnValueOnce('profile-secret')
     getTokens.mockResolvedValueOnce({
       accessToken: 'expired-token',
       expiresAt: Date.now() - 1000, // already expired
@@ -274,13 +281,14 @@ describe('resolveCredentials with profile config', () => {
     expect(result.source).toBe('profile')
   })
 
-  it('falls back to embedded when profile has only oauth_app_id but no secret', () => {
+  it('throws ConfigError when profile has only oauth_app_id but no secret', () => {
     getProfileConfig
       .mockReturnValueOnce('profile-id')
       .mockReturnValueOnce(undefined)
 
-    const result = resolveCredentials({ profile: 'myprofile' })
-    expect(result.source).toBe('embedded')
+    expect(() => resolveCredentials({ profile: 'myprofile' })).toThrow(
+      'No OAuth app configured',
+    )
   })
 })
 

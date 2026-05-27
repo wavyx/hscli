@@ -103,7 +103,7 @@ describe('BaseCommand', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'cid',
       clientSecret: 'csec',
-      source: 'embedded',
+      source: 'profile',
     })
 
     nock('https://api.helpscout.net')
@@ -123,7 +123,7 @@ describe('BaseCommand', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'cid',
       clientSecret: 'csec',
-      source: 'embedded',
+      source: 'profile',
     })
 
     nock('https://api.helpscout.net')
@@ -145,7 +145,7 @@ describe('BaseCommand', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'cid',
       clientSecret: 'csec',
-      source: 'embedded',
+      source: 'profile',
     })
 
     nock('https://api.helpscout.net')
@@ -161,14 +161,14 @@ describe('BaseCommand', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'cid',
       clientSecret: 'csec',
-      source: 'embedded',
+      source: 'profile',
     })
     mockGetTokens.mockResolvedValue({
       accessToken: 'old-token',
       refreshToken: 'old-refresh',
       expiresAt: Date.now() + 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
     mockRefreshAccessToken.mockResolvedValue({
       accessToken: 'new-token',
@@ -205,7 +205,7 @@ describe('BaseCommand', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'cid',
       clientSecret: 'csec',
-      source: 'embedded',
+      source: 'profile',
     })
     mockGetTokens.mockResolvedValue({
       accessToken: 'old-token',
@@ -227,7 +227,7 @@ describe('BaseCommand', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'cid',
       clientSecret: 'csec',
-      source: 'embedded',
+      source: 'profile',
     })
     mockGetTokens.mockResolvedValue(null)
 
@@ -245,7 +245,7 @@ describe('BaseCommand', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'cid',
       clientSecret: 'csec',
-      source: 'embedded',
+      source: 'profile',
     })
 
     nock('https://api.helpscout.net')

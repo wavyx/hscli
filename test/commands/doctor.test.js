@@ -43,7 +43,7 @@ describe('hs doctor', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     // Mock the API reachability check
@@ -94,7 +94,7 @@ describe('hs doctor', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() - 1000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net').get('/v2').reply(200, {})
@@ -117,7 +117,7 @@ describe('hs doctor', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net').get('/v2').reply(200, {})
@@ -142,7 +142,7 @@ describe('hs doctor', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net')
@@ -170,7 +170,7 @@ describe('hs doctor', () => {
       refreshToken: 'test-refresh',
       expiresAt: Date.now() + 86400000,
       authMode: 'authorization_code',
-      credentialSource: 'embedded',
+      credentialSource: 'byo',
     })
 
     const scope = nock('https://api.helpscout.net').get('/v2').reply(200, {})

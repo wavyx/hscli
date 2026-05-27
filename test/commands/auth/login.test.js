@@ -13,7 +13,7 @@ vi.mock('../../../src/lib/keychain.js', () => ({
     refreshToken: 'test-refresh',
     expiresAt: Date.now() + 86400000,
     authMode: 'authorization_code',
-    credentialSource: 'embedded',
+    credentialSource: 'byo',
   }),
   setTokens: mockSetTokens,
   deleteTokens: vi.fn().mockResolvedValue(undefined),
@@ -64,7 +64,7 @@ describe('hs auth login', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'test-id',
       clientSecret: 'test-secret',
-      source: 'embedded',
+      source: 'profile',
     })
     mockClientCredentialsFlow.mockResolvedValue({
       accessToken: 'new-token',
@@ -83,7 +83,7 @@ describe('hs auth login', () => {
         accessToken: 'new-token',
         refreshToken: undefined,
         authMode: 'client_credentials',
-        credentialSource: 'embedded',
+        credentialSource: 'byo',
       }),
     )
     expect(mockSetProfileConfig).toHaveBeenCalledWith(
@@ -127,7 +127,7 @@ describe('hs auth login', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'bad-id',
       clientSecret: 'bad-secret',
-      source: 'embedded',
+      source: 'profile',
     })
     mockClientCredentialsFlow.mockRejectedValue(
       new ApiError(
@@ -150,7 +150,7 @@ describe('hs auth login', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'test-id',
       clientSecret: 'test-secret',
-      source: 'embedded',
+      source: 'profile',
     })
     mockAuthorizationCodeFlow.mockResolvedValue({
       accessToken: 'auth-code-token',
@@ -170,7 +170,7 @@ describe('hs auth login', () => {
         accessToken: 'auth-code-token',
         refreshToken: 'auth-code-refresh',
         authMode: 'authorization_code',
-        credentialSource: 'embedded',
+        credentialSource: 'byo',
       }),
     )
     expect(mockSetProfileConfig).toHaveBeenCalledWith(
@@ -210,7 +210,7 @@ describe('hs auth login', () => {
     mockResolveCredentials.mockReturnValue({
       clientId: 'test-id',
       clientSecret: 'test-secret',
-      source: 'embedded',
+      source: 'profile',
     })
     const serverError = new ApiError(
       500,

@@ -13,7 +13,7 @@ const sampleTokens = {
   refreshToken: 'test-refresh-token',
   expiresAt: Date.now() + 3600_000,
   authMode: 'authorization_code',
-  credentialSource: 'embedded',
+  credentialSource: 'byo',
 }
 
 describe('keychain', () => {
