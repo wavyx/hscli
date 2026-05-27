@@ -102,4 +102,42 @@ describe('hs customer search', () => {
     expect(output).toHaveLength(1)
     expect(scope.isDone()).toBe(true)
   })
+
+  it('renders table with email and company columns', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/customers')
+      .query(true)
+      .reply(200, fixture)
+
+    const stdout = await runCmd(CustomerSearchCommand, [
+      'alice',
+      '--output',
+      'table',
+    ])
+
+    expect(stdout).toContain('Alice')
+    expect(stdout).toContain('alice@example.com')
+    expect(stdout).toContain('Acme Corp')
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('handles customers without email or organization', async () => {
+    const sparse = {
+      _embedded: {
+        customers: [{ id: 2, firstName: 'Sparse', lastName: 'User' }],
+      },
+      page: { totalPages: 1 },
+    }
+    nock('https://api.helpscout.net')
+      .get('/v2/customers')
+      .query(true)
+      .reply(200, sparse)
+
+    const stdout = await runCmd(CustomerSearchCommand, [
+      'sparse',
+      '--output',
+      'table',
+    ])
+    expect(stdout).toContain('Sparse')
+  })
 })
