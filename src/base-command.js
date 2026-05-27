@@ -16,7 +16,7 @@ export default class BaseCommand extends Command {
       char: 'o',
       description: 'Output format',
       helpGroup: 'GLOBAL',
-      options: ['table', 'json'],
+      options: ['table', 'json', 'yaml', 'csv'],
     }),
     profile: Flags.string({
       description: 'Named auth profile to use',
@@ -31,6 +31,14 @@ export default class BaseCommand extends Command {
       description: 'Show detailed API request/response on errors',
       helpGroup: 'GLOBAL',
       default: false,
+    }),
+    jq: Flags.string({
+      description: 'jq expression to filter JSON output',
+      helpGroup: 'GLOBAL',
+    }),
+    fields: Flags.string({
+      description: 'Comma-separated fields to display',
+      helpGroup: 'GLOBAL',
     }),
   }
 
@@ -88,7 +96,26 @@ export default class BaseCommand extends Command {
    * @param {object | object[]} data
    * @param {Record<string, import('./lib/output/table.js').Column>} columns
    */
-  outputResults(data, columns) {
+  async outputResults(data, columns) {
+    if (this.flags.jq) {
+      const { run } = await import('node-jq')
+      const input = JSON.stringify(Array.isArray(data) ? data : [data])
+      const result = await run(this.flags.jq, input, {
+        input: 'string',
+        output: 'pretty',
+      })
+      this.log(result)
+      return
+    }
+
+    let filteredColumns = columns
+    if (this.flags.fields && columns) {
+      const requested = this.flags.fields.split(',').map((f) => f.trim())
+      filteredColumns = Object.fromEntries(
+        Object.entries(columns).filter(([key]) => requested.includes(key)),
+      )
+    }
+
     let format = this.flags.output
     if (!format) {
       if (process.stdout.isTTY) {
@@ -97,7 +124,7 @@ export default class BaseCommand extends Command {
         format = 'json'
       }
     }
-    formatOutput(data, columns, format, this)
+    formatOutput(data, filteredColumns, format, this)
   }
 
   async catch(err) {

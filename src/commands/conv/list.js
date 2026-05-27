@@ -63,7 +63,7 @@ export default class ConvListCommand extends BaseCommand {
       this.apiClient.paginate('/v2/conversations', query, 'conversations'),
       flags.limit,
     )
-    this.outputResults(items, columns)
+    await this.outputResults(items, columns)
   }
 }
 

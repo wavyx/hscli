@@ -34,6 +34,6 @@ export default class ConvThreadsCommand extends BaseCommand {
       `/v2/conversations/${args.id}/threads`,
     )
     const threads = data?._embedded?.threads ?? []
-    this.outputResults(threads, columns)
+    await this.outputResults(threads, columns)
   }
 }

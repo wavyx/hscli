@@ -36,11 +36,11 @@ export default class ConvGetCommand extends BaseCommand {
     const data = await this.apiClient.get(`/v2/conversations/${args.id}`)
 
     if (flags.output === 'json') {
-      this.outputResults(data, columns)
+      await this.outputResults(data, columns)
       return
     }
 
     delete data._embedded
-    this.outputResults([data], columns)
+    await this.outputResults([data], columns)
   }
 }

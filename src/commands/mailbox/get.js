@@ -26,6 +26,6 @@ export default class MailboxGetCommand extends BaseCommand {
   async run() {
     const { args } = await this.parse(MailboxGetCommand)
     const data = await this.apiClient.get(`/v2/mailboxes/${args.id}`)
-    this.outputResults([data], columns)
+    await this.outputResults([data], columns)
   }
 }

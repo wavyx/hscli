@@ -20,6 +20,6 @@ export default class UserMeCommand extends BaseCommand {
 
   async run() {
     const data = await this.apiClient.get('/v2/users/me')
-    this.outputResults([data], columns)
+    await this.outputResults([data], columns)
   }
 }

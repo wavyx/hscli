@@ -28,6 +28,6 @@ export default class MailboxListCommand extends BaseCommand {
       this.apiClient.paginate('/v2/mailboxes', {}, 'mailboxes'),
       flags.limit,
     )
-    this.outputResults(items, columns)
+    await this.outputResults(items, columns)
   }
 }
