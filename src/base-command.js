@@ -27,6 +27,11 @@ export default class BaseCommand extends Command {
       description: 'Disable color output',
       helpGroup: 'GLOBAL',
     }),
+    verbose: Flags.boolean({
+      description: 'Show detailed API request/response on errors',
+      helpGroup: 'GLOBAL',
+      default: false,
+    }),
   }
 
   /** @type {string} */
@@ -41,6 +46,12 @@ export default class BaseCommand extends Command {
 
     if (flags['no-color'] || process.env.NO_COLOR) {
       process.env.FORCE_COLOR = '0'
+    }
+
+    if (flags.verbose) {
+      process.env.DEBUG = process.env.DEBUG
+        ? `${process.env.DEBUG},hs:*`
+        : 'hs:*'
     }
 
     const config = loadConfig(flags.profile)

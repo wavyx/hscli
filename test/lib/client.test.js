@@ -380,6 +380,23 @@ describe('createClient', () => {
     })
   })
 
+  describe('jsonPatch requests', () => {
+    it('sends PATCH with JSON Patch content type', async () => {
+      const scope = nock(API_BASE)
+        .patch('/v2/conversations/1', [
+          { op: 'replace', path: '/status', value: 'closed' },
+        ])
+        .matchHeader('content-type', 'application/json-patch+json')
+        .reply(204)
+
+      const result = await client.jsonPatch('/v2/conversations/1', [
+        { op: 'replace', path: '/status', value: 'closed' },
+      ])
+      expect(result).toBeNull()
+      expect(scope.isDone()).toBe(true)
+    })
+  })
+
   describe('edge cases', () => {
     it('returns null for empty response body', async () => {
       nock(API_BASE).get('/v2/empty').reply(200, '')

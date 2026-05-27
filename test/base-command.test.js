@@ -72,6 +72,12 @@ describe('BaseCommand', () => {
     nock.cleanAll()
     delete process.env.FORCE_COLOR
     delete process.env.NO_COLOR
+    delete process.env.DEBUG
+  })
+
+  it('sets DEBUG=hs:* when --verbose flag is passed', async () => {
+    await captureLogs(ProfileCurrentCommand, ['--verbose'])
+    expect(process.env.DEBUG).toContain('hs:')
   })
 
   it('sets FORCE_COLOR=0 when --no-color flag is passed', async () => {

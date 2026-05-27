@@ -28,7 +28,7 @@ export function createClient({
 }) {
   let token = accessToken
 
-  async function request(method, path, { body, query } = {}) {
+  async function request(method, path, { body, query, contentType } = {}) {
     const url = new URL(path, BASE_URL)
     if (query) {
       for (const [k, v] of Object.entries(query)) {
@@ -44,7 +44,7 @@ export function createClient({
 
       const headers = {
         authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
+        'content-type': contentType || 'application/json',
       }
 
       const res = await fetch(url, {
@@ -118,6 +118,11 @@ export function createClient({
     put: (path, opts) => request('PUT', path, opts),
     patch: (path, opts) => request('PATCH', path, opts),
     del: (path, opts) => request('DELETE', path, opts),
+    jsonPatch: (path, operations) =>
+      request('PATCH', path, {
+        body: operations,
+        contentType: 'application/json-patch+json',
+      }),
     paginate,
   }
 }
