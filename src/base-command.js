@@ -40,6 +40,15 @@ export default class BaseCommand extends Command {
       description: 'Comma-separated fields to display',
       helpGroup: 'GLOBAL',
     }),
+    'no-retry': Flags.boolean({
+      description: 'Disable automatic retry on rate limits and 5xx errors',
+      helpGroup: 'GLOBAL',
+      default: false,
+    }),
+    timeout: Flags.integer({
+      description: 'Request timeout in milliseconds',
+      helpGroup: 'GLOBAL',
+    }),
   }
 
   /** @type {string} */
@@ -73,6 +82,8 @@ export default class BaseCommand extends Command {
     const creds = resolveCredentials({ profile: this.activeProfile })
     this.apiClient = createClient({
       accessToken: token,
+      retry: !flags['no-retry'],
+      timeout: flags.timeout,
       onRefresh: async () => {
         const stored = await getTokens(this.activeProfile)
         if (!stored?.refreshToken) throw new AuthRequiredError()
