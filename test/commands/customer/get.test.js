@@ -99,3 +99,11 @@ describe('hs customer get', () => {
     expect(scope.isDone()).toBe(true)
   })
 })
+
+it('handles customer without emails', async () => {
+  nock('https://api.helpscout.net')
+    .get('/v2/customers/1')
+    .reply(200, { id: 1, firstName: 'No', lastName: 'Email' })
+  const stdout = await runCmd(CustomerGetCommand, ['1', '--output', 'table'])
+  expect(stdout).toContain('No')
+})

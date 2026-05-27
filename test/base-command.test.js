@@ -267,7 +267,7 @@ describe('BaseCommand', () => {
     )
   })
 
-  it('--jq filters output through jq expression', async () => {
+  it('--jq filters array output', async () => {
     mockGetValidToken.mockResolvedValue('valid-token')
     mockResolveCredentials.mockReturnValue({
       clientId: 'cid',
@@ -281,6 +281,30 @@ describe('BaseCommand', () => {
 
     const stdout = await captureLogs(UserMeCommand, ['--jq', '.[0].firstName'])
     expect(stdout).toContain('Jq')
+  })
+
+  it('--jq wraps non-array data before filtering', async () => {
+    mockGetValidToken.mockResolvedValue('valid-token')
+    mockResolveCredentials.mockReturnValue({
+      clientId: 'cid',
+      clientSecret: 'csec',
+      source: 'profile',
+    })
+
+    const { default: ConvGetCommand } =
+      await import('../src/commands/conv/get.js')
+    nock('https://api.helpscout.net')
+      .get('/v2/conversations/1')
+      .reply(200, { id: 1, subject: 'JqSingle' })
+
+    const stdout = await captureLogs(ConvGetCommand, [
+      '1',
+      '--output',
+      'json',
+      '--jq',
+      '.[0].subject',
+    ])
+    expect(stdout).toContain('JqSingle')
   })
 
   it('--fields limits displayed columns', async () => {

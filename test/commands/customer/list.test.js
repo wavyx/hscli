@@ -158,3 +158,15 @@ it('handles missing emails in customer', async () => {
   const stdout = await runCmd(CustomerListCommand, ['--output', 'table'])
   expect(stdout).toContain('No')
 })
+
+it('passes modifiedSince with days unit', async () => {
+  const scope = nock('https://api.helpscout.net')
+    .get('/v2/customers')
+    .query((q) =>
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(q.modifiedSince),
+    )
+    .reply(200, fixture)
+
+  await runCmd(CustomerListCommand, ['--since', '7d', '--output', 'json'])
+  expect(scope.isDone()).toBe(true)
+})

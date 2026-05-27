@@ -109,4 +109,22 @@ describe('hs api', () => {
     expect(stdout).toContain('999')
     expect(scope.isDone()).toBe(true)
   })
+
+  it('passes custom content-type', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .patch('/v2/conversations/1', { op: 'replace' })
+      .matchHeader('content-type', 'application/json-patch+json')
+      .reply(204)
+    const { resolveBody } = await import('../../src/lib/body.js')
+    resolveBody.mockResolvedValueOnce('{"op":"replace"}')
+    await runCmd(ApiCommand, [
+      'PATCH',
+      '/v2/conversations/1',
+      '--body',
+      'x',
+      '--content-type',
+      'application/json-patch+json',
+    ])
+    expect(scope.isDone()).toBe(true)
+  })
 })

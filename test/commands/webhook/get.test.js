@@ -90,3 +90,11 @@ describe('hs webhook get', () => {
     expect(scope.isDone()).toBe(true)
   })
 })
+
+it('handles webhook without events', async () => {
+  nock('https://api.helpscout.net')
+    .get('/v2/webhooks/1')
+    .reply(200, { id: 1, url: 'http://x.com', state: 'enabled' })
+  const stdout = await runCmd(WebhookGetCommand, ['1', '--output', 'table'])
+  expect(stdout).toContain('http://x.com')
+})

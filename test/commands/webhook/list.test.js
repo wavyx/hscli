@@ -101,3 +101,17 @@ describe('hs webhook list', () => {
     expect(scope.isDone()).toBe(true)
   })
 })
+
+it('handles webhooks without events array', async () => {
+  nock('https://api.helpscout.net')
+    .get('/v2/webhooks')
+    .query(true)
+    .reply(200, {
+      _embedded: {
+        webhooks: [{ id: 1, url: 'http://y.com', state: 'enabled' }],
+      },
+      page: { totalPages: 1 },
+    })
+  const stdout = await runCmd(WebhookListCommand, ['--output', 'table'])
+  expect(stdout).toContain('http://y.com')
+})
