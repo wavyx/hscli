@@ -32,8 +32,8 @@ export default class CustomerConversationsCommand extends BaseCommand {
     const { args, flags } = await this.parse(CustomerConversationsCommand)
     const items = await collectPages(
       this.apiClient.paginate(
-        `/v2/customers/${args.id}/conversations`,
-        {},
+        '/v2/conversations',
+        { customer: args.id },
         'conversations',
       ),
       flags.limit,

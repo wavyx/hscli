@@ -77,7 +77,7 @@ describe('hs customer conversations', () => {
 
   it('returns conversations as JSON array', async () => {
     const scope = nock('https://api.helpscout.net')
-      .get('/v2/customers/100/conversations')
+      .get('/v2/conversations')
       .query(true)
       .reply(200, fixture)
 
@@ -97,7 +97,7 @@ describe('hs customer conversations', () => {
 
   it('renders conversations in table format', async () => {
     const scope = nock('https://api.helpscout.net')
-      .get('/v2/customers/100/conversations')
+      .get('/v2/conversations')
       .query(true)
       .reply(200, fixture)
 
