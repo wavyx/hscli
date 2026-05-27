@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-05-27
+
+### Added
+
+- **Live tail**: `conv watch` with `--poll` interval and `--mailbox`/`--status` filters
+- **Full-text search**: `conv search <query>` with mailbox filter
+- **Bulk export**: `conv export --format json|csv|ndjson` with pagination progress
+- **Batch operations**: `conv bulk-status --set closed --tag X` with confirmation
+- **Conversation count**: `conv count --status active --mailbox X` without fetching full list
+- **Attachments**: `conv attachments <id>` lists files from conversation threads
+- **Mailbox folders**: `mailbox folders <id>` lists folder structure
+- **Mailbox fields**: `mailbox fields <id>` lists custom fields
+- **Tag usage**: `tag usage <name>` shows conversation count per tag
+- **Config validation**: `config validate` checks profile, OAuth app, keychain
+- **Auto .env loading**: CLI auto-loads `.env` from current directory
+- **`--no-retry` flag**: disable automatic retry on rate limits and 5xx errors
+- **`--timeout` flag**: override default 30s request timeout
+
 ## [0.3.0] - 2026-05-27
 
 ### Added

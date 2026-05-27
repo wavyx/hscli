@@ -1,6 +1,6 @@
 {
   "name": "hscli",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "CLI for Help Scout Inbox API 2.0",
   "type": "module",
   "license": "MIT",
