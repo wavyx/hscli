@@ -63,7 +63,11 @@ describe('hs workflow run', () => {
       })
       .reply(204)
 
-    const stdout = await runCmd(WorkflowRunCommand, ['5', '--conv', '100,200,300'])
+    const stdout = await runCmd(WorkflowRunCommand, [
+      '5',
+      '--conv',
+      '100,200,300',
+    ])
 
     expect(stdout).toContain('Workflow #5 executed successfully')
     expect(scope.isDone()).toBe(true)
@@ -72,7 +76,9 @@ describe('hs workflow run', () => {
   it('handles a single conversation ID', async () => {
     const scope = nock('https://api.helpscout.net')
       .post('/v2/workflows/7/run', (body) => {
-        return body.conversationIds.length === 1 && body.conversationIds[0] === 42
+        return (
+          body.conversationIds.length === 1 && body.conversationIds[0] === 42
+        )
       })
       .reply(204)
 

@@ -29,7 +29,6 @@ describe('resolveBody', () => {
   })
 
   it('reads from stdin when not TTY and no --body flag', async () => {
-    const origIsTTY = process.stdin.isTTY
     const origStdin = process.stdin
 
     const mockStdin = Readable.from([Buffer.from('stdin content\n')])

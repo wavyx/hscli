@@ -54,9 +54,12 @@ describe('hs customer get', () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/customers/100')
       .reply(200, {
-        id: 100, firstName: 'Alice', lastName: 'Wong',
+        id: 100,
+        firstName: 'Alice',
+        lastName: 'Wong',
         emails: [{ id: 1, value: 'alice@example.com' }],
-        organization: 'Acme Corp', jobTitle: 'Engineer',
+        organization: 'Acme Corp',
+        jobTitle: 'Engineer',
         createdAt: '2024-01-01T00:00:00Z',
       })
 
@@ -74,13 +77,20 @@ describe('hs customer get', () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/customers/100')
       .reply(200, {
-        id: 100, firstName: 'Alice', lastName: 'Wong',
+        id: 100,
+        firstName: 'Alice',
+        lastName: 'Wong',
         emails: [{ id: 1, value: 'alice@example.com' }],
-        organization: 'Acme Corp', jobTitle: 'Engineer',
+        organization: 'Acme Corp',
+        jobTitle: 'Engineer',
         createdAt: '2024-01-01T00:00:00Z',
       })
 
-    const stdout = await runCmd(CustomerGetCommand, ['100', '--output', 'table'])
+    const stdout = await runCmd(CustomerGetCommand, [
+      '100',
+      '--output',
+      'table',
+    ])
 
     expect(stdout).toContain('Alice')
     expect(stdout).toContain('Wong')

@@ -51,13 +51,17 @@ const fixture = {
   _embedded: {
     customers: [
       {
-        id: 100, firstName: 'Alice', lastName: 'Wong',
+        id: 100,
+        firstName: 'Alice',
+        lastName: 'Wong',
         emails: [{ id: 1, value: 'alice@example.com' }],
         organization: 'Acme Corp',
         createdAt: '2024-01-01T00:00:00Z',
       },
       {
-        id: 101, firstName: 'Bob', lastName: 'Jones',
+        id: 101,
+        firstName: 'Bob',
+        lastName: 'Jones',
         emails: [{ id: 2, value: 'bob@example.com' }],
         organization: null,
         createdAt: '2024-02-01T00:00:00Z',
@@ -101,4 +105,56 @@ describe('hs customer list', () => {
     expect(stdout).toContain('Acme Corp')
     expect(scope.isDone()).toBe(true)
   })
+})
+
+it('passes modifiedSince with hours unit', async () => {
+  const scope = nock('https://api.helpscout.net')
+    .get('/v2/customers')
+    .query((q) =>
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(q.modifiedSince),
+    )
+    .reply(200, fixture)
+
+  await runCmd(CustomerListCommand, ['--since', '2h', '--output', 'json'])
+  expect(scope.isDone()).toBe(true)
+})
+
+it('passes modifiedSince with minutes unit', async () => {
+  const scope = nock('https://api.helpscout.net')
+    .get('/v2/customers')
+    .query((q) =>
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(q.modifiedSince),
+    )
+    .reply(200, fixture)
+
+  await runCmd(CustomerListCommand, ['--since', '30m', '--output', 'json'])
+  expect(scope.isDone()).toBe(true)
+})
+
+it('passes raw ISO date for --since', async () => {
+  const scope = nock('https://api.helpscout.net')
+    .get('/v2/customers')
+    .query((q) => q.modifiedSince === '2024-01-01T00:00:00Z')
+    .reply(200, fixture)
+
+  await runCmd(CustomerListCommand, [
+    '--since',
+    '2024-01-01T00:00:00Z',
+    '--output',
+    'json',
+  ])
+  expect(scope.isDone()).toBe(true)
+})
+
+it('handles missing emails in customer', async () => {
+  const noEmailFixture = {
+    _embedded: { customers: [{ id: 1, firstName: 'No', lastName: 'Email' }] },
+    page: { totalPages: 1 },
+  }
+  nock('https://api.helpscout.net')
+    .get('/v2/customers')
+    .query(true)
+    .reply(200, noEmailFixture)
+  const stdout = await runCmd(CustomerListCommand, ['--output', 'table'])
+  expect(stdout).toContain('No')
 })

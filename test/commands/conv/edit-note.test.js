@@ -48,9 +48,8 @@ vi.mock('../../../src/lib/body.js', () => ({
   resolveBody: vi.fn().mockResolvedValue('Updated note content'),
 }))
 
-const { default: ConvEditNoteCommand } = await import(
-  '../../../src/commands/conv/edit-note.js'
-)
+const { default: ConvEditNoteCommand } =
+  await import('../../../src/commands/conv/edit-note.js')
 
 describe('hs conv edit-note', () => {
   afterEach(() => nock.cleanAll())

@@ -50,8 +50,20 @@ const { default: TagListCommand } =
 const fixture = {
   _embedded: {
     tags: [
-      { id: 1, name: 'Billing', slug: 'billing', createdAt: '2024-01-01T00:00:00Z', ticketCount: 42 },
-      { id: 2, name: 'Feature Request', slug: 'feature-request', createdAt: '2024-02-01T00:00:00Z', ticketCount: 15 },
+      {
+        id: 1,
+        name: 'Billing',
+        slug: 'billing',
+        createdAt: '2024-01-01T00:00:00Z',
+        ticketCount: 42,
+      },
+      {
+        id: 2,
+        name: 'Feature Request',
+        slug: 'feature-request',
+        createdAt: '2024-02-01T00:00:00Z',
+        ticketCount: 15,
+      },
     ],
   },
   _links: { self: { href: '/v2/tags?page=1' } },

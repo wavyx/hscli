@@ -11,7 +11,10 @@ export default class ReportCompanyCommand extends BaseCommand {
 
   static flags = {
     ...BaseCommand.baseFlags,
-    start: Flags.string({ description: 'Start date (ISO 8601)', required: true }),
+    start: Flags.string({
+      description: 'Start date (ISO 8601)',
+      required: true,
+    }),
     end: Flags.string({ description: 'End date (ISO 8601)', required: true }),
     mailbox: Flags.integer({ description: 'Filter by mailbox ID' }),
     tag: Flags.string({ description: 'Comma-separated tags' }),

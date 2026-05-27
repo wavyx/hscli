@@ -50,8 +50,22 @@ const { default: UserListCommand } =
 const fixture = {
   _embedded: {
     users: [
-      { id: 1, firstName: 'Jane', lastName: 'Doe', email: 'jane@example.com', role: 'owner', createdAt: '2024-01-01T00:00:00Z' },
-      { id: 2, firstName: 'John', lastName: 'Smith', email: 'john@example.com', role: 'user', createdAt: '2024-02-01T00:00:00Z' },
+      {
+        id: 1,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        email: 'jane@example.com',
+        role: 'owner',
+        createdAt: '2024-01-01T00:00:00Z',
+      },
+      {
+        id: 2,
+        firstName: 'John',
+        lastName: 'Smith',
+        email: 'john@example.com',
+        role: 'user',
+        createdAt: '2024-02-01T00:00:00Z',
+      },
     ],
   },
   _links: { self: { href: '/v2/users?page=1' } },

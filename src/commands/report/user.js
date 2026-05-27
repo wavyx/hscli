@@ -10,7 +10,10 @@ export default class ReportUserCommand extends BaseCommand {
 
   static flags = {
     ...BaseCommand.baseFlags,
-    start: Flags.string({ description: 'Start date (ISO 8601)', required: true }),
+    start: Flags.string({
+      description: 'Start date (ISO 8601)',
+      required: true,
+    }),
     end: Flags.string({ description: 'End date (ISO 8601)', required: true }),
     user: Flags.integer({ description: 'User ID', required: true }),
   }

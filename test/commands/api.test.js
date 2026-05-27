@@ -48,8 +48,7 @@ vi.mock('../../src/lib/body.js', () => ({
   resolveBody: vi.fn().mockResolvedValue('{"subject":"test"}'),
 }))
 
-const { default: ApiCommand } =
-  await import('../../src/commands/api.js')
+const { default: ApiCommand } = await import('../../src/commands/api.js')
 
 describe('hs api', () => {
   afterEach(() => nock.cleanAll())
@@ -73,8 +72,10 @@ describe('hs api', () => {
       .reply(201, { id: 99 })
 
     const stdout = await runCmd(ApiCommand, [
-      'POST', '/v2/conversations',
-      '--body', '{"subject":"test"}',
+      'POST',
+      '/v2/conversations',
+      '--body',
+      '{"subject":"test"}',
     ])
     const output = JSON.parse(stdout)
 
@@ -90,6 +91,22 @@ describe('hs api', () => {
     const stdout = await runCmd(ApiCommand, ['DELETE', '/v2/webhooks/1'])
 
     expect(stdout).toBe('')
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('parses JSON body for POST requests', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .post('/v2/conversations', { subject: 'test' })
+      .reply(201, { id: 999 })
+
+    const stdout = await runCmd(ApiCommand, [
+      'POST',
+      '/v2/conversations',
+      '--body',
+      '{"subject":"test"}',
+    ])
+
+    expect(stdout).toContain('999')
     expect(scope.isDone()).toBe(true)
   })
 })

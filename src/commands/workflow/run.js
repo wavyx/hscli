@@ -5,9 +5,7 @@ import BaseCommand from '../../base-command.js'
 export default class WorkflowRunCommand extends BaseCommand {
   static description = 'Run a manual workflow on conversations'
 
-  static examples = [
-    '<%= config.bin %> workflow run 1 --conv 100,200,300',
-  ]
+  static examples = ['<%= config.bin %> workflow run 1 --conv 100,200,300']
 
   static flags = {
     ...BaseCommand.baseFlags,

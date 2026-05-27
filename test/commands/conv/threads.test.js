@@ -44,9 +44,8 @@ vi.mock('../../../src/lib/auth.js', () => ({
   }),
 }))
 
-const { default: ConvThreadsCommand } = await import(
-  '../../../src/commands/conv/threads.js'
-)
+const { default: ConvThreadsCommand } =
+  await import('../../../src/commands/conv/threads.js')
 
 describe('hs conv threads', () => {
   afterEach(() => nock.cleanAll())
@@ -57,8 +56,18 @@ describe('hs conv threads', () => {
       .reply(200, {
         _embedded: {
           threads: [
-            { id: 1, type: 'note', body: 'Internal note', createdAt: '2024-01-01T00:00:00Z' },
-            { id: 2, type: 'customer', body: 'Customer message', createdAt: '2024-01-02T00:00:00Z' },
+            {
+              id: 1,
+              type: 'note',
+              body: 'Internal note',
+              createdAt: '2024-01-01T00:00:00Z',
+            },
+            {
+              id: 2,
+              type: 'customer',
+              body: 'Customer message',
+              createdAt: '2024-01-02T00:00:00Z',
+            },
           ],
         },
       })
@@ -79,12 +88,21 @@ describe('hs conv threads', () => {
       .reply(200, {
         _embedded: {
           threads: [
-            { id: 1, type: 'note', body: longBody, createdAt: '2024-01-01T00:00:00Z' },
+            {
+              id: 1,
+              type: 'note',
+              body: longBody,
+              createdAt: '2024-01-01T00:00:00Z',
+            },
           ],
         },
       })
 
-    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    const stdout = await runCmd(ConvThreadsCommand, [
+      '100',
+      '--output',
+      'table',
+    ])
     expect(stdout).toContain('...')
     expect(scope.isDone()).toBe(true)
   })
@@ -95,12 +113,21 @@ describe('hs conv threads', () => {
       .reply(200, {
         _embedded: {
           threads: [
-            { id: 1, type: 'message', text: 'Text field content', createdAt: '2024-01-01T00:00:00Z' },
+            {
+              id: 1,
+              type: 'message',
+              text: 'Text field content',
+              createdAt: '2024-01-01T00:00:00Z',
+            },
           ],
         },
       })
 
-    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    const stdout = await runCmd(ConvThreadsCommand, [
+      '100',
+      '--output',
+      'table',
+    ])
     expect(stdout).toContain('Text field content')
     expect(scope.isDone()).toBe(true)
   })
@@ -116,7 +143,11 @@ describe('hs conv threads', () => {
         },
       })
 
-    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    const stdout = await runCmd(ConvThreadsCommand, [
+      '100',
+      '--output',
+      'table',
+    ])
     expect(stdout).toContain('lineitem')
     expect(scope.isDone()).toBe(true)
   })
@@ -126,7 +157,11 @@ describe('hs conv threads', () => {
       .get('/v2/conversations/100/threads')
       .reply(200, { _embedded: { threads: [] } })
 
-    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    const stdout = await runCmd(ConvThreadsCommand, [
+      '100',
+      '--output',
+      'table',
+    ])
     expect(stdout).toContain('No results')
     expect(scope.isDone()).toBe(true)
   })
@@ -136,7 +171,11 @@ describe('hs conv threads', () => {
       .get('/v2/conversations/100/threads')
       .reply(200, {})
 
-    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    const stdout = await runCmd(ConvThreadsCommand, [
+      '100',
+      '--output',
+      'table',
+    ])
     expect(stdout).toContain('No results')
     expect(scope.isDone()).toBe(true)
   })
@@ -147,12 +186,21 @@ describe('hs conv threads', () => {
       .reply(200, {
         _embedded: {
           threads: [
-            { id: 1, type: 'note', body: 'My note', createdAt: '2024-01-01T00:00:00Z' },
+            {
+              id: 1,
+              type: 'note',
+              body: 'My note',
+              createdAt: '2024-01-01T00:00:00Z',
+            },
           ],
         },
       })
 
-    const stdout = await runCmd(ConvThreadsCommand, ['100', '--output', 'table'])
+    const stdout = await runCmd(ConvThreadsCommand, [
+      '100',
+      '--output',
+      'table',
+    ])
 
     expect(stdout).toContain('note')
     expect(stdout).toContain('My note')

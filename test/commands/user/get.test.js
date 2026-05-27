@@ -54,8 +54,13 @@ describe('hs user get', () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/users/1')
       .reply(200, {
-        id: 1, firstName: 'Jane', lastName: 'Doe', email: 'jane@example.com',
-        role: 'owner', timezone: 'America/New_York', createdAt: '2024-01-01T00:00:00Z',
+        id: 1,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        email: 'jane@example.com',
+        role: 'owner',
+        timezone: 'America/New_York',
+        createdAt: '2024-01-01T00:00:00Z',
       })
 
     const stdout = await runCmd(UserGetCommand, ['1', '--output', 'json'])
@@ -72,8 +77,13 @@ describe('hs user get', () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/users/1')
       .reply(200, {
-        id: 1, firstName: 'Jane', lastName: 'Doe', email: 'jane@example.com',
-        role: 'owner', timezone: 'America/New_York', createdAt: '2024-01-01T00:00:00Z',
+        id: 1,
+        firstName: 'Jane',
+        lastName: 'Doe',
+        email: 'jane@example.com',
+        role: 'owner',
+        timezone: 'America/New_York',
+        createdAt: '2024-01-01T00:00:00Z',
       })
 
     const stdout = await runCmd(UserGetCommand, ['1', '--output', 'table'])

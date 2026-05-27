@@ -266,4 +266,45 @@ describe('BaseCommand', () => {
       'Help Scout API 422: Validation failed',
     )
   })
+
+  it('--jq filters output through jq expression', async () => {
+    mockGetValidToken.mockResolvedValue('valid-token')
+    mockResolveCredentials.mockReturnValue({
+      clientId: 'cid',
+      clientSecret: 'csec',
+      source: 'profile',
+    })
+
+    nock('https://api.helpscout.net')
+      .get('/v2/users/me')
+      .reply(200, { id: 1, firstName: 'Jq', lastName: 'Test' })
+
+    const stdout = await captureLogs(UserMeCommand, ['--jq', '.[0].firstName'])
+    expect(stdout).toContain('Jq')
+  })
+
+  it('--fields limits displayed columns', async () => {
+    mockGetValidToken.mockResolvedValue('valid-token')
+    mockResolveCredentials.mockReturnValue({
+      clientId: 'cid',
+      clientSecret: 'csec',
+      source: 'profile',
+    })
+
+    nock('https://api.helpscout.net').get('/v2/users/me').reply(200, {
+      id: 1,
+      firstName: 'Field',
+      lastName: 'Test',
+      email: 'f@t.com',
+    })
+
+    const origIsTTY = process.stdout.isTTY
+    process.stdout.isTTY = true
+    const stdout = await captureLogs(UserMeCommand, ['--fields', 'id,email'])
+    process.stdout.isTTY = origIsTTY
+
+    expect(stdout).toContain('ID')
+    expect(stdout).toContain('f@t.com')
+    expect(stdout).not.toContain('First Name')
+  })
 })

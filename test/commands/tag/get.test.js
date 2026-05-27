@@ -53,7 +53,13 @@ describe('hs tag get', () => {
   it('returns a single tag as JSON', async () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/tags/1')
-      .reply(200, { id: 1, name: 'Billing', slug: 'billing', createdAt: '2024-01-01T00:00:00Z', ticketCount: 42 })
+      .reply(200, {
+        id: 1,
+        name: 'Billing',
+        slug: 'billing',
+        createdAt: '2024-01-01T00:00:00Z',
+        ticketCount: 42,
+      })
 
     const stdout = await runCmd(TagGetCommand, ['1', '--output', 'json'])
     const output = JSON.parse(stdout)
@@ -68,7 +74,13 @@ describe('hs tag get', () => {
   it('renders tag details in table format', async () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/tags/1')
-      .reply(200, { id: 1, name: 'Billing', slug: 'billing', createdAt: '2024-01-01T00:00:00Z', ticketCount: 42 })
+      .reply(200, {
+        id: 1,
+        name: 'Billing',
+        slug: 'billing',
+        createdAt: '2024-01-01T00:00:00Z',
+        ticketCount: 42,
+      })
 
     const stdout = await runCmd(TagGetCommand, ['1', '--output', 'table'])
 

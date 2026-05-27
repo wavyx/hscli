@@ -54,13 +54,21 @@ describe('hs report user', () => {
     const reportData = { conversationsHandled: 45, avgResponseTime: 3600 }
     const scope = nock('https://api.helpscout.net')
       .get('/v2/reports/user')
-      .query((q) => q.start === '2024-01-01T00:00:00Z' && q.end === '2024-01-31T23:59:59Z' && q.user === '10')
+      .query(
+        (q) =>
+          q.start === '2024-01-01T00:00:00Z' &&
+          q.end === '2024-01-31T23:59:59Z' &&
+          q.user === '10',
+      )
       .reply(200, reportData)
 
     const stdout = await runCmd(ReportUserCommand, [
-      '--start', '2024-01-01T00:00:00Z',
-      '--end', '2024-01-31T23:59:59Z',
-      '--user', '10',
+      '--start',
+      '2024-01-01T00:00:00Z',
+      '--end',
+      '2024-01-31T23:59:59Z',
+      '--user',
+      '10',
     ])
     const output = JSON.parse(stdout)
 
@@ -76,9 +84,12 @@ describe('hs report user', () => {
       .reply(200, { conversationsHandled: 0 })
 
     const stdout = await runCmd(ReportUserCommand, [
-      '--start', '2024-06-01T00:00:00Z',
-      '--end', '2024-06-30T23:59:59Z',
-      '--user', '99',
+      '--start',
+      '2024-06-01T00:00:00Z',
+      '--end',
+      '2024-06-30T23:59:59Z',
+      '--user',
+      '99',
     ])
     const output = JSON.parse(stdout)
 

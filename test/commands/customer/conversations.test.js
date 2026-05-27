@@ -50,8 +50,22 @@ const { default: CustomerConversationsCommand } =
 const fixture = {
   _embedded: {
     conversations: [
-      { id: 200, number: 2001, subject: 'Billing question', status: 'active', mailboxId: 42, createdAt: '2024-03-01T00:00:00Z' },
-      { id: 201, number: 2002, subject: 'Feature request', status: 'closed', mailboxId: 43, createdAt: '2024-04-01T00:00:00Z' },
+      {
+        id: 200,
+        number: 2001,
+        subject: 'Billing question',
+        status: 'active',
+        mailboxId: 42,
+        createdAt: '2024-03-01T00:00:00Z',
+      },
+      {
+        id: 201,
+        number: 2002,
+        subject: 'Feature request',
+        status: 'closed',
+        mailboxId: 43,
+        createdAt: '2024-04-01T00:00:00Z',
+      },
     ],
   },
   _links: { self: { href: '/v2/customers/100/conversations?page=1' } },
@@ -67,7 +81,11 @@ describe('hs customer conversations', () => {
       .query(true)
       .reply(200, fixture)
 
-    const stdout = await runCmd(CustomerConversationsCommand, ['100', '--output', 'json'])
+    const stdout = await runCmd(CustomerConversationsCommand, [
+      '100',
+      '--output',
+      'json',
+    ])
     const output = JSON.parse(stdout)
 
     expect(Array.isArray(output)).toBe(true)
@@ -83,7 +101,11 @@ describe('hs customer conversations', () => {
       .query(true)
       .reply(200, fixture)
 
-    const stdout = await runCmd(CustomerConversationsCommand, ['100', '--output', 'table'])
+    const stdout = await runCmd(CustomerConversationsCommand, [
+      '100',
+      '--output',
+      'table',
+    ])
 
     expect(stdout).toContain('Billing question')
     expect(stdout).toContain('Feature request')

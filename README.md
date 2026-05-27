@@ -27,8 +27,13 @@ hs customer create --email user@example.com --first Jane
 | `hs auth`     | `setup`, `login`, `logout`, `status`, `refresh`                                                               |
 | `hs conv`     | `list`, `get`, `create`, `reply`, `note`, `status`, `assign`, `tag`, `move`, `delete`, `threads`, `edit-note` |
 | `hs mailbox`  | `list`, `get`                                                                                                 |
-| `hs user`     | `me`                                                                                                          |
-| `hs customer` | `create`, `update`                                                                                            |
+| `hs user`     | `me`, `list`, `get`                                                                                           |
+| `hs customer` | `create`, `update`, `list`, `get`, `search`, `conversations`                                                  |
+| `hs tag`      | `list`, `get`                                                                                                 |
+| `hs workflow` | `list`, `run`                                                                                                 |
+| `hs webhook`  | `list`, `get`, `create`, `delete`                                                                             |
+| `hs report`   | `company`, `user`, `conversations`                                                                            |
+| `hs api`      | Raw API escape hatch: `hs api GET /v2/conversations`                                                          |
 | `hs profile`  | `list`, `use`, `current`                                                                                      |
 | `hs config`   | `get`, `set`, `list`                                                                                          |
 | `hs doctor`   | Diagnostic checks                                                                                             |

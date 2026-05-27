@@ -1,6 +1,5 @@
-import { Args, Flags } from '@oclif/core'
+import { Args } from '@oclif/core'
 import BaseCommand from '../../base-command.js'
-import { collectPages } from '../../lib/pagination.js'
 
 const columns = {
   id: { header: 'ID' },

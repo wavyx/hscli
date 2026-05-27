@@ -54,12 +54,18 @@ describe('hs report company', () => {
     const reportData = { totalConversations: 150, resolvedConversations: 120 }
     const scope = nock('https://api.helpscout.net')
       .get('/v2/reports/company')
-      .query((q) => q.start === '2024-01-01T00:00:00Z' && q.end === '2024-01-31T23:59:59Z')
+      .query(
+        (q) =>
+          q.start === '2024-01-01T00:00:00Z' &&
+          q.end === '2024-01-31T23:59:59Z',
+      )
       .reply(200, reportData)
 
     const stdout = await runCmd(ReportCompanyCommand, [
-      '--start', '2024-01-01T00:00:00Z',
-      '--end', '2024-01-31T23:59:59Z',
+      '--start',
+      '2024-01-01T00:00:00Z',
+      '--end',
+      '2024-01-31T23:59:59Z',
     ])
     const output = JSON.parse(stdout)
 
@@ -75,10 +81,14 @@ describe('hs report company', () => {
       .reply(200, { totalConversations: 10 })
 
     const stdout = await runCmd(ReportCompanyCommand, [
-      '--start', '2024-01-01T00:00:00Z',
-      '--end', '2024-01-31T23:59:59Z',
-      '--mailbox', '5',
-      '--tag', 'billing,vip',
+      '--start',
+      '2024-01-01T00:00:00Z',
+      '--end',
+      '2024-01-31T23:59:59Z',
+      '--mailbox',
+      '5',
+      '--tag',
+      'billing,vip',
     ])
     const output = JSON.parse(stdout)
 

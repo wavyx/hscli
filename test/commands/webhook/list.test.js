@@ -50,8 +50,20 @@ const { default: WebhookListCommand } =
 const fixture = {
   _embedded: {
     webhooks: [
-      { id: 1, url: 'https://example.com/hook1', events: ['convo.created', 'convo.updated'], state: 'enabled', createdAt: '2024-01-01T00:00:00Z' },
-      { id: 2, url: 'https://example.com/hook2', events: ['convo.deleted'], state: 'disabled', createdAt: '2024-02-01T00:00:00Z' },
+      {
+        id: 1,
+        url: 'https://example.com/hook1',
+        events: ['convo.created', 'convo.updated'],
+        state: 'enabled',
+        createdAt: '2024-01-01T00:00:00Z',
+      },
+      {
+        id: 2,
+        url: 'https://example.com/hook2',
+        events: ['convo.deleted'],
+        state: 'disabled',
+        createdAt: '2024-02-01T00:00:00Z',
+      },
     ],
   },
   _links: { self: { href: '/v2/webhooks?page=1' } },

@@ -50,8 +50,22 @@ const { default: WorkflowListCommand } =
 const fixture = {
   _embedded: {
     workflows: [
-      { id: 1, name: 'Auto-close', type: 'automatic', status: 'active', mailboxId: 10, createdAt: '2024-01-01T00:00:00Z' },
-      { id: 2, name: 'Tag billing', type: 'manual', status: 'inactive', mailboxId: 11, createdAt: '2024-02-01T00:00:00Z' },
+      {
+        id: 1,
+        name: 'Auto-close',
+        type: 'automatic',
+        status: 'active',
+        mailboxId: 10,
+        createdAt: '2024-01-01T00:00:00Z',
+      },
+      {
+        id: 2,
+        name: 'Tag billing',
+        type: 'manual',
+        status: 'inactive',
+        mailboxId: 11,
+        createdAt: '2024-02-01T00:00:00Z',
+      },
     ],
   },
   _links: { self: { href: '/v2/workflows?page=1' } },
@@ -83,9 +97,12 @@ describe('hs workflow list', () => {
       .reply(200, fixture)
 
     const stdout = await runCmd(WorkflowListCommand, [
-      '--mailbox', '10',
-      '--type', 'manual',
-      '--output', 'json',
+      '--mailbox',
+      '10',
+      '--type',
+      'manual',
+      '--output',
+      'json',
     ])
     const output = JSON.parse(stdout)
 

@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-27
+
+### Added
+
+- **Tag commands**: `tag list`, `tag get`
+- **User commands**: `user list`, `user get` (with --mailbox, --email filters)
+- **Customer read commands**: `customer list`, `customer get`, `customer search`, `customer conversations`
+- **Workflow commands**: `workflow list`, `workflow run` (max 50 conversation IDs)
+- **Webhook commands**: `webhook list`, `webhook get`, `webhook create`, `webhook delete`
+- **Report commands**: `report company`, `report user`, `report conversations` (with --start/--end date range)
+- **Raw API escape hatch**: `hs api <method> <path> [--body]` for any endpoint
+- **Output formats**: `--output yaml` (via js-yaml), `--output csv` (with proper escaping)
+- **jq filtering**: `--jq '<expr>'` filters JSON output inline via node-jq
+- **Field projection**: `--fields id,name` limits displayed columns
+
 ## [0.2.0] - 2026-05-27
 
 ### Added

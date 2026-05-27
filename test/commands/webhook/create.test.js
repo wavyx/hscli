@@ -64,9 +64,12 @@ describe('hs webhook create', () => {
       .reply(201, { id: 55 })
 
     const stdout = await runCmd(WebhookCreateCommand, [
-      '--url', 'https://example.com/hook',
-      '--event', 'convo.created, convo.updated',
-      '--secret', 's3cret',
+      '--url',
+      'https://example.com/hook',
+      '--event',
+      'convo.created, convo.updated',
+      '--secret',
+      's3cret',
     ])
 
     expect(stdout).toContain('Created webhook 55')
@@ -76,15 +79,21 @@ describe('hs webhook create', () => {
   it('includes label when provided', async () => {
     const scope = nock('https://api.helpscout.net')
       .post('/v2/webhooks', (body) => {
-        return body.label === 'My Hook' && body.url === 'https://example.com/hook'
+        return (
+          body.label === 'My Hook' && body.url === 'https://example.com/hook'
+        )
       })
       .reply(201, { id: 56 })
 
     const stdout = await runCmd(WebhookCreateCommand, [
-      '--url', 'https://example.com/hook',
-      '--event', 'convo.created',
-      '--secret', 's3cret',
-      '--label', 'My Hook',
+      '--url',
+      'https://example.com/hook',
+      '--event',
+      'convo.created',
+      '--secret',
+      's3cret',
+      '--label',
+      'My Hook',
     ])
 
     expect(stdout).toContain('Created webhook 56')

@@ -37,7 +37,11 @@ export default class CustomerSearchCommand extends BaseCommand {
   async run() {
     const { args, flags } = await this.parse(CustomerSearchCommand)
     const items = await collectPages(
-      this.apiClient.paginate('/v2/customers', { query: args.query }, 'customers'),
+      this.apiClient.paginate(
+        '/v2/customers',
+        { query: args.query },
+        'customers',
+      ),
       flags.limit,
     )
     await this.outputResults(items, columns)

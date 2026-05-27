@@ -11,7 +11,10 @@ export default class ReportConversationsCommand extends BaseCommand {
 
   static flags = {
     ...BaseCommand.baseFlags,
-    start: Flags.string({ description: 'Start date (ISO 8601)', required: true }),
+    start: Flags.string({
+      description: 'Start date (ISO 8601)',
+      required: true,
+    }),
     end: Flags.string({ description: 'End date (ISO 8601)', required: true }),
     mailbox: Flags.integer({ description: 'Filter by mailbox ID' }),
     tag: Flags.string({ description: 'Comma-separated tags' }),
@@ -29,7 +32,9 @@ export default class ReportConversationsCommand extends BaseCommand {
     if (flags.mailbox) query.mailboxes = String(flags.mailbox)
     if (flags.tag) query.tags = flags.tag
 
-    const data = await this.apiClient.get('/v2/reports/conversations', { query })
+    const data = await this.apiClient.get('/v2/reports/conversations', {
+      query,
+    })
     await this.outputResults(data, {})
   }
 }

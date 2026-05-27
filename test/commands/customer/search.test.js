@@ -51,7 +51,9 @@ const fixture = {
   _embedded: {
     customers: [
       {
-        id: 100, firstName: 'Alice', lastName: 'Wong',
+        id: 100,
+        firstName: 'Alice',
+        lastName: 'Wong',
         emails: [{ id: 1, value: 'alice@example.com' }],
         organization: 'Acme Corp',
         createdAt: '2024-01-01T00:00:00Z',
@@ -71,7 +73,11 @@ describe('hs customer search', () => {
       .query(true)
       .reply(200, fixture)
 
-    const stdout = await runCmd(CustomerSearchCommand, ['alice', '--output', 'json'])
+    const stdout = await runCmd(CustomerSearchCommand, [
+      'alice',
+      '--output',
+      'json',
+    ])
     const output = JSON.parse(stdout)
 
     expect(Array.isArray(output)).toBe(true)
@@ -86,7 +92,11 @@ describe('hs customer search', () => {
       .query((q) => q.query === 'acme')
       .reply(200, fixture)
 
-    const stdout = await runCmd(CustomerSearchCommand, ['acme', '--output', 'json'])
+    const stdout = await runCmd(CustomerSearchCommand, [
+      'acme',
+      '--output',
+      'json',
+    ])
     const output = JSON.parse(stdout)
 
     expect(output).toHaveLength(1)

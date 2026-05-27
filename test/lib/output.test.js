@@ -159,7 +159,24 @@ describe('formatOutput', () => {
     formatOutput(data, columns, 'json', cmd)
 
     const output = cmd.log.mock.calls[0][0]
-    // JSON format gets the original object, not wrapped in array
     expect(JSON.parse(output)).toEqual({ id: 1 })
+  })
+
+  it('dispatches to yaml formatter', () => {
+    const cmd = { log: vi.fn() }
+    formatOutput({ id: 1, name: 'Test' }, {}, 'yaml', cmd)
+    const output = cmd.log.mock.calls[0][0]
+    expect(output).toContain('id: 1')
+    expect(output).toContain('name: Test')
+  })
+
+  it('dispatches to csv formatter', () => {
+    const cmd = { log: vi.fn() }
+    const data = [{ id: 1, name: 'Alice' }]
+    const columns = { id: { header: 'ID' }, name: { header: 'Name' } }
+    formatOutput(data, columns, 'csv', cmd)
+    const output = cmd.log.mock.calls[0][0]
+    expect(output).toContain('ID,Name')
+    expect(output).toContain('1,Alice')
   })
 })
