@@ -14,14 +14,14 @@ This means a flag always overrides an environment variable, which always overrid
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|---|---|---|
-| `HSCLI_APP_ID` | OAuth App ID for authentication | -- |
-| `HSCLI_APP_SECRET` | OAuth App Secret for authentication | -- |
-| `HSCLI_AUTH_MODE` | Set to `client_credentials` to use Client Credentials flow | -- |
-| `HSCLI_PROFILE` | Profile name to use | `default` |
-| `NO_COLOR` | Disable color output when set to any value | -- |
-| `DEBUG` | Enable debug logging. Use `hs:*` for all hscli logs, or narrow with `hs:auth`, `hs:client`, etc. | -- |
+| Variable           | Description                                                                                      | Default   |
+| ------------------ | ------------------------------------------------------------------------------------------------ | --------- |
+| `HSCLI_APP_ID`     | OAuth App ID for authentication                                                                  | --        |
+| `HSCLI_APP_SECRET` | OAuth App Secret for authentication                                                              | --        |
+| `HSCLI_AUTH_MODE`  | Set to `client_credentials` to use Client Credentials flow                                       | --        |
+| `HSCLI_PROFILE`    | Profile name to use                                                                              | `default` |
+| `NO_COLOR`         | Disable color output when set to any value                                                       | --        |
+| `DEBUG`            | Enable debug logging. Use `hs:*` for all hscli logs, or narrow with `hs:auth`, `hs:client`, etc. | --        |
 
 ### CI/CD Example
 
@@ -103,15 +103,15 @@ hs config set page_size 25
 
 These keys can be set with `hs config set <key> <value>` and read with `hs config get <key>`:
 
-| Key | Description | Default |
-|---|---|---|
-| `default_output` | Default output format (`table` or `json`) | `table` in TTY, `json` when piped |
-| `page_size` | Default number of results per page | `25` |
-| `timeout_ms` | API request timeout in milliseconds | `30000` |
-| `oauth_app_id` | OAuth App ID stored for this profile | -- |
-| `oauth_app_secret` | OAuth App Secret stored for this profile | -- |
-| `auth_mode` | Auth mode for this profile (`authorization_code` or `client_credentials`) | -- |
-| `apiBase` | API base URL (for testing or proxying) | `https://api.helpscout.net/v2` |
+| Key                | Description                                                               | Default                           |
+| ------------------ | ------------------------------------------------------------------------- | --------------------------------- |
+| `default_output`   | Default output format (`table` or `json`)                                 | `table` in TTY, `json` when piped |
+| `page_size`        | Default number of results per page                                        | `25`                              |
+| `timeout_ms`       | API request timeout in milliseconds                                       | `30000`                           |
+| `oauth_app_id`     | OAuth App ID stored for this profile                                      | --                                |
+| `oauth_app_secret` | OAuth App Secret stored for this profile                                  | --                                |
+| `auth_mode`        | Auth mode for this profile (`authorization_code` or `client_credentials`) | --                                |
+| `apiBase`          | API base URL (for testing or proxying)                                    | `https://api.helpscout.net/v2`    |
 
 ### Examples
 
@@ -126,11 +126,11 @@ hs config list
 
 hscli uses the [`conf`](https://github.com/sindresorhus/conf) library for config storage, which follows platform conventions:
 
-| OS | Config directory |
-|---|---|
-| macOS | `~/Library/Preferences/hscli-nodejs/` |
-| Linux | `~/.config/hscli-nodejs/` (or `$XDG_CONFIG_HOME/hscli-nodejs/`) |
-| Windows | `%APPDATA%\hscli-nodejs\` |
+| OS      | Config directory                                                |
+| ------- | --------------------------------------------------------------- |
+| macOS   | `~/Library/Preferences/hscli-nodejs/`                           |
+| Linux   | `~/.config/hscli-nodejs/` (or `$XDG_CONFIG_HOME/hscli-nodejs/`) |
+| Windows | `%APPDATA%\hscli-nodejs\`                                       |
 
 The main config file is `config.json` inside this directory. It stores the active profile name and all per-profile configuration:
 

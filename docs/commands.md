@@ -2,12 +2,12 @@
 
 All commands support the following global flags:
 
-| Flag | Description |
-|---|---|
+| Flag             | Description                                                            |
+| ---------------- | ---------------------------------------------------------------------- |
 | `--output`, `-o` | Output format: `table` (default in TTY) or `json` (default when piped) |
-| `--profile` | Named auth profile to use (overrides active profile) |
-| `--no-color` | Disable color output (also honors `NO_COLOR` env var) |
-| `--verbose` | Show detailed API request/response info on errors |
+| `--profile`      | Named auth profile to use (overrides active profile)                   |
+| `--no-color`     | Disable color output (also honors `NO_COLOR` env var)                  |
+| `--verbose`      | Show detailed API request/response info on errors                      |
 
 ---
 

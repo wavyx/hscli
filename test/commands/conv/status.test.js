@@ -62,10 +62,7 @@ describe('hs conv status', () => {
       })
       .reply(204)
 
-    const stdout = await runCmd(ConvStatusCommand, [
-      '123',
-      '--set', 'closed',
-    ])
+    const stdout = await runCmd(ConvStatusCommand, ['123', '--set', 'closed'])
 
     expect(stdout).toContain('Conversation #123 status')
     expect(stdout).toContain('closed')
@@ -79,10 +76,7 @@ describe('hs conv status', () => {
       })
       .reply(204)
 
-    const stdout = await runCmd(ConvStatusCommand, [
-      '456',
-      '--set', 'pending',
-    ])
+    const stdout = await runCmd(ConvStatusCommand, ['456', '--set', 'pending'])
 
     expect(stdout).toContain('Conversation #456 status')
     expect(stdout).toContain('pending')

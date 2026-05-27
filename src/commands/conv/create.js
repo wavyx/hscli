@@ -14,9 +14,17 @@ export default class ConvCreateCommand extends BaseCommand {
   static flags = {
     ...BaseCommand.baseFlags,
     mailbox: Flags.integer({ description: 'Mailbox ID', required: true }),
-    customer: Flags.string({ description: 'Customer email address', required: true }),
-    subject: Flags.string({ description: 'Conversation subject', required: true }),
-    body: Flags.string({ description: 'Message body (text, @file, or pipe stdin)' }),
+    customer: Flags.string({
+      description: 'Customer email address',
+      required: true,
+    }),
+    subject: Flags.string({
+      description: 'Conversation subject',
+      required: true,
+    }),
+    body: Flags.string({
+      description: 'Message body (text, @file, or pipe stdin)',
+    }),
     type: Flags.string({
       description: 'Conversation type',
       options: ['email', 'chat', 'phone'],
@@ -47,7 +55,9 @@ export default class ConvCreateCommand extends BaseCommand {
       payload.assignTo = flags['assign-to']
     }
 
-    const result = await this.apiClient.post('/v2/conversations', { body: payload })
+    const result = await this.apiClient.post('/v2/conversations', {
+      body: payload,
+    })
     this.log(`Created conversation ${result.id}`)
   }
 }

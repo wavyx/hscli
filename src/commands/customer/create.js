@@ -13,7 +13,10 @@ export default class CustomerCreateCommand extends BaseCommand {
 
   static flags = {
     ...BaseCommand.baseFlags,
-    email: Flags.string({ description: 'Customer email address', required: true }),
+    email: Flags.string({
+      description: 'Customer email address',
+      required: true,
+    }),
     first: Flags.string({ description: 'First name' }),
     last: Flags.string({ description: 'Last name' }),
     company: Flags.string({ description: 'Company / organization name' }),

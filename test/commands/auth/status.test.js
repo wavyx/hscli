@@ -214,9 +214,7 @@ describe('hs auth status', () => {
   })
 
   it('shows encrypted file when keychain unavailable', async () => {
-    const { isKeychainAvailable } = await import(
-      '../../../src/lib/keychain.js'
-    )
+    const { isKeychainAvailable } = await import('../../../src/lib/keychain.js')
     isKeychainAvailable.mockReturnValueOnce(false)
     mockGetTokens.mockResolvedValue(null)
 

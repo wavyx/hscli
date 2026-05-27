@@ -67,7 +67,8 @@ describe('hs conv reply', () => {
 
     const stdout = await runCmd(ConvReplyCommand, [
       '123',
-      '--body', 'ignored by mock',
+      '--body',
+      'ignored by mock',
     ])
 
     expect(stdout).toContain('Replied to conversation #123')
@@ -89,9 +90,12 @@ describe('hs conv reply', () => {
 
     const stdout = await runCmd(ConvReplyCommand, [
       '200',
-      '--body', 'text',
-      '--cc', 'a@example.com,b@example.com',
-      '--bcc', 'c@example.com',
+      '--body',
+      'text',
+      '--cc',
+      'a@example.com,b@example.com',
+      '--bcc',
+      'c@example.com',
     ])
 
     expect(stdout).toContain('Replied to conversation #200')
@@ -105,7 +109,8 @@ describe('hs conv reply', () => {
 
     const stdout = await runCmd(ConvReplyCommand, [
       '300',
-      '--body', 'text',
+      '--body',
+      'text',
       '--draft',
     ])
 

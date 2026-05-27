@@ -62,10 +62,7 @@ describe('hs conv assign', () => {
       })
       .reply(204)
 
-    const stdout = await runCmd(ConvAssignCommand, [
-      '123',
-      '--user', '456',
-    ])
+    const stdout = await runCmd(ConvAssignCommand, ['123', '--user', '456'])
 
     expect(stdout).toContain('Conversation #123 assigned to user 456')
     expect(scope.isDone()).toBe(true)
@@ -82,10 +79,7 @@ describe('hs conv assign', () => {
       })
       .reply(204)
 
-    const stdout = await runCmd(ConvAssignCommand, [
-      '100',
-      '--user', 'me',
-    ])
+    const stdout = await runCmd(ConvAssignCommand, ['100', '--user', 'me'])
 
     expect(stdout).toContain('Conversation #100 assigned to user 789')
     expect(meScope.isDone()).toBe(true)

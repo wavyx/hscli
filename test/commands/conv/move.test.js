@@ -62,10 +62,7 @@ describe('hs conv move', () => {
       })
       .reply(204)
 
-    const stdout = await runCmd(ConvMoveCommand, [
-      '123',
-      '--to-mailbox', '456',
-    ])
+    const stdout = await runCmd(ConvMoveCommand, ['123', '--to-mailbox', '456'])
 
     expect(stdout).toContain('Conversation #123 moved to mailbox 456')
     expect(scope.isDone()).toBe(true)
@@ -78,10 +75,7 @@ describe('hs conv move', () => {
       })
       .reply(204)
 
-    const stdout = await runCmd(ConvMoveCommand, [
-      '789',
-      '--to-mailbox', '10',
-    ])
+    const stdout = await runCmd(ConvMoveCommand, ['789', '--to-mailbox', '10'])
 
     expect(stdout).toContain('Conversation #789 moved to mailbox 10')
     expect(scope.isDone()).toBe(true)

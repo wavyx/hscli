@@ -38,20 +38,19 @@ export default class SetupCommand extends BaseCommand {
 
     if (!appId || !appSecret) {
       this.log('')
-      this.log(
-        chalk.bold('Help Scout OAuth App Setup'),
-      )
+      this.log(chalk.bold('Help Scout OAuth App Setup'))
       this.log('')
       this.log(
         'To use the CLI you need to create an OAuth application in Help Scout.',
       )
       this.log('')
       this.log('Steps:')
-      this.log(
-        `  1. Go to ${chalk.cyan('My Profile → My Apps')} in Help Scout`,
-      )
+      this.log(`  1. Go to ${chalk.cyan('My Profile → My Apps')} in Help Scout`)
       this.log('  2. Click "Create My App"')
-      this.log('  3. Set the Redirection URL to: ' + chalk.cyan('http://127.0.0.1:9999/callback'))
+      this.log(
+        '  3. Set the Redirection URL to: ' +
+          chalk.cyan('http://127.0.0.1:9999/callback'),
+      )
       this.log('  4. Copy the App ID and App Secret')
       this.log('')
 
@@ -90,7 +89,7 @@ export default class SetupCommand extends BaseCommand {
       spinner.succeed(chalk.green('OAuth app configured and validated'))
       this.log('OAuth app configured and validated')
       this.log(`Profile: ${chalk.cyan(this.activeProfile)}`)
-    } catch (error) {
+    } catch {
       spinner.fail('Validation failed')
       this.log(
         chalk.red(

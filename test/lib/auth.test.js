@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect, afterEach, vi } from 'vitest'
 import nock from 'nock'
 
 vi.mock('../../src/lib/keychain.js', () => ({
@@ -300,7 +300,10 @@ describe('authorizationCodeFlow', () => {
 
   it('resolves with tokens on successful callback', async () => {
     nock(TOKEN_URL)
-      .post('/v2/oauth2/token', (body) => body.grant_type === 'authorization_code')
+      .post(
+        '/v2/oauth2/token',
+        (body) => body.grant_type === 'authorization_code',
+      )
       .reply(200, {
         access_token: 'auth-code-token',
         refresh_token: 'auth-code-refresh',
@@ -351,13 +354,11 @@ describe('authorizationCodeFlow', () => {
 
     // Now send the correct state so the flow can resolve and the server closes
     const state = authUrl.searchParams.get('state')
-    nock(TOKEN_URL)
-      .post('/v2/oauth2/token')
-      .reply(200, {
-        access_token: 'tok',
-        refresh_token: 'rt',
-        expires_in: 100,
-      })
+    nock(TOKEN_URL).post('/v2/oauth2/token').reply(200, {
+      access_token: 'tok',
+      refresh_token: 'rt',
+      expires_in: 100,
+    })
 
     await fetch(
       `http://127.0.0.1:${callbackUrl.port}/callback?code=c&state=${state}`,
@@ -372,7 +373,9 @@ describe('authorizationCodeFlow', () => {
       timeout: 5000,
     })
     // Attach rejection handler immediately to avoid unhandled rejection warning
-    const assertion = expect(flowPromise).rejects.toThrow('OAuth state mismatch')
+    const assertion = expect(flowPromise).rejects.toThrow(
+      'OAuth state mismatch',
+    )
 
     await vi.waitFor(() => expect(capturedAuthUrl).toBeDefined())
 
@@ -394,7 +397,9 @@ describe('authorizationCodeFlow', () => {
       clientSecret: 'test-secret',
       timeout: 5000,
     })
-    const assertion = expect(flowPromise).rejects.toThrow('No authorization code received')
+    const assertion = expect(flowPromise).rejects.toThrow(
+      'No authorization code received',
+    )
 
     await vi.waitFor(() => expect(capturedAuthUrl).toBeDefined())
 
@@ -404,27 +409,25 @@ describe('authorizationCodeFlow', () => {
     const callbackUrl = new URL(redirectUri)
 
     // Send correct state but no code
-    await fetch(
-      `http://127.0.0.1:${callbackUrl.port}/callback?state=${state}`,
-    )
+    await fetch(`http://127.0.0.1:${callbackUrl.port}/callback?state=${state}`)
 
     await assertion
   })
 
   it('rejects when token exchange fails', async () => {
-    nock(TOKEN_URL)
-      .post('/v2/oauth2/token')
-      .reply(400, {
-        error: 'invalid_grant',
-        error_description: 'Authorization code expired',
-      })
+    nock(TOKEN_URL).post('/v2/oauth2/token').reply(400, {
+      error: 'invalid_grant',
+      error_description: 'Authorization code expired',
+    })
 
     const flowPromise = authorizationCodeFlow({
       clientId: 'test-id',
       clientSecret: 'test-secret',
       timeout: 5000,
     })
-    const assertion = expect(flowPromise).rejects.toThrow('Authorization code expired')
+    const assertion = expect(flowPromise).rejects.toThrow(
+      'Authorization code expired',
+    )
 
     await vi.waitFor(() => expect(capturedAuthUrl).toBeDefined())
 

@@ -63,7 +63,8 @@ describe('hs conv note', () => {
 
     const stdout = await runCmd(ConvNoteCommand, [
       '123',
-      '--body', 'ignored by mock',
+      '--body',
+      'ignored by mock',
     ])
 
     expect(stdout).toContain('Added note to conversation #123')
@@ -75,10 +76,7 @@ describe('hs conv note', () => {
       .post('/v2/conversations/456/notes')
       .reply(201)
 
-    const stdout = await runCmd(ConvNoteCommand, [
-      '456',
-      '--body', 'text',
-    ])
+    const stdout = await runCmd(ConvNoteCommand, ['456', '--body', 'text'])
 
     expect(stdout).toContain('Added note to conversation #456')
     expect(scope.isDone()).toBe(true)

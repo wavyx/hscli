@@ -135,12 +135,12 @@ You can also set the profile via the `HSCLI_PROFILE` environment variable.
 
 For non-interactive environments, configure authentication entirely through environment variables:
 
-| Variable | Description |
-|---|---|
-| `HSCLI_APP_ID` | OAuth App ID |
-| `HSCLI_APP_SECRET` | OAuth App Secret |
-| `HSCLI_AUTH_MODE` | Set to `client_credentials` to skip the browser flow |
-| `HSCLI_PROFILE` | Profile name to use (default: `default`) |
+| Variable           | Description                                          |
+| ------------------ | ---------------------------------------------------- |
+| `HSCLI_APP_ID`     | OAuth App ID                                         |
+| `HSCLI_APP_SECRET` | OAuth App Secret                                     |
+| `HSCLI_AUTH_MODE`  | Set to `client_credentials` to skip the browser flow |
+| `HSCLI_PROFILE`    | Profile name to use (default: `default`)             |
 
 ### Example: GitHub Actions
 

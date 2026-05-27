@@ -68,7 +68,8 @@ describe('hs conv tag', () => {
 
     const stdout = await runCmd(ConvTagCommand, [
       '123',
-      '--add', 'billing,urgent',
+      '--add',
+      'billing,urgent',
     ])
 
     expect(stdout).toContain('Tags updated on conversation #123')
@@ -97,7 +98,8 @@ describe('hs conv tag', () => {
 
     const stdout = await runCmd(ConvTagCommand, [
       '200',
-      '--remove', 'remove-me',
+      '--remove',
+      'remove-me',
     ])
 
     expect(stdout).toContain('Tags updated on conversation #200')
@@ -122,8 +124,10 @@ describe('hs conv tag', () => {
 
     const stdout = await runCmd(ConvTagCommand, [
       '300',
-      '--add', 'new',
-      '--remove', 'old',
+      '--add',
+      'new',
+      '--remove',
+      'old',
     ])
 
     expect(stdout).toContain('Tags updated on conversation #300')

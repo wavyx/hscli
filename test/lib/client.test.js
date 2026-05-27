@@ -370,9 +370,7 @@ describe('createClient', () => {
 
   describe('DELETE requests', () => {
     it('sends DELETE', async () => {
-      const scope = nock(API_BASE)
-        .delete('/v2/conversations/1')
-        .reply(204)
+      const scope = nock(API_BASE).delete('/v2/conversations/1').reply(204)
 
       const result = await client.del('/v2/conversations/1')
       expect(result).toBeNull()

@@ -64,7 +64,11 @@ describe('hs customer update', () => {
       .reply(204)
 
     const stdout = await runCmd(CustomerUpdateCommand, [
-      '42', '--first', 'Jane', '--last', 'Doe',
+      '42',
+      '--first',
+      'Jane',
+      '--last',
+      'Doe',
     ])
 
     expect(stdout).toContain('Updated customer')
@@ -77,7 +81,11 @@ describe('hs customer update', () => {
       .patch('/v2/customers/10', (body) => {
         expect(body).toEqual(
           expect.arrayContaining([
-            { op: 'replace', path: '/emails', value: [{ value: 'new@example.com' }] },
+            {
+              op: 'replace',
+              path: '/emails',
+              value: [{ value: 'new@example.com' }],
+            },
             { op: 'replace', path: '/phones', value: [{ value: '555-9999' }] },
           ]),
         )
@@ -86,7 +94,11 @@ describe('hs customer update', () => {
       .reply(204)
 
     const stdout = await runCmd(CustomerUpdateCommand, [
-      '10', '--email', 'new@example.com', '--phone', '555-9999',
+      '10',
+      '--email',
+      'new@example.com',
+      '--phone',
+      '555-9999',
     ])
 
     expect(stdout).toContain('Updated customer')
@@ -108,7 +120,11 @@ describe('hs customer update', () => {
       .reply(204)
 
     const stdout = await runCmd(CustomerUpdateCommand, [
-      '7', '--company', 'Globex', '--job-title', 'CTO',
+      '7',
+      '--company',
+      'Globex',
+      '--job-title',
+      'CTO',
     ])
 
     expect(stdout).toContain('Updated customer')

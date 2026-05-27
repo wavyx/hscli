@@ -67,9 +67,7 @@ describe('hs conv delete', () => {
   })
 
   it('passes --yes flag to confirmAction', async () => {
-    nock('https://api.helpscout.net')
-      .delete('/v2/conversations/456')
-      .reply(204)
+    nock('https://api.helpscout.net').delete('/v2/conversations/456').reply(204)
 
     await runCmd(ConvDeleteCommand, ['456', '--yes'])
 

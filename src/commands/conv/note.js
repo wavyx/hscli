@@ -12,7 +12,9 @@ export default class ConvNoteCommand extends BaseCommand {
 
   static flags = {
     ...BaseCommand.baseFlags,
-    body: Flags.string({ description: 'Note body (text, @file, or pipe stdin)' }),
+    body: Flags.string({
+      description: 'Note body (text, @file, or pipe stdin)',
+    }),
   }
 
   static args = {

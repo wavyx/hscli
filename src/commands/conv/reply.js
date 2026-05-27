@@ -13,7 +13,9 @@ export default class ConvReplyCommand extends BaseCommand {
 
   static flags = {
     ...BaseCommand.baseFlags,
-    body: Flags.string({ description: 'Reply body (text, @file, or pipe stdin)' }),
+    body: Flags.string({
+      description: 'Reply body (text, @file, or pipe stdin)',
+    }),
     cc: Flags.string({ description: 'Comma-separated CC recipients' }),
     bcc: Flags.string({ description: 'Comma-separated BCC recipients' }),
     draft: Flags.boolean({ description: 'Save as draft', default: false }),
@@ -41,7 +43,9 @@ export default class ConvReplyCommand extends BaseCommand {
       payload.bcc = flags.bcc.split(',').map((e) => e.trim())
     }
 
-    await this.apiClient.post(`/v2/conversations/${args.id}/reply`, { body: payload })
+    await this.apiClient.post(`/v2/conversations/${args.id}/reply`, {
+      body: payload,
+    })
     this.log(`Replied to conversation #${args.id}`)
   }
 }

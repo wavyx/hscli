@@ -14,12 +14,12 @@ Base URL: `https://api.helpscout.net`
 
 Exchange credentials for an access token.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/x-www-form-urlencoded` |
-| Response | `200 OK` -- JSON |
-| CLI commands | `hs auth login`, `hs auth setup`, `hs auth refresh` |
-| Docs | [OAuth 2.0 Authentication](https://developer.helpscout.com/mailbox-api/overview/authentication/) |
+| Detail       | Value                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------ |
+| Content-Type | `application/x-www-form-urlencoded`                                                              |
+| Response     | `200 OK` -- JSON                                                                                 |
+| CLI commands | `hs auth login`, `hs auth setup`, `hs auth refresh`                                              |
+| Docs         | [OAuth 2.0 Authentication](https://developer.helpscout.com/mailbox-api/overview/authentication/) |
 
 **Request body (form-urlencoded):**
 
@@ -57,24 +57,24 @@ refresh_token=<refresh_token> # refresh_token only
 
 List conversations with optional filters.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `200 OK` -- JSON (paginated) |
-| CLI command | `hs conv list` |
-| Docs | [List Conversations](https://developer.helpscout.com/mailbox-api/endpoints/conversations/list/) |
+| Detail       | Value                                                                                           |
+| ------------ | ----------------------------------------------------------------------------------------------- |
+| Content-Type | `application/json`                                                                              |
+| Response     | `200 OK` -- JSON (paginated)                                                                    |
+| CLI command  | `hs conv list`                                                                                  |
+| Docs         | [List Conversations](https://developer.helpscout.com/mailbox-api/endpoints/conversations/list/) |
 
 **Query parameters:**
 
-| Param | Type | Notes |
-|---|---|---|
-| `status` | string | `active`, `pending`, `closed`, `spam`, `all` |
-| `mailbox` | integer | Mailbox ID |
-| `tag` | string | Filter by tag name |
-| `assigned_to` | integer | User ID |
-| `query` | string | Search query |
-| `modifiedSince` | string | ISO 8601 datetime |
-| `page` | integer | Page number (1-indexed) |
+| Param           | Type    | Notes                                        |
+| --------------- | ------- | -------------------------------------------- |
+| `status`        | string  | `active`, `pending`, `closed`, `spam`, `all` |
+| `mailbox`       | integer | Mailbox ID                                   |
+| `tag`           | string  | Filter by tag name                           |
+| `assigned_to`   | integer | User ID                                      |
+| `query`         | string  | Search query                                 |
+| `modifiedSince` | string  | ISO 8601 datetime                            |
+| `page`          | integer | Page number (1-indexed)                      |
 
 **Response:**
 
@@ -103,12 +103,12 @@ List conversations with optional filters.
 
 Get a single conversation by ID, including thread details.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `200 OK` -- JSON |
-| CLI command | `hs conv get <id>` |
-| Docs | [Get Conversation](https://developer.helpscout.com/mailbox-api/endpoints/conversations/get/) |
+| Detail       | Value                                                                                        |
+| ------------ | -------------------------------------------------------------------------------------------- |
+| Content-Type | `application/json`                                                                           |
+| Response     | `200 OK` -- JSON                                                                             |
+| CLI command  | `hs conv get <id>`                                                                           |
+| Docs         | [Get Conversation](https://developer.helpscout.com/mailbox-api/endpoints/conversations/get/) |
 
 **Response:** Full conversation object with `_embedded` threads.
 
@@ -118,12 +118,12 @@ Get a single conversation by ID, including thread details.
 
 Create a new conversation.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `201 Created` -- JSON |
-| CLI command | `hs conv create` |
-| Docs | [Create Conversation](https://developer.helpscout.com/mailbox-api/endpoints/conversations/create/) |
+| Detail       | Value                                                                                              |
+| ------------ | -------------------------------------------------------------------------------------------------- |
+| Content-Type | `application/json`                                                                                 |
+| Response     | `201 Created` -- JSON                                                                              |
+| CLI command  | `hs conv create`                                                                                   |
+| Docs         | [Create Conversation](https://developer.helpscout.com/mailbox-api/endpoints/conversations/create/) |
 
 **Request body:**
 
@@ -152,12 +152,12 @@ Create a new conversation.
 
 Add a customer-facing reply to a conversation.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `201 Created` |
-| CLI command | `hs conv reply <id>` |
-| Docs | [Create Thread](https://developer.helpscout.com/mailbox-api/endpoints/conversations/threads/create/) |
+| Detail       | Value                                                                                                |
+| ------------ | ---------------------------------------------------------------------------------------------------- |
+| Content-Type | `application/json`                                                                                   |
+| Response     | `201 Created`                                                                                        |
+| CLI command  | `hs conv reply <id>`                                                                                 |
+| Docs         | [Create Thread](https://developer.helpscout.com/mailbox-api/endpoints/conversations/threads/create/) |
 
 **Request body:**
 
@@ -182,12 +182,12 @@ Add a customer-facing reply to a conversation.
 
 Add an internal note (not visible to the customer).
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `201 Created` |
-| CLI command | `hs conv note <id>` |
-| Docs | [Create Thread](https://developer.helpscout.com/mailbox-api/endpoints/conversations/threads/create/) |
+| Detail       | Value                                                                                                |
+| ------------ | ---------------------------------------------------------------------------------------------------- |
+| Content-Type | `application/json`                                                                                   |
+| Response     | `201 Created`                                                                                        |
+| CLI command  | `hs conv note <id>`                                                                                  |
+| Docs         | [Create Thread](https://developer.helpscout.com/mailbox-api/endpoints/conversations/threads/create/) |
 
 **Request body:**
 
@@ -204,12 +204,12 @@ Add an internal note (not visible to the customer).
 
 Update conversation fields using JSON Patch (RFC 6902).
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json-patch+json` |
-| Response | `204 No Content` |
-| CLI commands | `hs conv status`, `hs conv assign`, `hs conv move` |
-| Docs | [Update Conversation](https://developer.helpscout.com/mailbox-api/endpoints/conversations/update/) |
+| Detail       | Value                                                                                              |
+| ------------ | -------------------------------------------------------------------------------------------------- |
+| Content-Type | `application/json-patch+json`                                                                      |
+| Response     | `204 No Content`                                                                                   |
+| CLI commands | `hs conv status`, `hs conv assign`, `hs conv move`                                                 |
+| Docs         | [Update Conversation](https://developer.helpscout.com/mailbox-api/endpoints/conversations/update/) |
 
 **Request body (status change):**
 
@@ -240,12 +240,12 @@ Update conversation fields using JSON Patch (RFC 6902).
 
 Replace all tags on a conversation.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `204 No Content` |
-| CLI command | `hs conv tag <id>` |
-| Docs | [Update Tags](https://developer.helpscout.com/mailbox-api/endpoints/conversations/tags/) |
+| Detail       | Value                                                                                    |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| Content-Type | `application/json`                                                                       |
+| Response     | `204 No Content`                                                                         |
+| CLI command  | `hs conv tag <id>`                                                                       |
+| Docs         | [Update Tags](https://developer.helpscout.com/mailbox-api/endpoints/conversations/tags/) |
 
 **Request body:**
 
@@ -265,12 +265,12 @@ Replace all tags on a conversation.
 
 Delete a conversation.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `204 No Content` |
-| CLI command | `hs conv delete <id>` |
-| Docs | [Delete Conversation](https://developer.helpscout.com/mailbox-api/endpoints/conversations/delete/) |
+| Detail       | Value                                                                                              |
+| ------------ | -------------------------------------------------------------------------------------------------- |
+| Content-Type | `application/json`                                                                                 |
+| Response     | `204 No Content`                                                                                   |
+| CLI command  | `hs conv delete <id>`                                                                              |
+| Docs         | [Delete Conversation](https://developer.helpscout.com/mailbox-api/endpoints/conversations/delete/) |
 
 **Notes:**
 
@@ -284,12 +284,12 @@ Delete a conversation.
 
 List all mailboxes.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `200 OK` -- JSON (paginated) |
-| CLI command | `hs mailbox list` |
-| Docs | [List Mailboxes](https://developer.helpscout.com/mailbox-api/endpoints/mailboxes/list/) |
+| Detail       | Value                                                                                   |
+| ------------ | --------------------------------------------------------------------------------------- |
+| Content-Type | `application/json`                                                                      |
+| Response     | `200 OK` -- JSON (paginated)                                                            |
+| CLI command  | `hs mailbox list`                                                                       |
+| Docs         | [List Mailboxes](https://developer.helpscout.com/mailbox-api/endpoints/mailboxes/list/) |
 
 **Response:**
 
@@ -308,12 +308,12 @@ List all mailboxes.
 
 Get a single mailbox by ID.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `200 OK` -- JSON |
-| CLI command | `hs mailbox get <id>` |
-| Docs | [Get Mailbox](https://developer.helpscout.com/mailbox-api/endpoints/mailboxes/get/) |
+| Detail       | Value                                                                               |
+| ------------ | ----------------------------------------------------------------------------------- |
+| Content-Type | `application/json`                                                                  |
+| Response     | `200 OK` -- JSON                                                                    |
+| CLI command  | `hs mailbox get <id>`                                                               |
+| Docs         | [Get Mailbox](https://developer.helpscout.com/mailbox-api/endpoints/mailboxes/get/) |
 
 ---
 
@@ -323,12 +323,12 @@ Get a single mailbox by ID.
 
 Get the currently authenticated user.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `200 OK` -- JSON |
-| CLI commands | `hs user me`, `hs auth status`, `hs conv assign <id> --user me` |
-| Docs | [Get Current User](https://developer.helpscout.com/mailbox-api/endpoints/users/me/) |
+| Detail       | Value                                                                               |
+| ------------ | ----------------------------------------------------------------------------------- |
+| Content-Type | `application/json`                                                                  |
+| Response     | `200 OK` -- JSON                                                                    |
+| CLI commands | `hs user me`, `hs auth status`, `hs conv assign <id> --user me`                     |
+| Docs         | [Get Current User](https://developer.helpscout.com/mailbox-api/endpoints/users/me/) |
 
 **Response:**
 
@@ -351,12 +351,12 @@ Get the currently authenticated user.
 
 Create a new customer.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json` |
-| Response | `201 Created` -- JSON |
-| CLI command | `hs customer create` |
-| Docs | [Create Customer](https://developer.helpscout.com/mailbox-api/endpoints/customers/create/) |
+| Detail       | Value                                                                                      |
+| ------------ | ------------------------------------------------------------------------------------------ |
+| Content-Type | `application/json`                                                                         |
+| Response     | `201 Created` -- JSON                                                                      |
+| CLI command  | `hs customer create`                                                                       |
+| Docs         | [Create Customer](https://developer.helpscout.com/mailbox-api/endpoints/customers/create/) |
 
 **Request body:**
 
@@ -381,19 +381,23 @@ Create a new customer.
 
 Update a customer using JSON Patch.
 
-| Detail | Value |
-|---|---|
-| Content-Type | `application/json-patch+json` |
-| Response | `204 No Content` |
-| CLI command | `hs customer update <id>` |
-| Docs | [Update Customer](https://developer.helpscout.com/mailbox-api/endpoints/customers/update/) |
+| Detail       | Value                                                                                      |
+| ------------ | ------------------------------------------------------------------------------------------ |
+| Content-Type | `application/json-patch+json`                                                              |
+| Response     | `204 No Content`                                                                           |
+| CLI command  | `hs customer update <id>`                                                                  |
+| Docs         | [Update Customer](https://developer.helpscout.com/mailbox-api/endpoints/customers/update/) |
 
 **Request body:**
 
 ```json
 [
   { "op": "replace", "path": "/firstName", "value": "Janet" },
-  { "op": "replace", "path": "/emails", "value": [{ "value": "new@example.com" }] }
+  {
+    "op": "replace",
+    "path": "/emails",
+    "value": [{ "value": "new@example.com" }]
+  }
 ]
 ```
 

@@ -4,9 +4,7 @@ import BaseCommand from '../../base-command.js'
 export default class ConvMoveCommand extends BaseCommand {
   static description = 'Move a conversation to another mailbox'
 
-  static examples = [
-    '<%= config.bin %> conv move 123 --to-mailbox 456',
-  ]
+  static examples = ['<%= config.bin %> conv move 123 --to-mailbox 456']
 
   static flags = {
     ...BaseCommand.baseFlags,

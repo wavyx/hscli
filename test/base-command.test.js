@@ -37,12 +37,9 @@ vi.mock('../src/lib/auth.js', () => ({
   refreshAccessToken: mockRefreshAccessToken,
 }))
 
-const { default: UserMeCommand } = await import(
-  '../src/commands/user/me.js'
-)
-const { default: ProfileCurrentCommand } = await import(
-  '../src/commands/profile/current.js'
-)
+const { default: UserMeCommand } = await import('../src/commands/user/me.js')
+const { default: ProfileCurrentCommand } =
+  await import('../src/commands/profile/current.js')
 
 function captureLogs(CmdClass, argv = []) {
   const lines = []

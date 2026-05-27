@@ -22,17 +22,17 @@ hs customer create --email user@example.com --first Jane
 
 ## Commands
 
-| Topic | Commands |
-|-------|----------|
-| `hs auth` | `setup`, `login`, `logout`, `status`, `refresh` |
-| `hs conv` | `list`, `get`, `create`, `reply`, `note`, `status`, `assign`, `tag`, `move`, `delete` |
-| `hs mailbox` | `list`, `get` |
-| `hs user` | `me` |
-| `hs customer` | `create`, `update` |
-| `hs profile` | `list`, `use`, `current` |
-| `hs config` | `get`, `set`, `list` |
-| `hs doctor` | Diagnostic checks |
-| `hs version` | Version info |
+| Topic         | Commands                                                                              |
+| ------------- | ------------------------------------------------------------------------------------- |
+| `hs auth`     | `setup`, `login`, `logout`, `status`, `refresh`                                       |
+| `hs conv`     | `list`, `get`, `create`, `reply`, `note`, `status`, `assign`, `tag`, `move`, `delete` |
+| `hs mailbox`  | `list`, `get`                                                                         |
+| `hs user`     | `me`                                                                                  |
+| `hs customer` | `create`, `update`                                                                    |
+| `hs profile`  | `list`, `use`, `current`                                                              |
+| `hs config`   | `get`, `set`, `list`                                                                  |
+| `hs doctor`   | Diagnostic checks                                                                     |
+| `hs version`  | Version info                                                                          |
 
 Run `hs --help` or `hs <topic> --help` for details.
 

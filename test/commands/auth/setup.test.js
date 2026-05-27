@@ -36,12 +36,10 @@ vi.mock('../../../src/lib/config.js', () => ({
 
 vi.mock('open', () => ({ default: vi.fn() }))
 
-const { setTokens: mockSetTokens } = await import(
-  '../../../src/lib/keychain.js'
-)
-const { default: SetupCommand } = await import(
-  '../../../src/commands/auth/setup.js'
-)
+const { setTokens: mockSetTokens } =
+  await import('../../../src/lib/keychain.js')
+const { default: SetupCommand } =
+  await import('../../../src/commands/auth/setup.js')
 
 describe('hs auth setup', () => {
   beforeEach(() => {
@@ -60,12 +58,10 @@ describe('hs auth setup', () => {
     mockInput.mockResolvedValue('my-app-id')
     mockPassword.mockResolvedValue('my-app-secret')
 
-    nock('https://api.helpscout.net')
-      .post('/v2/oauth2/token')
-      .reply(200, {
-        access_token: 'new-access-token',
-        expires_in: 172800,
-      })
+    nock('https://api.helpscout.net').post('/v2/oauth2/token').reply(200, {
+      access_token: 'new-access-token',
+      expires_in: 172800,
+    })
 
     const stdout = await runCmd(SetupCommand, [])
 
@@ -89,12 +85,10 @@ describe('hs auth setup', () => {
   })
 
   it('uses --app-id and --app-secret flags for non-interactive mode', async () => {
-    nock('https://api.helpscout.net')
-      .post('/v2/oauth2/token')
-      .reply(200, {
-        access_token: 'flag-access-token',
-        expires_in: 172800,
-      })
+    nock('https://api.helpscout.net').post('/v2/oauth2/token').reply(200, {
+      access_token: 'flag-access-token',
+      expires_in: 172800,
+    })
 
     const stdout = await runCmd(SetupCommand, [
       '--app-id',
@@ -125,12 +119,10 @@ describe('hs auth setup', () => {
     mockInput.mockResolvedValue('bad-id')
     mockPassword.mockResolvedValue('bad-secret')
 
-    nock('https://api.helpscout.net')
-      .post('/v2/oauth2/token')
-      .reply(401, {
-        error: 'invalid_client',
-        error_description: 'Invalid client authentication',
-      })
+    nock('https://api.helpscout.net').post('/v2/oauth2/token').reply(401, {
+      error: 'invalid_client',
+      error_description: 'Invalid client authentication',
+    })
 
     const stdout = await runCmd(SetupCommand, [])
 

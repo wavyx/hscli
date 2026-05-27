@@ -61,7 +61,8 @@ describe('hs customer create', () => {
       .reply(201, { id: 999 })
 
     const stdout = await runCmd(CustomerCreateCommand, [
-      '--email', 'alice@example.com',
+      '--email',
+      'alice@example.com',
     ])
 
     expect(stdout).toContain('Created customer')
@@ -83,12 +84,18 @@ describe('hs customer create', () => {
       .reply(201, { id: 1001 })
 
     const stdout = await runCmd(CustomerCreateCommand, [
-      '--email', 'bob@example.com',
-      '--first', 'Bob',
-      '--last', 'Smith',
-      '--company', 'Acme',
-      '--phone', '555-1234',
-      '--job-title', 'Engineer',
+      '--email',
+      'bob@example.com',
+      '--first',
+      'Bob',
+      '--last',
+      'Smith',
+      '--company',
+      'Acme',
+      '--phone',
+      '555-1234',
+      '--job-title',
+      'Engineer',
     ])
 
     expect(stdout).toContain('Created customer')
@@ -102,8 +109,10 @@ describe('hs customer create', () => {
       .reply(201, { id: 500 })
 
     const stdout = await runCmd(CustomerCreateCommand, [
-      '--email', 'json@example.com',
-      '--output', 'json',
+      '--email',
+      'json@example.com',
+      '--output',
+      'json',
     ])
 
     expect(stdout).toContain('Created customer')

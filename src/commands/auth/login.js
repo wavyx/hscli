@@ -41,7 +41,7 @@ export default class LoginCommand extends BaseCommand {
   async run() {
     const { flags } = await this.parse(LoginCommand)
 
-    const { clientId, clientSecret, source } = resolveCredentials({
+    const { clientId, clientSecret } = resolveCredentials({
       flags: { appId: flags['app-id'], appSecret: flags['app-secret'] },
       profile: this.activeProfile,
     })
@@ -77,11 +77,7 @@ export default class LoginCommand extends BaseCommand {
           credentialSource,
         })
 
-        setProfileConfig(
-          this.activeProfile,
-          'auth_mode',
-          'authorization_code',
-        )
+        setProfileConfig(this.activeProfile, 'auth_mode', 'authorization_code')
         spinner.succeed(chalk.green('Authenticated successfully'))
       }
 

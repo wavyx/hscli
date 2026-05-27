@@ -80,9 +80,7 @@ describe('ApiError', () => {
       error_description: 'Client authentication failed',
     }
     const err = new ApiError(401, body, '/v2/oauth2/token')
-    expect(err.message).toBe(
-      'Help Scout API 401: Client authentication failed',
-    )
+    expect(err.message).toBe('Help Scout API 401: Client authentication failed')
   })
 
   it('falls back to error field when no error_description', () => {

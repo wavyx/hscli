@@ -70,10 +70,14 @@ describe('hs conv create', () => {
       .reply(201, { id: 999 })
 
     const stdout = await runCmd(ConvCreateCommand, [
-      '--mailbox', '1',
-      '--customer', 'user@example.com',
-      '--subject', 'Help needed',
-      '--body', 'ignored by mock',
+      '--mailbox',
+      '1',
+      '--customer',
+      'user@example.com',
+      '--subject',
+      'Help needed',
+      '--body',
+      'ignored by mock',
     ])
 
     expect(stdout).toContain('Created conversation 999')
@@ -93,12 +97,18 @@ describe('hs conv create', () => {
       .reply(201, { id: 1000 })
 
     const stdout = await runCmd(ConvCreateCommand, [
-      '--mailbox', '1',
-      '--customer', 'user@example.com',
-      '--subject', 'Tagged',
-      '--body', 'text',
-      '--tag', 'billing,urgent',
-      '--assign-to', '42',
+      '--mailbox',
+      '1',
+      '--customer',
+      'user@example.com',
+      '--subject',
+      'Tagged',
+      '--body',
+      'text',
+      '--tag',
+      'billing,urgent',
+      '--assign-to',
+      '42',
     ])
 
     expect(stdout).toContain('Created conversation 1000')
@@ -111,11 +121,16 @@ describe('hs conv create', () => {
       .reply(201, { id: 1001 })
 
     const stdout = await runCmd(ConvCreateCommand, [
-      '--mailbox', '1',
-      '--customer', 'user@example.com',
-      '--subject', 'Chat conv',
-      '--body', 'text',
-      '--type', 'chat',
+      '--mailbox',
+      '1',
+      '--customer',
+      'user@example.com',
+      '--subject',
+      'Chat conv',
+      '--body',
+      'text',
+      '--type',
+      'chat',
     ])
 
     expect(stdout).toContain('Created conversation 1001')
