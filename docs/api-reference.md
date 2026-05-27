@@ -442,3 +442,14 @@ All API requests (except `/v2/oauth2/token`) require:
 ```
 Authorization: Bearer <access_token>
 ```
+
+---
+
+## Known Limitations
+
+Operations **not available** in the public Mailbox API v2:
+
+- **Delete thread/note**: Only via Help Scout web UI (internal `/api/v1/` with session auth). The public API returns `400` on `DELETE /v2/conversations/:id/threads/:threadId` — only `PATCH` is supported on threads.
+- **OAuth apps are account-scoped**: No public/shared app model. Each user must create their own OAuth app in Help Scout.
+- **PATCH format**: Conversation patches use a single JSON Patch object `{op, path, value}`, not an array `[{...}]`. Customer patches use the array format.
+- **Reply requires customer**: `POST /v2/conversations/:id/reply` requires a `customer: {id}` field in the body. The CLI fetches the conversation first to resolve this automatically.
