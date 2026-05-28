@@ -105,18 +105,17 @@ export function createClient({
    */
   async function* paginate(path, query = {}, resourceKey, opts = {}) {
     let page = 1
-    let totalPages = 1
-
-    do {
+    while (true) {
       const data = await request('GET', path, {
         query: { ...query, page },
       })
       const items = data?._embedded?.[resourceKey] ?? []
-      totalPages = data?.page?.totalPages ?? 1
+      const totalPages = data?.page?.totalPages ?? 1
       if (opts.onProgress) opts.onProgress({ page, totalPages })
       yield* items
+      if (page >= totalPages) break
       page++
-    } while (page <= totalPages)
+    }
   }
 
   return {

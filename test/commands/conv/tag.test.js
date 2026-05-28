@@ -160,9 +160,7 @@ describe('hs conv tag', () => {
 
     const putScope = nock('https://api.helpscout.net')
       .put('/v2/conversations/600/tags', (body) => {
-        return (
-          body.tags.length === 1 && body.tags[0] === 'billing'
-        )
+        return body.tags.length === 1 && body.tags[0] === 'billing'
       })
       .reply(204)
 

@@ -85,20 +85,18 @@ export default class ConvExportCommand extends BaseCommand {
 
     const allItems = []
     let page = 1
-    let totalPages = 1
-
-    // Manual pagination to show progress
-    do {
+    while (true) {
       const data = await this.apiClient.get('/v2/conversations', {
         query: { ...query, page },
       })
 
       const items = data?._embedded?.conversations ?? []
       allItems.push(...items)
-      totalPages = data?.page?.totalPages ?? 1
+      const totalPages = data?.page?.totalPages ?? 1
       spinner.text = `Exporting... page ${page}/${totalPages} (${allItems.length} conversations)`
+      if (page >= totalPages) break
       page++
-    } while (page <= totalPages)
+    }
 
     spinner.succeed(`Exported ${allItems.length} conversations`)
 

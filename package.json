@@ -104,10 +104,10 @@
     "undici": "7.26.0"
   },
   "devDependencies": {
-    "@eslint/js": "9.39.4",
+    "@eslint/js": "10.0.1",
     "@oclif/test": "4.1.18",
     "@vitest/coverage-v8": "4.1.7",
-    "eslint": "9.39.4",
+    "eslint": "10.4.0",
     "globals": "17.6.0",
     "nock": "14.0.15",
     "oclif": "4.23.8",
