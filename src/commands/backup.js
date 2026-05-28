@@ -129,7 +129,7 @@ export default class BackupCommand extends BaseCommand {
       inProgress: checkpoint?.inProgress,
     }
 
-    const startedAt = new Date().toISOString()
+    const startedAt = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 
     let history = null
     if (flags['keep-history'] && !flags['dry-run']) {
@@ -178,7 +178,7 @@ export default class BackupCommand extends BaseCommand {
     }
 
     if (!flags['dry-run']) {
-      const finishedAt = new Date().toISOString()
+      const finishedAt = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
       manifest.history.push({ startedAt, finishedAt, mode, counts })
       for (const [name, total] of Object.entries(counts)) {
         manifest.resources[name] = { lastSyncedAt: startedAt, total }
