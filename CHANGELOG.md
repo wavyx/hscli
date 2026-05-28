@@ -22,6 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Auto .env loading**: CLI auto-loads `.env` from current directory
 - **`--no-retry` flag**: disable automatic retry on rate limits and 5xx errors
 - **`--timeout` flag**: override default 30s request timeout
+- **Aliases**: `alias set/list/unset` — custom command shortcuts
+- **Machine-readable errors**: `--output json` outputs JSON error payload to stderr
+- **Verbose error details**: `--verbose` shows full API request/response on errors
+- **Pagination progress callback**: `client.paginate()` accepts `onProgress` option
+
+### Removed
+
+- `@oclif/plugin-not-found` — replaced by custom `command_not_found` hook that also handles alias expansion
 
 ## [0.3.0] - 2026-05-27
 
