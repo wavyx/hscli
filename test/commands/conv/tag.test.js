@@ -153,6 +153,25 @@ describe('hs conv tag', () => {
     expect(putScope.isDone()).toBe(true)
   })
 
+  it('does not duplicate when adding an already-present tag', async () => {
+    const getScope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/600')
+      .reply(200, { id: 600, tags: ['billing'] })
+
+    const putScope = nock('https://api.helpscout.net')
+      .put('/v2/conversations/600/tags', (body) => {
+        return (
+          body.tags.length === 1 && body.tags[0] === 'billing'
+        )
+      })
+      .reply(204)
+
+    const stdout = await runCmd(ConvTagCommand, ['600', '--add', 'billing'])
+    expect(stdout).toContain('Tags updated')
+    expect(getScope.isDone()).toBe(true)
+    expect(putScope.isDone()).toBe(true)
+  })
+
   it('shows empty tags when all removed', async () => {
     const getScope = nock('https://api.helpscout.net')
       .get('/v2/conversations/500')

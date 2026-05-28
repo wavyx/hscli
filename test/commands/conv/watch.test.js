@@ -177,6 +177,25 @@ describe('hs conv watch', () => {
     expect(scope.isDone()).toBe(true)
   })
 
+  it('exits after second poll when --max-polls is 2', async () => {
+    nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query(true)
+      .reply(200, fixture)
+      .get('/v2/conversations')
+      .query(true)
+      .reply(200, { _embedded: { conversations: [] } })
+
+    await runCmd(ConvWatchCommand, [
+      '--max-polls',
+      '2',
+      '--poll',
+      '1',
+      '--output',
+      'json',
+    ])
+  }, 15000)
+
   it('exits after first poll when --max-polls is 1', async () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/conversations')

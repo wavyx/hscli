@@ -319,6 +319,22 @@ describe('handleError', () => {
     expect(cmd.error).toHaveBeenCalledWith(err.message, { exit: 69 })
   })
 
+  it('verbose ApiError with falsy body omits Response body section', () => {
+    stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const cmd = {
+      flags: { verbose: true },
+      error: vi.fn(),
+      exit: vi.fn(),
+    }
+    const err = new ApiError(500, { message: 'x' }, '/v2/x')
+    err.body = null
+
+    handleError(err, cmd)
+
+    const writes = stderrSpy.mock.calls.map((c) => c[0]).join('')
+    expect(writes).not.toContain('Response body:')
+  })
+
   it('verbose ApiError without logRef omits the log ref line', () => {
     stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
     const cmd = {
