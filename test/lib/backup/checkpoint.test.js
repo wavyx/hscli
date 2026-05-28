@@ -1,6 +1,7 @@
 import { mkdtempSync, rmSync, existsSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { mkdirSync } from 'node:fs'
 import {
   readCheckpoint,
   writeCheckpoint,
@@ -46,5 +47,10 @@ describe('backup/checkpoint', () => {
   it('readCheckpoint throws on non-ENOENT errors', async () => {
     writeFileSync(join(dir, CHECKPOINT_FILE), '{bad')
     await expect(readCheckpoint(dir)).rejects.toThrow()
+  })
+
+  it('deleteCheckpoint rethrows non-ENOENT errors (EISDIR when path is a dir)', async () => {
+    mkdirSync(join(dir, CHECKPOINT_FILE), { recursive: true })
+    await expect(deleteCheckpoint(dir)).rejects.toThrow()
   })
 })

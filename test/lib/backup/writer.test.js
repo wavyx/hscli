@@ -64,10 +64,7 @@ describe('backup/writer', () => {
   it('appendIndex writes NDJSON line per item', async () => {
     await appendIndex(dir, PER_ITEM, { id: 1, updatedAt: '2024-01-01' })
     await appendIndex(dir, PER_ITEM, { id: 2, updatedAt: '2024-01-02' })
-    const txt = readFileSync(
-      join(dir, 'customers', '_index.ndjson'),
-      'utf8',
-    )
+    const txt = readFileSync(join(dir, 'customers', '_index.ndjson'), 'utf8')
     const lines = txt.split('\n').filter(Boolean)
     expect(lines).toHaveLength(2)
     expect(JSON.parse(lines[0]).id).toBe(1)
@@ -109,5 +106,19 @@ describe('backup/writer', () => {
     writeFileSync(join(sub, '_index.ndjson.bak'), '')
     const ids = await readLocalIds(dir, PER_ITEM)
     expect([...ids].sort()).toEqual([11, 12])
+  })
+
+  it('readLocalIds rethrows corrupt-JSON parse errors from index', async () => {
+    const sub = join(dir, 'customers')
+    mkdirSync(sub, { recursive: true })
+    writeFileSync(join(sub, '_index.ndjson'), '{not json\n')
+    await expect(readLocalIds(dir, PER_ITEM)).rejects.toThrow()
+  })
+
+  it('readLocalIds returns empty when path component is a file (ENOTDIR fallback)', async () => {
+    // dir doesn't exist for this layout
+    const altDir = join(dir, 'altroot')
+    const ids = await readLocalIds(altDir, PER_ITEM)
+    expect(ids.size).toBe(0)
   })
 })

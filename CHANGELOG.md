@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-05-28
+
+### Added
+
+- **`hs backup`**: GDPR-style full account dump to a directory of JSON files.
+  - Auto-incremental: subsequent runs sync only modified items via `modifiedSince`
+  - `--full` forces re-sync
+  - `--resume` continues an interrupted run from `checkpoint.json`
+  - `--reconcile` detects deletions via ID-only scan, writes `_deleted.ndjson`
+  - `--keep-history` appends per-run delta log to `_history/`
+  - `--attachments` downloads thread attachment binaries (skips existing)
+  - `--compress` produces `.tar.gz` of output dir
+  - `--include`/`--exclude` filter resource set (users, teams, mailboxes, tags, workflows, webhooks, customers, conversations)
+  - `--since` overrides per-resource `lastSyncedAt`
+  - `--parallel N` caps concurrent attachment downloads
+  - `--dry-run` previews without writes
+  - Refuses to write into existing non-backup directories
+- **`hs conv dump <id>`**: single-conversation self-contained JSON archive (conversation + threads + customers + tags + attachment metadata), outputs to stdout or `--out FILE`
+- **`hs conv export --embed`**: include related resources inline via HAL `embed` query (`threads`, `customers`, `tags`); JSON/NDJSON only (CSV incompatible)
+- **Client**: array query values now serialize as repeated params (`?embed=threads&embed=customers`)
+- **Docs**: `docs/backup.md` with output structure, modes, scheduling examples (cron, launchd, Task Scheduler)
+
+### Dependencies
+
+- Added `tar` for `--compress`
+
 ## [0.4.0] - 2026-05-27
 
 ### Added

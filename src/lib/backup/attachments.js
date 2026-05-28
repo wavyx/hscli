@@ -1,9 +1,4 @@
-import {
-  mkdir,
-  writeFile,
-  readFile,
-  access,
-} from 'node:fs/promises'
+import { mkdir, writeFile, readFile, access } from 'node:fs/promises'
 import { join } from 'node:path'
 import { safeName } from './writer.js'
 
@@ -85,7 +80,6 @@ export async function processConversationAttachments({
   async function worker() {
     while (queue.length) {
       const next = queue.shift()
-      if (!next) return
       const r = await downloadAttachment(
         client,
         baseDir,

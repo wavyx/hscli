@@ -166,7 +166,9 @@ describe('backup/attachments', () => {
   it('processConversationAttachments uses default parallel of 4 when 0 passed', async () => {
     const conv = {
       id: 1,
-      _embedded: { threads: [{ id: 1, attachments: [{ id: 1, filename: 'a' }] }] },
+      _embedded: {
+        threads: [{ id: 1, attachments: [{ id: 1, filename: 'a' }] }],
+      },
     }
     nock(API).get('/v2/attachments/1/data').reply(200, { data: '' })
     const r = await processConversationAttachments({
@@ -179,13 +181,15 @@ describe('backup/attachments', () => {
   })
 
   it('writeAttachmentsManifest merges with existing entries', async () => {
-    await writeAttachmentsManifest(dir, 1, [
-      { id: 10, filename: 'a' },
-    ])
-    await writeAttachmentsManifest(dir, 1, [
-      { id: 11, filename: 'b' },
-    ])
-    const file = join(dir, 'conversations', '1', 'attachments', '_manifest.json')
+    await writeAttachmentsManifest(dir, 1, [{ id: 10, filename: 'a' }])
+    await writeAttachmentsManifest(dir, 1, [{ id: 11, filename: 'b' }])
+    const file = join(
+      dir,
+      'conversations',
+      '1',
+      'attachments',
+      '_manifest.json',
+    )
     const m = JSON.parse(readFileSync(file, 'utf8'))
     expect(Object.keys(m).sort()).toEqual(['10', '11'])
   })
@@ -197,6 +201,25 @@ describe('backup/attachments', () => {
     await writeAttachmentsManifest(dir, 1, [{ id: 99, filename: 'x' }])
     const m = JSON.parse(readFileSync(join(subDir, '_manifest.json'), 'utf8'))
     expect(m['99'].filename).toBe('x')
+  })
+
+  it('processConversationAttachments counts skipped when files already exist', async () => {
+    const sub = join(dir, 'conversations', '500', 'attachments')
+    mkdirSync(sub, { recursive: true })
+    writeFileSync(join(sub, '99_x.png'), 'pre')
+    const conv = {
+      id: 500,
+      _embedded: {
+        threads: [{ id: 1, attachments: [{ id: 99, filename: 'x.png' }] }],
+      },
+    }
+    const r = await processConversationAttachments({
+      client,
+      baseDir: dir,
+      conversation: conv,
+    })
+    expect(r.downloaded).toBe(0)
+    expect(r.skipped).toBe(1)
   })
 
   it('handles attachment with missing data field', async () => {

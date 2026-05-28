@@ -42,7 +42,8 @@ export default class BackupCommand extends BaseCommand {
     }),
     reconcile: Flags.boolean({
       default: false,
-      description: 'After fetch, ID-scan to detect deletions (writes tombstones)',
+      description:
+        'After fetch, ID-scan to detect deletions (writes tombstones)',
     }),
     'keep-history': Flags.boolean({
       default: false,
@@ -63,7 +64,8 @@ export default class BackupCommand extends BaseCommand {
     }),
     compress: Flags.boolean({
       default: false,
-      description: 'Final tar.gz step (incompatible with future incremental on same dir)',
+      description:
+        'Final tar.gz step (incompatible with future incremental on same dir)',
     }),
     parallel: Flags.integer({
       default: 4,
@@ -95,7 +97,12 @@ export default class BackupCommand extends BaseCommand {
     if (!manifest) {
       const me = await this.apiClient.get('/v2/users/me').catch(() => null)
       manifest = newManifest(
-        me ? { id: me.id, name: `${me.firstName || ''} ${me.lastName || ''}`.trim() } : {},
+        me
+          ? {
+              id: me.id,
+              name: `${me.firstName || ''} ${me.lastName || ''}`.trim(),
+            }
+          : {},
         this.config.version,
       )
     }
@@ -108,8 +115,14 @@ export default class BackupCommand extends BaseCommand {
     const since = flags.since ? parseSince(flags.since) : null
 
     const options = {
-      include: flags.include?.split(',').map((s) => s.trim()).filter(Boolean),
-      exclude: flags.exclude?.split(',').map((s) => s.trim()).filter(Boolean),
+      include: flags.include
+        ?.split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+      exclude: flags.exclude
+        ?.split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
       since,
       dryRun: flags['dry-run'],
       completed: checkpoint?.completed,

@@ -1,9 +1,4 @@
-import {
-  mkdtempSync,
-  rmSync,
-  readFileSync,
-  existsSync,
-} from 'node:fs'
+import { mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import nock from 'nock'
@@ -23,7 +18,12 @@ function emptyPage(key) {
 function page(key, items, { totalPages = 1, number = 1 } = {}) {
   return {
     _embedded: { [key]: items },
-    page: { size: items.length, totalElements: items.length, totalPages, number },
+    page: {
+      size: items.length,
+      totalElements: items.length,
+      totalPages,
+      number,
+    },
   }
 }
 
@@ -77,7 +77,12 @@ describe('backup/runner', () => {
       .query(true)
       .reply(200, page('mailboxes', [{ id: 42, name: 'Support' }]))
 
-    await runBackup({ client, dir, mode: 'full', manifest: newManifest({}, '0.5.0') })
+    await runBackup({
+      client,
+      dir,
+      mode: 'full',
+      manifest: newManifest({}, '0.5.0'),
+    })
     expect(existsSync(join(dir, 'mailboxes/42/mailbox.json'))).toBe(true)
   })
 
@@ -88,7 +93,12 @@ describe('backup/runner', () => {
       .query(true)
       .reply(200, page('tags', [{ id: 1, tag: 'billing' }]))
 
-    await runBackup({ client, dir, mode: 'full', manifest: newManifest({}, '0.5.0') })
+    await runBackup({
+      client,
+      dir,
+      mode: 'full',
+      manifest: newManifest({}, '0.5.0'),
+    })
     const tags = JSON.parse(readFileSync(join(dir, 'tags.json'), 'utf8'))
     expect(tags).toHaveLength(1)
     expect(tags[0].tag).toBe('billing')
@@ -109,7 +119,12 @@ describe('backup/runner', () => {
       })
       .reply(200, page('conversations', [{ id: 1 }]))
 
-    await runBackup({ client, dir, mode: 'full', manifest: newManifest({}, '0.5.0') })
+    await runBackup({
+      client,
+      dir,
+      mode: 'full',
+      manifest: newManifest({}, '0.5.0'),
+    })
     expect(scope.isDone()).toBe(true)
   })
 
@@ -319,7 +334,11 @@ describe('backup/runner', () => {
       .query(true)
       .reply(200, page('users', [{ id: 1 }]))
     // no local users data — reconcile should not call /v2/users
-    const tombs = await reconcile({ client, dir, options: { include: ['users'] } })
+    const tombs = await reconcile({
+      client,
+      dir,
+      options: { include: ['users'] },
+    })
     expect(tombs).toHaveLength(0)
   })
 
@@ -336,10 +355,7 @@ describe('backup/runner', () => {
       manifest: newManifest({}, '0.5.0'),
       options: { include: ['customers'] },
     })
-    nock(API)
-      .get('/v2/customers')
-      .query(true)
-      .reply(200, page('customers', []))
+    nock(API).get('/v2/customers').query(true).reply(200, page('customers', []))
     const calls = []
     await reconcile({
       client,
@@ -348,6 +364,80 @@ describe('backup/runner', () => {
       hooks: { onTombstone: async (r, id) => calls.push([r.name, id]) },
     })
     expect(calls).toEqual([['customers', 10]])
+  })
+
+  it('single-file resource fires onItem and onProgress hooks', async () => {
+    nock(API)
+      .get('/v2/tags')
+      .query(true)
+      .reply(
+        200,
+        page('tags', [
+          { id: 1, tag: 'a' },
+          { id: 2, tag: 'b' },
+        ]),
+      )
+
+    const items = []
+    const pages = []
+    await runBackup({
+      client,
+      dir,
+      mode: 'full',
+      manifest: newManifest({}, '0.5.0'),
+      options: { include: ['tags'] },
+      hooks: {
+        onItem: async (r, item) => items.push([r.name, item.id]),
+        onProgress: (r, info) => pages.push([r.name, info.page]),
+      },
+    })
+    expect(items).toEqual([
+      ['tags', 1],
+      ['tags', 2],
+    ])
+    expect(pages).toEqual([['tags', 1]])
+  })
+
+  it('inProgress with lastCompletedPage missing defaults to 0', async () => {
+    nock(API)
+      .get('/v2/users')
+      .query(true)
+      .reply(200, page('users', [{ id: 1 }]))
+
+    const { counts } = await runBackup({
+      client,
+      dir,
+      mode: 'full',
+      manifest: newManifest({}, '0.5.0'),
+      options: {
+        include: ['users'],
+        inProgress: { resource: 'users' },
+      },
+    })
+    expect(counts.users).toBe(1)
+  })
+
+  it('reconcile on conversations uses status=all', async () => {
+    await writeManifest(dir, newManifest({}, '0.5.0'))
+    // seed local
+    nock(API)
+      .get('/v2/conversations')
+      .query(true)
+      .reply(200, page('conversations', [{ id: 1 }]))
+    await runBackup({
+      client,
+      dir,
+      mode: 'full',
+      manifest: newManifest({}, '0.5.0'),
+      options: { include: ['conversations'] },
+    })
+
+    const scope = nock(API)
+      .get('/v2/conversations')
+      .query((q) => q.status === 'all')
+      .reply(200, page('conversations', [{ id: 1 }]))
+    await reconcile({ client, dir, options: { include: ['conversations'] } })
+    expect(scope.isDone()).toBe(true)
   })
 
   it('reconcile dry-run does not write _deleted.ndjson', async () => {
@@ -363,10 +453,7 @@ describe('backup/runner', () => {
       manifest: newManifest({}, '0.5.0'),
       options: { include: ['customers'] },
     })
-    nock(API)
-      .get('/v2/customers')
-      .query(true)
-      .reply(200, page('customers', []))
+    nock(API).get('/v2/customers').query(true).reply(200, page('customers', []))
     const tombs = await reconcile({
       client,
       dir,

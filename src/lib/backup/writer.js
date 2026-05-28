@@ -4,6 +4,7 @@ import {
   appendFile,
   readFile,
   readdir,
+  access,
 } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
@@ -99,15 +100,15 @@ export async function readLocalIds(baseDir, resource) {
     if (e.code !== 'ENOENT') throw e
   }
   try {
-    const entries = await readdir(dir)
-    return new Set(
-      entries
-        .filter((n) => n.endsWith('.json') && !n.startsWith('_'))
-        .map((n) => Number(n.replace(/\.json$/, '')))
-        .filter((n) => !Number.isNaN(n)),
-    )
-  } catch (e) {
-    if (e.code === 'ENOENT') return new Set()
-    throw e
+    await access(dir)
+  } catch {
+    return new Set()
   }
+  const entries = await readdir(dir)
+  return new Set(
+    entries
+      .filter((n) => n.endsWith('.json') && !n.startsWith('_'))
+      .map((n) => Number(n.replace(/\.json$/, '')))
+      .filter((n) => !Number.isNaN(n)),
+  )
 }

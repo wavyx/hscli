@@ -38,7 +38,10 @@ describe('backup/manifest', () => {
 
   it('writeManifest then readManifest round-trips', async () => {
     const m = newManifest({ id: 1, name: 'Acme' }, '0.5.0')
-    m.resources.conversations = { lastSyncedAt: '2026-05-28T10:00:00Z', total: 5 }
+    m.resources.conversations = {
+      lastSyncedAt: '2026-05-28T10:00:00Z',
+      total: 5,
+    }
     await writeManifest(dir, m)
     const r = await readManifest(dir)
     expect(r.account.name).toBe('Acme')

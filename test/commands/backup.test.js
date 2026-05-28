@@ -60,7 +60,12 @@ const API = 'https://api.helpscout.net'
 function ep(key, items, { totalPages = 1, number = 1 } = {}) {
   return {
     _embedded: { [key]: items },
-    page: { size: items.length, totalElements: items.length, totalPages, number },
+    page: {
+      size: items.length,
+      totalElements: items.length,
+      totalPages,
+      number,
+    },
   }
 }
 
@@ -108,7 +113,10 @@ describe('hs backup', () => {
 
   it('first run: writes manifest with account info from /v2/users/me', async () => {
     mockMe()
-    nock(API).get('/v2/users').query(true).reply(200, ep('users', [{ id: 1, firstName: 'A' }]))
+    nock(API)
+      .get('/v2/users')
+      .query(true)
+      .reply(200, ep('users', [{ id: 1, firstName: 'A' }]))
     mockAllEmpty(['/v2/users'])
 
     await BackupCommand.run(['--out', dir])
@@ -171,7 +179,10 @@ describe('hs backup', () => {
 
   it('--dry-run does not write files', async () => {
     mockMe()
-    nock(API).get('/v2/users').query(true).reply(200, ep('users', [{ id: 1 }]))
+    nock(API)
+      .get('/v2/users')
+      .query(true)
+      .reply(200, ep('users', [{ id: 1 }]))
     mockAllEmpty(['/v2/users'])
     await BackupCommand.run(['--out', dir, '--dry-run'])
     expect(existsSync(join(dir, 'manifest.json'))).toBe(false)
@@ -180,7 +191,10 @@ describe('hs backup', () => {
 
   it('--include restricts to named resources', async () => {
     mockMe()
-    nock(API).get('/v2/users').query(true).reply(200, ep('users', [{ id: 1 }]))
+    nock(API)
+      .get('/v2/users')
+      .query(true)
+      .reply(200, ep('users', [{ id: 1 }]))
     await BackupCommand.run(['--out', dir, '--include', 'users'])
     const m = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'))
     expect(Object.keys(m.resources)).toEqual(['users'])
@@ -243,7 +257,10 @@ describe('hs backup', () => {
     // remote: 11 gone
     nock(API).get('/v2/customers').query(true).reply(200, empty('customers'))
     // reconcile pass
-    nock(API).get('/v2/customers').query(true).reply(200, ep('customers', [{ id: 10 }]))
+    nock(API)
+      .get('/v2/customers')
+      .query(true)
+      .reply(200, ep('customers', [{ id: 10 }]))
     await BackupCommand.run([
       '--out',
       dir,
@@ -257,7 +274,10 @@ describe('hs backup', () => {
 
   it('--keep-history writes a delta log file', async () => {
     mockMe()
-    nock(API).get('/v2/users').query(true).reply(200, ep('users', [{ id: 1 }]))
+    nock(API)
+      .get('/v2/users')
+      .query(true)
+      .reply(200, ep('users', [{ id: 1 }]))
     await BackupCommand.run([
       '--out',
       dir,
@@ -266,9 +286,7 @@ describe('hs backup', () => {
       '--keep-history',
     ])
     const hdir = join(dir, '_history')
-    const files = existsSync(hdir)
-      ? require('node:fs').readdirSync(hdir)
-      : []
+    const files = existsSync(hdir) ? require('node:fs').readdirSync(hdir) : []
     expect(files.length).toBeGreaterThan(0)
     const log = readFileSync(join(hdir, files[0]), 'utf8')
     expect(log).toMatch(/"op":"upsert"/)
@@ -313,14 +331,11 @@ describe('hs backup', () => {
 
   it('--compress produces tar.gz of the directory', async () => {
     mockMe()
-    nock(API).get('/v2/users').query(true).reply(200, ep('users', [{ id: 1 }]))
-    await BackupCommand.run([
-      '--out',
-      dir,
-      '--include',
-      'users',
-      '--compress',
-    ])
+    nock(API)
+      .get('/v2/users')
+      .query(true)
+      .reply(200, ep('users', [{ id: 1 }]))
+    await BackupCommand.run(['--out', dir, '--include', 'users', '--compress'])
     expect(existsSync(`${dir}.tar.gz`)).toBe(true)
   })
 
@@ -346,7 +361,10 @@ describe('hs backup', () => {
       }),
     )
     // no /v2/users mock — must be skipped
-    nock(API).get('/v2/teams').query(true).reply(200, ep('teams', [{ id: 1 }]))
+    nock(API)
+      .get('/v2/teams')
+      .query(true)
+      .reply(200, ep('teams', [{ id: 1 }]))
     await BackupCommand.run([
       '--out',
       dir,
@@ -372,8 +390,50 @@ describe('hs backup', () => {
       .get('/v2/users')
       .query((q) => typeof q.modifiedSince === 'string')
       .reply(200, empty('users'))
-    await BackupCommand.run(['--out', dir, '--include', 'users', '--since', '2h'])
+    await BackupCommand.run([
+      '--out',
+      dir,
+      '--include',
+      'users',
+      '--since',
+      '2h',
+    ])
     expect(scope.isDone()).toBe(true)
+  })
+
+  it('handles /v2/users/me returning empty user (no firstName/lastName)', async () => {
+    nock(API).get('/v2/users/me').reply(200, { id: 1 })
+    mockAllEmpty()
+    await BackupCommand.run(['--out', dir])
+    const m = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'))
+    expect(m.account.name).toBe('')
+  })
+
+  it('--reconcile + --keep-history writes tombstones to history log', async () => {
+    mockMe()
+    nock(API)
+      .get('/v2/customers')
+      .query(true)
+      .reply(200, ep('customers', [{ id: 5 }]))
+    await BackupCommand.run(['--out', dir, '--include', 'customers'])
+
+    nock(API).get('/v2/customers').query(true).reply(200, empty('customers'))
+    nock(API).get('/v2/customers').query(true).reply(200, empty('customers'))
+    await BackupCommand.run([
+      '--out',
+      dir,
+      '--include',
+      'customers',
+      '--reconcile',
+      '--keep-history',
+    ])
+    const hdir = join(dir, '_history')
+    const fs = await import('node:fs')
+    const files = fs.readdirSync(hdir).filter((f) => f.includes('incremental'))
+    expect(files.length).toBeGreaterThan(0)
+    const log = readFileSync(join(hdir, files[files.length - 1]), 'utf8')
+    expect(log).toMatch(/"op":"delete"/)
+    expect(log).toMatch(/"id":5/)
   })
 
   it('--since 30m parses into ISO', async () => {
@@ -382,7 +442,14 @@ describe('hs backup', () => {
       .get('/v2/users')
       .query((q) => typeof q.modifiedSince === 'string')
       .reply(200, empty('users'))
-    await BackupCommand.run(['--out', dir, '--include', 'users', '--since', '30m'])
+    await BackupCommand.run([
+      '--out',
+      dir,
+      '--include',
+      'users',
+      '--since',
+      '30m',
+    ])
     expect(scope.isDone()).toBe(true)
   })
 })

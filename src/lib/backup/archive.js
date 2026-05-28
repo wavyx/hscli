@@ -8,9 +8,6 @@ import { c as tarCreate } from 'tar'
  */
 export async function compressDir(dir) {
   const out = `${dir}.tar.gz`
-  await tarCreate(
-    { gzip: true, file: out, cwd: dirname(dir) },
-    [basename(dir)],
-  )
+  await tarCreate({ gzip: true, file: out, cwd: dirname(dir) }, [basename(dir)])
   return out
 }

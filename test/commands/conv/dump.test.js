@@ -47,9 +47,8 @@ vi.mock('../../../src/lib/auth.js', () => ({
   }),
 }))
 
-const { default: ConvDumpCommand } = await import(
-  '../../../src/commands/conv/dump.js'
-)
+const { default: ConvDumpCommand } =
+  await import('../../../src/commands/conv/dump.js')
 
 const fixtureConv = {
   id: 123,

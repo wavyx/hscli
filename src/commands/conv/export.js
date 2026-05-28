@@ -52,7 +52,10 @@ export default class ConvExportCommand extends BaseCommand {
 
     let embed
     if (flags.embed) {
-      embed = flags.embed.split(',').map((s) => s.trim()).filter(Boolean)
+      embed = flags.embed
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
       const bad = embed.filter((e) => !VALID_EMBEDS.includes(e))
       if (bad.length) {
         throw new ConfigError(

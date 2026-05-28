@@ -169,19 +169,20 @@ export async function reconcile({ client, dir, options = {}, hooks = {} }) {
   return tombstones
 }
 
-async function* paginateWithSkip(client, resource, query, skipPages, onProgress) {
+async function* paginateWithSkip(
+  client,
+  resource,
+  query,
+  skipPages,
+  onProgress,
+) {
   let page = 0
-  for await (const item of client.paginate(
-    resource.path,
-    query,
-    resource.key,
-    {
-      onProgress: (info) => {
-        page = info.page
-        onProgress?.(info)
-      },
+  for await (const item of client.paginate(resource.path, query, resource.key, {
+    onProgress: (info) => {
+      page = info.page
+      onProgress?.(info)
     },
-  )) {
+  })) {
     if (page <= skipPages) continue
     yield item
   }

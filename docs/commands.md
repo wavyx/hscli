@@ -526,3 +526,55 @@ USAGE
 EXAMPLES
   hs version
 ```
+
+---
+
+## Data Portability
+
+See [docs/backup.md](backup.md) for the full guide.
+
+### `hs backup`
+
+Full account backup with incremental refresh, resume, deletion detection, optional attachment downloads, and optional compression.
+
+```
+USAGE
+  hs backup --out <dir> [--full] [--resume] [--reconcile] [--keep-history]
+            [--since DATE] [--include LIST] [--exclude LIST]
+            [--attachments] [--compress] [--parallel N] [--dry-run]
+
+EXAMPLES
+  hs backup --out ~/hs-backup
+  hs backup --out ~/hs-backup --reconcile --keep-history
+  hs backup --out ~/hs-backup --full --attachments --compress
+  hs backup --out ~/hs-backup --include conversations,customers
+  hs backup --out ~/hs-backup --dry-run
+```
+
+### `hs conv dump <id>`
+
+Dump a single conversation with threads, customers, tags, and attachment metadata as one self-contained JSON.
+
+```
+USAGE
+  hs conv dump <id> [--out FILE]
+
+EXAMPLES
+  hs conv dump 3336043008 > conv-3336043008.json
+  hs conv dump 3336043008 --out conv-3336043008.json
+```
+
+### `hs conv export --embed`
+
+`hs conv export` already supports bulk export to JSON/CSV/NDJSON. Pass `--embed` to include related resources inline via HAL `embed` query (single request per page):
+
+```
+USAGE
+  hs conv export --embed threads[,customers,tags] --format json|ndjson
+
+EXAMPLES
+  hs conv export --embed threads --format ndjson > full.ndjson
+  hs conv export --embed threads,customers,tags --status closed --format json
+```
+
+`--embed` is incompatible with `--format csv`.
