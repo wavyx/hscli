@@ -211,6 +211,93 @@ describe('hs conv list', () => {
     expect(scope.isDone()).toBe(true)
   })
 
+  it('filters by --source client-side', async () => {
+    const mixed = {
+      _embedded: {
+        conversations: [
+          {
+            id: 1,
+            subject: 'A',
+            status: 'active',
+            mailboxId: 1,
+            createdAt: '2024-01-01',
+            source: { type: 'email', via: 'customer' },
+          },
+          {
+            id: 2,
+            subject: 'B',
+            status: 'active',
+            mailboxId: 1,
+            createdAt: '2024-01-02',
+            source: { type: 'beacon', via: 'customer' },
+          },
+          {
+            id: 3,
+            subject: 'C',
+            status: 'active',
+            mailboxId: 1,
+            createdAt: '2024-01-03',
+            source: { type: 'beacon', via: 'customer' },
+          },
+        ],
+      },
+      page: { size: 3, totalElements: 3, totalPages: 1, number: 1 },
+    }
+    nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query(true)
+      .reply(200, mixed)
+    const stdout = await runCmd(ConvListCommand, [
+      '--source',
+      'beacon',
+      '--output',
+      'json',
+    ])
+    const out = JSON.parse(stdout)
+    expect(out).toHaveLength(2)
+    expect(out.every((c) => c.source.type === 'beacon')).toBe(true)
+  })
+
+  it('honors --limit even with --source filter', async () => {
+    const mixed = {
+      _embedded: {
+        conversations: Array.from({ length: 10 }, (_, i) => ({
+          id: i + 1,
+          subject: `s${i}`,
+          status: 'active',
+          mailboxId: 1,
+          createdAt: '2024-01-01',
+          source: { type: 'beacon', via: 'customer' },
+        })),
+      },
+      page: { size: 10, totalElements: 10, totalPages: 1, number: 1 },
+    }
+    nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query(true)
+      .reply(200, mixed)
+    const stdout = await runCmd(ConvListCommand, [
+      '--source',
+      'beacon',
+      '--limit',
+      '3',
+      '--output',
+      'json',
+    ])
+    expect(JSON.parse(stdout)).toHaveLength(3)
+  })
+
+  it('rejects unknown --source value', async () => {
+    let err
+    try {
+      await ConvListCommand.run(['--source', 'bogus'])
+    } catch (e) {
+      err = e
+    }
+    expect(err).toBeDefined()
+    expect(err.message).toMatch(/source.*bogus/i)
+  })
+
   it('parses --since with minutes unit', async () => {
     const before = Date.now()
 

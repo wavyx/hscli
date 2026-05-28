@@ -35,7 +35,8 @@ hs backup --out ~/hs-backup            # Full account backup (incremental on re-
 | `hs tag`      | `list`, `get`                                                                                                                                                                             |
 | `hs workflow` | `list`, `run`                                                                                                                                                                             |
 | `hs webhook`  | `list`, `get`, `create`, `delete`                                                                                                                                                         |
-| `hs report`   | `company`, `user`, `conversations`                                                                                                                                                        |
+| `hs report`   | `company`, `user`, `conversations`, `beacon`                                                                                                                                              |
+| `hs beacon`   | `sign`, `verify`, `embed`, `identify-snippet` — HMAC + snippet utilities for Beacon Secure Mode                                                                                           |
 | `hs api`      | Raw API escape hatch: `hs api GET /v2/conversations`                                                                                                                                      |
 | `hs backup`   | Full account dump with incremental refresh, resume, deletion detection, attachments                                                                                                       |
 | `hs profile`  | `list`, `use`, `current`                                                                                                                                                                  |
@@ -52,6 +53,7 @@ Run `hs --help` or `hs <topic> --help` for details.
 - [Configuration](docs/configuration.md) -- env vars, profiles, settings
 - [API Reference](docs/api-reference.md) -- Help Scout endpoints used
 - [Backup & Data Portability](docs/backup.md) -- `hs backup`, `hs conv dump`, `hs conv export --embed`
+- [Beacon](docs/beacon.md) -- Beacon Secure Mode HMAC signing, embed/identify snippets, source-based reporting, limitations
 
 ## Contributing
 

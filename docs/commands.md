@@ -578,3 +578,79 @@ EXAMPLES
 ```
 
 `--embed` is incompatible with `--format csv`.
+
+---
+
+## Beacon Utilities
+
+See [docs/beacon.md](beacon.md) for the full guide including limitations.
+
+### `hs beacon sign`
+
+Generate HMAC-SHA256 signature for Beacon Secure Mode.
+
+```
+USAGE
+  hs beacon sign --email <email> --secret <key>
+
+EXAMPLES
+  hs beacon sign --email user@example.com --secret YOUR_KEY
+  HSCLI_BEACON_SECRET=KEY hs beacon sign --email user@example.com
+```
+
+### `hs beacon verify`
+
+Verify a signature. Exit 0 on match, exit 1 on mismatch.
+
+```
+USAGE
+  hs beacon verify --email <email> --secret <key> --signature <sig>
+```
+
+### `hs beacon embed <beaconId>`
+
+Generate `<script>` embed block for the Beacon widget.
+
+```
+USAGE
+  hs beacon embed <beaconId> [--color HEX] [--position left|right]
+                              [--style icon|text|iconAndText|manual]
+                              [--text "Help"] [--icon-image NAME]
+
+EXAMPLES
+  hs beacon embed abc-123
+  hs beacon embed abc-123 --color "#5b21b6" --position right --style iconAndText --text Help
+```
+
+### `hs beacon identify-snippet`
+
+Generate server-side identify code with HMAC signing for the chosen stack.
+
+```
+USAGE
+  hs beacon identify-snippet --beacon-id <id> --secret <key>
+                              [--stack node|rails|php|django|python]
+
+EXAMPLES
+  hs beacon identify-snippet --beacon-id abc-123 --secret KEY
+  hs beacon identify-snippet --beacon-id abc-123 --secret KEY --stack rails
+```
+
+### `hs report beacon`
+
+Aggregate conversation counts by `source.type`/`source.via`. Useful as a Beacon-origin proxy since Help Scout does not expose Beacon analytics via API.
+
+```
+USAGE
+  hs report beacon [--since 30d|2024-01-01T00:00:00Z] [--mailbox ID]
+
+EXAMPLES
+  hs report beacon --since 7d
+  hs report beacon --since 30d --mailbox 42 --output json
+```
+
+### `hs conv list --source <type>` and `hs conv export --source <type>`
+
+Filter conversations by `source.type`. Client-side filter (Help Scout API does
+not support source as a query param). Valid values: `api`, `beacon`, `channel`,
+`chat`, `consumer`, `coreapi`, `customer`, `email`.

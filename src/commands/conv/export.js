@@ -3,6 +3,7 @@ import BaseCommand from '../../base-command.js'
 import { ConfigError } from '../../lib/errors.js'
 import { formatCsv } from '../../lib/output/csv.js'
 import { formatJson } from '../../lib/output/json.js'
+import { VALID_SOURCES } from './list.js'
 
 const VALID_EMBEDS = ['threads']
 
@@ -45,6 +46,9 @@ export default class ConvExportCommand extends BaseCommand {
     embed: Flags.string({
       description: `Embed related resources (csv: ${VALID_EMBEDS.join(',')})`,
     }),
+    source: Flags.string({
+      description: `Filter by source.type (client-side post-fetch): ${VALID_SOURCES.join(', ')}`,
+    }),
   }
 
   async run() {
@@ -69,6 +73,12 @@ export default class ConvExportCommand extends BaseCommand {
       }
     }
 
+    if (flags.source && !VALID_SOURCES.includes(flags.source)) {
+      throw new ConfigError(
+        `Unknown --source '${flags.source}'. Valid: ${VALID_SOURCES.join(', ')}`,
+      )
+    }
+
     const query = {
       status: flags.status,
       mailbox: flags.mailbox,
@@ -91,7 +101,10 @@ export default class ConvExportCommand extends BaseCommand {
       })
 
       const items = data?._embedded?.conversations ?? []
-      allItems.push(...items)
+      const kept = flags.source
+        ? items.filter((c) => c?.source?.type === flags.source)
+        : items
+      allItems.push(...kept)
       const totalPages = data?.page?.totalPages ?? 1
       spinner.text = `Exporting... page ${page}/${totalPages} (${allItems.length} conversations)`
       if (page >= totalPages) break

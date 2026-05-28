@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-05-28
+
+### Added
+
+- **Beacon utilities** — new `hs beacon` topic:
+  - `hs beacon sign --email --secret` — HMAC-SHA256 signature for Beacon Secure Mode
+  - `hs beacon verify --email --secret --signature` — verify a signature (exit 1 on mismatch)
+  - `hs beacon embed <id> [--color] [--position] [--style] [--text] [--icon-image]` — generate `<script>` embed block
+  - `hs beacon identify-snippet --beacon-id --secret --stack node|rails|php|django|python` — server-side identify code generator
+- **Conversation source filter** — `hs conv list --source <type>` and `hs conv export --source <type>` with values `api|beacon|channel|chat|consumer|coreapi|customer|email`. Implemented as client-side post-fetch filter because Help Scout does not expose `source` as a query parameter.
+- **Beacon-origin report** — `hs report beacon [--since N] [--mailbox]` aggregates conversation counts by `source.type` and `source.via` with percentages. Default window is 30 days.
+- **Docs** — new `docs/beacon.md` covering supported commands, explicit list of Help Scout limitations (Beacon CRUD / stats are web-UI only, no REST endpoints), and per-stack snippet examples.
+
+### Notes
+
+- v0.6 (Distribution) was deferred. v0.7 prioritises functional surface coverage over packaging polish.
+- Beacon configuration cannot be managed via the API — Help Scout does not expose `GET /v2/beacons` or related endpoints. `hs beacon` commands are utility helpers for working _with_ Beacon, not for managing its config.
+
 ## [0.5.0] - 2026-05-28
 
 ### Added

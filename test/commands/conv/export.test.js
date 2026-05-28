@@ -341,6 +341,43 @@ describe('hs conv export', () => {
     expect(captured.message).toMatch(/embed.*csv/i)
   })
 
+  it('--source filters conversations by source.type', async () => {
+    const mixed = {
+      _embedded: {
+        conversations: [
+          { id: 1, subject: 'a', source: { type: 'email' } },
+          { id: 2, subject: 'b', source: { type: 'beacon' } },
+          { id: 3, subject: 'c', source: { type: 'beacon' } },
+        ],
+      },
+      page: { size: 3, totalElements: 3, totalPages: 1, number: 1 },
+    }
+    nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query(true)
+      .reply(200, mixed)
+    const stdout = await runCmd(ConvExportCommand, [
+      '--source',
+      'beacon',
+      '--format',
+      'json',
+    ])
+    const out = JSON.parse(stdout)
+    expect(out).toHaveLength(2)
+    expect(out.every((c) => c.source.type === 'beacon')).toBe(true)
+  })
+
+  it('--source rejects unknown values', async () => {
+    let err
+    try {
+      await ConvExportCommand.run(['--source', 'bogus', '--format', 'json'])
+    } catch (e) {
+      err = e
+    }
+    expect(err).toBeDefined()
+    expect(err.message).toMatch(/source.*bogus/i)
+  })
+
   it('passes through --since as ISO date when not relative', async () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/conversations')

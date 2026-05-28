@@ -1,6 +1,18 @@
 import { Flags } from '@oclif/core'
 import BaseCommand from '../../base-command.js'
+import { ConfigError } from '../../lib/errors.js'
 import { collectPages } from '../../lib/pagination.js'
+
+export const VALID_SOURCES = [
+  'api',
+  'beacon',
+  'channel',
+  'chat',
+  'consumer',
+  'coreapi',
+  'customer',
+  'email',
+]
 
 const columns = {
   id: { header: 'ID' },
@@ -45,10 +57,19 @@ export default class ConvListCommand extends BaseCommand {
       description: 'Modified since (ISO date or relative: 7d, 30d, 1h)',
     }),
     limit: Flags.integer({ description: 'Max results to return', default: 25 }),
+    source: Flags.string({
+      description: `Filter by source.type (client-side post-fetch): ${VALID_SOURCES.join(', ')}`,
+    }),
   }
 
   async run() {
     const { flags } = await this.parse(ConvListCommand)
+
+    if (flags.source && !VALID_SOURCES.includes(flags.source)) {
+      throw new ConfigError(
+        `Unknown --source '${flags.source}'. Valid: ${VALID_SOURCES.join(', ')}`,
+      )
+    }
 
     const query = {
       status: flags.status,
@@ -59,10 +80,25 @@ export default class ConvListCommand extends BaseCommand {
       modifiedSince: flags.since ? parseRelativeDate(flags.since) : undefined,
     }
 
-    const items = await collectPages(
-      this.apiClient.paginate('/v2/conversations', query, 'conversations'),
-      flags.limit,
-    )
+    let items
+    if (flags.source) {
+      items = []
+      for await (const c of this.apiClient.paginate(
+        '/v2/conversations',
+        query,
+        'conversations',
+      )) {
+        if (c?.source?.type === flags.source) {
+          items.push(c)
+          if (items.length >= flags.limit) break
+        }
+      }
+    } else {
+      items = await collectPages(
+        this.apiClient.paginate('/v2/conversations', query, 'conversations'),
+        flags.limit,
+      )
+    }
     await this.outputResults(items, columns)
   }
 }
