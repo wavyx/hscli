@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import {
   CliError,
   AuthRequiredError,
@@ -6,6 +6,7 @@ import {
   RateLimitError,
   ServiceUnavailableError,
   ApiError,
+  handleError,
 } from '../../src/lib/errors.js'
 
 describe('CliError', () => {
@@ -165,5 +166,200 @@ describe('ApiError', () => {
       const err = ApiError.fromResponse(500, text, '/v2/x')
       expect(err.logRef).toBe('ref-456')
     })
+  })
+})
+
+describe('handleError', () => {
+  let stderrSpy
+
+  afterEach(() => {
+    if (stderrSpy) stderrSpy.mockRestore()
+  })
+
+  it('delegates to cmd.error with err.message and exitCode for plain CliError', () => {
+    const cmd = {
+      flags: {},
+      error: vi.fn(),
+      exit: vi.fn(),
+    }
+    const err = new CliError('something broke', { exitCode: 5 })
+
+    handleError(err, cmd)
+
+    expect(cmd.error).toHaveBeenCalledWith('something broke', { exit: 5 })
+  })
+
+  it('defaults to exit code 70 when err has no exitCode', () => {
+    const cmd = {
+      flags: {},
+      error: vi.fn(),
+      exit: vi.fn(),
+    }
+    const err = new Error('unknown')
+
+    handleError(err, cmd)
+
+    expect(cmd.error).toHaveBeenCalledWith('unknown', { exit: 70 })
+  })
+
+  it('writes JSON error to stderr when --output json', () => {
+    stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const cmd = {
+      flags: { output: 'json' },
+      error: vi.fn(),
+      exit: vi.fn((code) => {
+        throw new Error(`exit ${code}`)
+      }),
+    }
+    const err = new ApiError(404, { message: 'Not found' }, '/v2/x')
+
+    expect(() => handleError(err, cmd)).toThrow('exit 1')
+
+    const output = stderrSpy.mock.calls[0][0]
+    const parsed = JSON.parse(output)
+    expect(parsed.error).toBe('ApiError')
+    expect(parsed.message).toBe('Help Scout API 404: Not found')
+    expect(parsed.statusCode).toBe(404)
+    expect(parsed.path).toBe('/v2/x')
+    expect(parsed.exitCode).toBe(1)
+    expect(parsed.body).toBeUndefined() // not included without --verbose
+  })
+
+  it('JSON error includes logRef when present', () => {
+    stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const cmd = {
+      flags: { output: 'json' },
+      error: vi.fn(),
+      exit: vi.fn((code) => {
+        throw new Error(`exit ${code}`)
+      }),
+    }
+    const err = new ApiError(
+      500,
+      { message: 'Server error', logRef: 'log-789' },
+      '/v2/x',
+    )
+
+    expect(() => handleError(err, cmd)).toThrow('exit 69')
+
+    const output = stderrSpy.mock.calls[0][0]
+    const parsed = JSON.parse(output)
+    expect(parsed.logRef).toBe('log-789')
+  })
+
+  it('JSON error includes body when --verbose', () => {
+    stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const cmd = {
+      flags: { output: 'json', verbose: true },
+      error: vi.fn(),
+      exit: vi.fn((code) => {
+        throw new Error(`exit ${code}`)
+      }),
+    }
+    const err = new ApiError(
+      422,
+      { message: 'Validation', errors: [{ field: 'x' }] },
+      '/v2/x',
+    )
+
+    expect(() => handleError(err, cmd)).toThrow('exit 65')
+
+    const output = stderrSpy.mock.calls[0][0]
+    const parsed = JSON.parse(output)
+    expect(parsed.body).toEqual({
+      message: 'Validation',
+      errors: [{ field: 'x' }],
+    })
+  })
+
+  it('JSON error for non-ApiError omits statusCode/path/body', () => {
+    stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const cmd = {
+      flags: { output: 'json' },
+      error: vi.fn(),
+      exit: vi.fn((code) => {
+        throw new Error(`exit ${code}`)
+      }),
+    }
+    const err = new ConfigError('bad config')
+
+    expect(() => handleError(err, cmd)).toThrow('exit 78')
+
+    const output = stderrSpy.mock.calls[0][0]
+    const parsed = JSON.parse(output)
+    expect(parsed.error).toBe('ConfigError')
+    expect(parsed.message).toBe('bad config')
+    expect(parsed.exitCode).toBe(78)
+    expect(parsed.statusCode).toBeUndefined()
+    expect(parsed.path).toBeUndefined()
+    expect(parsed.body).toBeUndefined()
+  })
+
+  it('writes verbose request/response details to stderr for ApiError', () => {
+    stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const cmd = {
+      flags: { verbose: true },
+      error: vi.fn(),
+      exit: vi.fn(),
+    }
+    const err = new ApiError(
+      500,
+      { message: 'oops', logRef: 'ref-9' },
+      '/v2/things',
+    )
+
+    handleError(err, cmd)
+
+    const writes = stderrSpy.mock.calls.map((c) => c[0]).join('')
+    expect(writes).toContain('Request path: /v2/things')
+    expect(writes).toContain('Status code:  500')
+    expect(writes).toContain('Log ref:      ref-9')
+    expect(writes).toContain('Response body:')
+    expect(writes).toContain('"message": "oops"')
+    expect(cmd.error).toHaveBeenCalledWith(err.message, { exit: 69 })
+  })
+
+  it('verbose ApiError without logRef omits the log ref line', () => {
+    stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const cmd = {
+      flags: { verbose: true },
+      error: vi.fn(),
+      exit: vi.fn(),
+    }
+    const err = new ApiError(404, { message: 'gone' }, '/v2/missing')
+
+    handleError(err, cmd)
+
+    const writes = stderrSpy.mock.calls.map((c) => c[0]).join('')
+    expect(writes).toContain('Request path: /v2/missing')
+    expect(writes).toContain('Status code:  404')
+    expect(writes).not.toContain('Log ref:')
+  })
+
+  it('verbose flag has no effect on non-ApiError', () => {
+    stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const cmd = {
+      flags: { verbose: true },
+      error: vi.fn(),
+      exit: vi.fn(),
+    }
+    const err = new ConfigError('bad')
+
+    handleError(err, cmd)
+
+    expect(stderrSpy).not.toHaveBeenCalled()
+    expect(cmd.error).toHaveBeenCalledWith('bad', { exit: 78 })
+  })
+
+  it('handles missing cmd.flags by defaulting to plain error', () => {
+    const cmd = {
+      error: vi.fn(),
+      exit: vi.fn(),
+    }
+    const err = new CliError('oh no', { exitCode: 3 })
+
+    handleError(err, cmd)
+
+    expect(cmd.error).toHaveBeenCalledWith('oh no', { exit: 3 })
   })
 })

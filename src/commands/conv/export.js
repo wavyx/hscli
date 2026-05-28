@@ -1,6 +1,5 @@
 import { Flags } from '@oclif/core'
 import BaseCommand from '../../base-command.js'
-import { collectPages } from '../../lib/pagination.js'
 import { formatCsv } from '../../lib/output/csv.js'
 import { formatJson } from '../../lib/output/json.js'
 

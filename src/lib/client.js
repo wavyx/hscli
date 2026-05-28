@@ -95,9 +95,10 @@ export function createClient({
    * @param {string} path
    * @param {object} [query]
    * @param {string} resourceKey
+   * @param {{ onProgress?: (info: {page: number, totalPages: number}) => void }} [opts]
    * @returns {AsyncGenerator<object>}
    */
-  async function* paginate(path, query = {}, resourceKey) {
+  async function* paginate(path, query = {}, resourceKey, opts = {}) {
     let page = 1
     let totalPages = 1
 
@@ -106,8 +107,9 @@ export function createClient({
         query: { ...query, page },
       })
       const items = data?._embedded?.[resourceKey] ?? []
-      yield* items
       totalPages = data?.page?.totalPages ?? 1
+      if (opts.onProgress) opts.onProgress({ page, totalPages })
+      yield* items
       page++
     } while (page <= totalPages)
   }

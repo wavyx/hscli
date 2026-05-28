@@ -324,6 +324,40 @@ describe('createClient', () => {
       expect(items).toHaveLength(1)
       expect(scope.isDone()).toBe(true)
     })
+
+    it('calls onProgress callback per page', async () => {
+      const scope = nock(API_BASE)
+        .get('/v2/conversations')
+        .query({ page: '1' })
+        .reply(200, {
+          _embedded: { conversations: [{ id: 1 }] },
+          page: { totalPages: 2 },
+        })
+        .get('/v2/conversations')
+        .query({ page: '2' })
+        .reply(200, {
+          _embedded: { conversations: [{ id: 2 }] },
+          page: { totalPages: 2 },
+        })
+
+      const progress = []
+      const onProgress = (info) => progress.push(info)
+      const items = []
+      for await (const item of client.paginate(
+        '/v2/conversations',
+        {},
+        'conversations',
+        { onProgress },
+      )) {
+        items.push(item)
+      }
+
+      expect(progress).toEqual([
+        { page: 1, totalPages: 2 },
+        { page: 2, totalPages: 2 },
+      ])
+      expect(scope.isDone()).toBe(true)
+    })
   })
 
   describe('POST requests', () => {

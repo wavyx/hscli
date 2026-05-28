@@ -85,5 +85,34 @@ export class ApiError extends CliError {
  */
 export function handleError(err, cmd) {
   const exitCode = err.exitCode ?? 70
+  const flags = cmd.flags ?? {}
+
+  if (flags.output === 'json') {
+    const payload = {
+      error: err.constructor.name,
+      message: err.message,
+      exitCode,
+    }
+    if (err instanceof ApiError) {
+      payload.statusCode = err.statusCode
+      payload.path = err.path
+      if (err.logRef) payload.logRef = err.logRef
+      if (flags.verbose) payload.body = err.body
+    }
+    process.stderr.write(JSON.stringify(payload, null, 2) + '\n')
+    cmd.exit(exitCode)
+  }
+
+  if (flags.verbose && err instanceof ApiError) {
+    process.stderr.write(`\nRequest path: ${err.path}\n`)
+    process.stderr.write(`Status code:  ${err.statusCode}\n`)
+    if (err.logRef) process.stderr.write(`Log ref:      ${err.logRef}\n`)
+    if (err.body) {
+      process.stderr.write(
+        `Response body:\n${JSON.stringify(err.body, null, 2)}\n`,
+      )
+    }
+  }
+
   cmd.error(err.message, { exit: exitCode })
 }
