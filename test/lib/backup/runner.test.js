@@ -104,19 +104,13 @@ describe('backup/runner', () => {
     expect(tags[0].tag).toBe('billing')
   })
 
-  it('conversations resource uses embed and status=all', async () => {
+  it('conversations resource uses embed=threads and status=all', async () => {
     mockEmpty(ALL_NON_CONVS.filter((r) => r.path !== '/v2/conversations'))
     const scope = nock(API)
       .get('/v2/conversations')
-      .query((q) => {
-        const e = [].concat(q.embed)
-        return (
-          e.includes('threads') &&
-          e.includes('customers') &&
-          e.includes('tags') &&
-          q.status === 'all'
-        )
-      })
+      .query(
+        (q) => [].concat(q.embed).includes('threads') && q.status === 'all',
+      )
       .reply(200, page('conversations', [{ id: 1 }]))
 
     await runBackup({

@@ -71,11 +71,11 @@ hs-backup/
 | `workflows`     | `/v2/workflows`                                           | single file `workflows.json`                          |
 | `webhooks`      | `/v2/webhooks`                                            | single file `webhooks.json`                           |
 | `customers`     | `/v2/customers`                                           | per-item under `customers/`                           |
-| `conversations` | `/v2/conversations` (with `embed=threads,customers,tags`) | per-item under `conversations/{id}/conversation.json` |
+| `conversations` | `/v2/conversations` (with `embed=threads`) | per-item under `conversations/{id}/conversation.json` |
 
-Conversations include their threads, customers, and tags inline. Pass
-`--attachments` to additionally download binary attachments referenced
-by threads.
+Conversations include their threads inline (and tags + primary customer
+ref live on the conversation object itself). Pass `--attachments` to
+additionally download binary attachments referenced by threads.
 
 ## Modes
 
@@ -228,16 +228,18 @@ downloaded — use `hs backup --attachments` for that.
 ## Bulk Export with Embeds
 
 `hs conv export` lists conversations as bulk JSON/CSV/NDJSON. Pass
-`--embed` to include related data inline (HAL-native, single request
-per page):
+`--embed threads` to include thread bodies inline (HAL-native, single
+request per page):
 
 ```bash
 hs conv export --embed threads --format ndjson > full.ndjson
-hs conv export --embed threads,customers,tags --status closed --format json
+hs conv export --embed threads --status closed --format json
 ```
 
 `--embed` is incompatible with `--format csv` (the embedded structure
-doesn't flatten cleanly).
+doesn't flatten cleanly). Only `threads` is supported — Help Scout's
+API does not currently allow embedding customers or tags on the
+conversations endpoint.
 
 ## Restoring
 

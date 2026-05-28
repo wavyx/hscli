@@ -302,18 +302,15 @@ describe('hs conv export', () => {
     expect(scope.isDone()).toBe(true)
   })
 
-  it('passes --embed values as repeated query params', async () => {
+  it('passes --embed threads as query param', async () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/conversations')
-      .query((q) => {
-        const values = [].concat(q.embed)
-        return values.includes('threads') && values.includes('customers')
-      })
+      .query((q) => [].concat(q.embed).includes('threads'))
       .reply(200, fixture)
 
     const stdout = await runCmd(ConvExportCommand, [
       '--embed',
-      'threads,customers',
+      'threads',
       '--format',
       'json',
     ])

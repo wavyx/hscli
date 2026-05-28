@@ -22,8 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `--parallel N` caps concurrent attachment downloads
   - `--dry-run` previews without writes
   - Refuses to write into existing non-backup directories
-- **`hs conv dump <id>`**: single-conversation self-contained JSON archive (conversation + threads + customers + tags + attachment metadata), outputs to stdout or `--out FILE`
-- **`hs conv export --embed`**: include related resources inline via HAL `embed` query (`threads`, `customers`, `tags`); JSON/NDJSON only (CSV incompatible)
+- **`hs conv dump <id>`**: single-conversation self-contained JSON archive (conversation + threads + primary customer + tags + attachment metadata), outputs to stdout or `--out FILE`
+- **`hs conv export --embed threads`**: include thread bodies inline via HAL `embed` query; JSON/NDJSON only (CSV incompatible). Only `threads` is supported by Help Scout's API on this endpoint.
 - **Client**: array query values now serialize as repeated params (`?embed=threads&embed=customers`)
 - **Docs**: `docs/backup.md` with output structure, modes, scheduling examples (cron, launchd, Task Scheduler)
 

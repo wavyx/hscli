@@ -57,6 +57,13 @@ const fixtureConv = {
   status: 'active',
   mailboxId: 42,
   createdAt: '2024-06-15T09:00:00Z',
+  tags: [{ id: 1, color: '#abc', tag: 'billing' }],
+  primaryCustomer: {
+    id: 7001,
+    first: 'Eric',
+    last: 'R',
+    email: 'customer@example.com',
+  },
   _embedded: {
     threads: [
       {
@@ -81,8 +88,6 @@ const fixtureConv = {
         createdAt: '2024-06-15T09:10:00Z',
       },
     ],
-    customers: [{ id: 7001, firstName: 'Eric', email: 'customer@example.com' }],
-    tags: [{ id: 1, color: '#abc', tag: 'billing' }],
   },
 }
 
@@ -99,12 +104,7 @@ describe('hs conv dump', () => {
   it('dumps conversation with threads, customers, tags, attachments to stdout', async () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/conversations/123')
-      .query((q) => {
-        const v = [].concat(q.embed)
-        return (
-          v.includes('threads') && v.includes('customers') && v.includes('tags')
-        )
-      })
+      .query((q) => q.embed === 'threads')
       .reply(200, fixtureConv)
 
     const stdout = await runCmd(ConvDumpCommand, ['123'])
@@ -148,6 +148,35 @@ describe('hs conv dump', () => {
     expect(out.customers).toEqual([])
     expect(out.tags).toEqual([])
     expect(out.attachments).toEqual([])
+  })
+
+  it('falls back to createdBy customer when primaryCustomer missing', async () => {
+    const conv = {
+      id: 200,
+      createdBy: { id: 5, type: 'customer', email: 'a@b.com' },
+    }
+    nock('https://api.helpscout.net')
+      .get('/v2/conversations/200')
+      .query(true)
+      .reply(200, conv)
+    const stdout = await runCmd(ConvDumpCommand, ['200'])
+    const out = JSON.parse(stdout)
+    expect(out.customers).toHaveLength(1)
+    expect(out.customers[0].email).toBe('a@b.com')
+  })
+
+  it('omits customer when createdBy is a user (not customer)', async () => {
+    const conv = {
+      id: 201,
+      createdBy: { id: 99, type: 'user', email: 'agent@co' },
+    }
+    nock('https://api.helpscout.net')
+      .get('/v2/conversations/201')
+      .query(true)
+      .reply(200, conv)
+    const stdout = await runCmd(ConvDumpCommand, ['201'])
+    const out = JSON.parse(stdout)
+    expect(out.customers).toEqual([])
   })
 
   it('handles thread with no attachments', async () => {

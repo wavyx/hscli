@@ -26,12 +26,16 @@ export default class ConvDumpCommand extends BaseCommand {
     const { args, flags } = await this.parse(ConvDumpCommand)
 
     const conv = await this.apiClient.get(`/v2/conversations/${args.id}`, {
-      query: { embed: ['threads', 'customers', 'tags'] },
+      query: { embed: 'threads' },
     })
 
     const threads = conv?._embedded?.threads ?? []
-    const customers = conv?._embedded?.customers ?? []
-    const tags = conv?._embedded?.tags ?? []
+    const tags = conv?.tags ?? []
+    const customers = conv?.primaryCustomer
+      ? [conv.primaryCustomer]
+      : conv?.createdBy?.type === 'customer'
+        ? [conv.createdBy]
+        : []
 
     const attachments = threads.flatMap((t) =>
       (t.attachments || []).map((a) => ({

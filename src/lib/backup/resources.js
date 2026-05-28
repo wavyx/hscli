@@ -53,7 +53,7 @@ export const RESOURCES = [
     key: 'conversations',
     layout: 'per-item',
     dir: 'conversations',
-    embeds: ['threads', 'customers', 'tags'],
+    embeds: ['threads'],
     statusAll: true,
   },
 ]

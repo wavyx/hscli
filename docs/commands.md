@@ -566,15 +566,15 @@ EXAMPLES
 
 ### `hs conv export --embed`
 
-`hs conv export` already supports bulk export to JSON/CSV/NDJSON. Pass `--embed` to include related resources inline via HAL `embed` query (single request per page):
+`hs conv export` already supports bulk export to JSON/CSV/NDJSON. Pass `--embed threads` to include thread bodies inline via HAL `embed` query (single request per page). Only `threads` is supported by the Help Scout API on the conversations endpoint.
 
 ```
 USAGE
-  hs conv export --embed threads[,customers,tags] --format json|ndjson
+  hs conv export --embed threads --format json|ndjson
 
 EXAMPLES
   hs conv export --embed threads --format ndjson > full.ndjson
-  hs conv export --embed threads,customers,tags --status closed --format json
+  hs conv export --embed threads --status closed --format json
 ```
 
 `--embed` is incompatible with `--format csv`.

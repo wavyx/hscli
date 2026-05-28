@@ -4,7 +4,7 @@ import { ConfigError } from '../../lib/errors.js'
 import { formatCsv } from '../../lib/output/csv.js'
 import { formatJson } from '../../lib/output/json.js'
 
-const VALID_EMBEDS = ['threads', 'customers', 'tags']
+const VALID_EMBEDS = ['threads']
 
 const columns = {
   id: { header: 'ID' },
