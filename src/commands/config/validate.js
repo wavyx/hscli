@@ -1,11 +1,8 @@
 import chalk from 'chalk'
 import BaseCommand from '../../base-command.js'
-import {
-  getConf,
-  getActiveProfile,
-  getProfileConfig,
-} from '../../lib/config.js'
+import { getConf, getActiveProfile } from '../../lib/config.js'
 import { isKeychainAvailable } from '../../lib/keychain.js'
+import { resolveCredentials } from '../../lib/auth.js'
 
 const PASS = chalk.green('PASS')
 const FAIL = chalk.red('FAIL')
@@ -50,14 +47,22 @@ export default class ConfigValidateCommand extends BaseCommand {
       })
     }
 
-    // 3. OAuth app configured
+    // 3. OAuth app configured (checks flags > env > profile config)
     if (profile) {
-      const oauthAppId = getProfileConfig(profile, 'oauth_app_id')
-      results.push({
-        label: 'OAuth app configured',
-        ok: oauthAppId !== undefined,
-        detail: oauthAppId ? undefined : 'Run: hs auth setup',
-      })
+      try {
+        const creds = resolveCredentials({ profile })
+        results.push({
+          label: 'OAuth app configured',
+          ok: true,
+          detail: `source: ${creds.source}`,
+        })
+      } catch {
+        results.push({
+          label: 'OAuth app configured',
+          ok: false,
+          detail: 'Run: hs auth setup',
+        })
+      }
     } else {
       results.push({
         label: 'OAuth app configured',
