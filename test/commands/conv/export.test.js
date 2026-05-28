@@ -302,6 +302,48 @@ describe('hs conv export', () => {
     expect(scope.isDone()).toBe(true)
   })
 
+  it('passes --embed values as repeated query params', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query((q) => {
+        const values = [].concat(q.embed)
+        return values.includes('threads') && values.includes('customers')
+      })
+      .reply(200, fixture)
+
+    const stdout = await runCmd(ConvExportCommand, [
+      '--embed',
+      'threads,customers',
+      '--format',
+      'json',
+    ])
+    const output = JSON.parse(stdout)
+    expect(output).toHaveLength(2)
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('rejects unknown --embed values', async () => {
+    let captured
+    try {
+      await ConvExportCommand.run(['--embed', 'bogus', '--format', 'json'])
+    } catch (e) {
+      captured = e
+    }
+    expect(captured).toBeDefined()
+    expect(captured.message).toMatch(/embed.*bogus/i)
+  })
+
+  it('rejects --embed combined with --format csv', async () => {
+    let captured
+    try {
+      await ConvExportCommand.run(['--embed', 'threads', '--format', 'csv'])
+    } catch (e) {
+      captured = e
+    }
+    expect(captured).toBeDefined()
+    expect(captured.message).toMatch(/embed.*csv/i)
+  })
+
   it('passes through --since as ISO date when not relative', async () => {
     const scope = nock('https://api.helpscout.net')
       .get('/v2/conversations')

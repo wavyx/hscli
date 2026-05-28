@@ -61,6 +61,33 @@ describe('createClient', () => {
       expect(result).toEqual({ items: [] })
       expect(scope.isDone()).toBe(true)
     })
+
+    it('passes array query values as repeated params', async () => {
+      const scope = nock(API_BASE)
+        .get('/v2/conversations')
+        .query((q) => {
+          const values = [].concat(q.embed)
+          return values.includes('threads') && values.includes('customers')
+        })
+        .reply(200, { items: [] })
+
+      await client.get('/v2/conversations', {
+        query: { embed: ['threads', 'customers'] },
+      })
+      expect(scope.isDone()).toBe(true)
+    })
+
+    it('skips null/undefined query values', async () => {
+      const scope = nock(API_BASE)
+        .get('/v2/conversations')
+        .query((q) => !('foo' in q) && !('bar' in q) && q.page === '1')
+        .reply(200, {})
+
+      await client.get('/v2/conversations', {
+        query: { foo: null, bar: undefined, page: 1 },
+      })
+      expect(scope.isDone()).toBe(true)
+    })
   })
 
   describe('error handling', () => {

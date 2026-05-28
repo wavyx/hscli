@@ -1,7 +1,10 @@
 import { Flags } from '@oclif/core'
 import BaseCommand from '../../base-command.js'
+import { ConfigError } from '../../lib/errors.js'
 import { formatCsv } from '../../lib/output/csv.js'
 import { formatJson } from '../../lib/output/json.js'
+
+const VALID_EMBEDS = ['threads', 'customers', 'tags']
 
 const columns = {
   id: { header: 'ID' },
@@ -39,16 +42,36 @@ export default class ConvExportCommand extends BaseCommand {
       default: 'json',
     }),
     tag: Flags.string({ description: 'Filter by tag' }),
+    embed: Flags.string({
+      description: `Embed related resources (csv: ${VALID_EMBEDS.join(',')})`,
+    }),
   }
 
   async run() {
     const { flags } = await this.parse(ConvExportCommand)
+
+    let embed
+    if (flags.embed) {
+      embed = flags.embed.split(',').map((s) => s.trim()).filter(Boolean)
+      const bad = embed.filter((e) => !VALID_EMBEDS.includes(e))
+      if (bad.length) {
+        throw new ConfigError(
+          `Unknown --embed value(s): ${bad.join(', ')}. Valid: ${VALID_EMBEDS.join(', ')}`,
+        )
+      }
+      if (flags.format === 'csv') {
+        throw new ConfigError(
+          '--embed not supported with --format csv (use json or ndjson)',
+        )
+      }
+    }
 
     const query = {
       status: flags.status,
       mailbox: flags.mailbox,
       tag: flags.tag,
       modifiedSince: flags.since ? parseRelativeDate(flags.since) : undefined,
+      ...(embed ? { embed } : {}),
     }
 
     const ora = (await import('ora')).default
