@@ -1,7 +1,7 @@
 {
   "name": "hscli",
   "version": "0.5.0",
-  "description": "CLI for Help Scout Inbox API 2.0",
+  "description": "Command-line interface for Help Scout",
   "type": "module",
   "license": "MIT",
   "author": "Eric Rodriguez",

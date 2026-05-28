@@ -1,6 +1,8 @@
 # hscli
 
-CLI for [Help Scout](https://www.helpscout.com/) Inbox API 2.0.
+Command-line interface for [Help Scout](https://www.helpscout.com/).
+
+Currently covers the **Mailbox API 2.0** (conversations, customers, mailboxes, users, tags, workflows, webhooks, reports). Aims to expand to **Docs**, **Beacon**, and **Help Desk** APIs over time.
 
 ## Install
 
