@@ -147,4 +147,50 @@ describe('hs conv watch', () => {
     expect(stdout).toContain('Need help with billing')
     expect(scope.isDone()).toBe(true)
   })
+
+  it('tracks lastSeen between polls and exits after max-polls', async () => {
+    // First poll: returns conversations with createdAt timestamps.
+    // Second poll: nock matcher asserts modifiedSince is the stripped-ms ISO
+    // string of the latest createdAt from the first poll (2024-06-15T09:00:00Z).
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query((q) => !q.modifiedSince)
+      .reply(200, fixture)
+      .get('/v2/conversations')
+      .query((q) => q.modifiedSince === '2024-06-15T09:00:00Z')
+      .reply(200, {
+        _embedded: { conversations: [] },
+        page: { size: 25, totalElements: 0, totalPages: 1, number: 1 },
+      })
+
+    const stdout = await runCmd(ConvWatchCommand, [
+      '--poll',
+      '0',
+      '--max-polls',
+      '2',
+      '--output',
+      'json',
+    ])
+
+    expect(stdout).toContain('Need help with billing')
+    expect(stdout).toContain('No new conversations.')
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('exits after first poll when --max-polls is 1', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query(true)
+      .reply(200, fixture)
+
+    const stdout = await runCmd(ConvWatchCommand, [
+      '--max-polls',
+      '1',
+      '--output',
+      'json',
+    ])
+
+    expect(stdout).toContain('Need help with billing')
+    expect(scope.isDone()).toBe(true)
+  })
 })

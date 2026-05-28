@@ -53,7 +53,10 @@ export default class ConvExportCommand extends BaseCommand {
     }
 
     const ora = (await import('ora')).default
-    const spinner = ora({ text: 'Exporting... page 1', stream: process.stderr }).start()
+    const spinner = ora({
+      text: 'Exporting... page 1',
+      stream: process.stderr,
+    }).start()
 
     const allItems = []
     let page = 1

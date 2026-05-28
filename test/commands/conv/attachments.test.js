@@ -157,4 +157,19 @@ describe('hs conv attachments', () => {
     expect(stdout).toContain('No results')
     expect(scope.isDone()).toBe(true)
   })
+
+  it('handles response with no _embedded.threads', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations/100/threads')
+      .reply(200, {})
+
+    const stdout = await runCmd(ConvAttachmentsCommand, [
+      '100',
+      '--output',
+      'table',
+    ])
+
+    expect(stdout).toContain('No results')
+    expect(scope.isDone()).toBe(true)
+  })
 })

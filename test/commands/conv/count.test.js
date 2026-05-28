@@ -93,4 +93,16 @@ describe('hs conv count', () => {
     expect(stdout).toContain('47')
     expect(scope.isDone()).toBe(true)
   })
+
+  it('defaults to 0 when response has no page field', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query(true)
+      .reply(200, {})
+
+    const stdout = await runCmd(ConvCountCommand, [])
+
+    expect(stdout.trim()).toBe('0')
+    expect(scope.isDone()).toBe(true)
+  })
 })

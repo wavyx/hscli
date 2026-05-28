@@ -109,4 +109,19 @@ describe('hs mailbox fields', () => {
     expect(stdout).toContain('No results')
     expect(scope.isDone()).toBe(true)
   })
+
+  it('handles response with no _embedded.fields', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/mailboxes/42/fields')
+      .reply(200, {})
+
+    const stdout = await runCmd(MailboxFieldsCommand, [
+      '42',
+      '--output',
+      'table',
+    ])
+
+    expect(stdout).toContain('No results')
+    expect(scope.isDone()).toBe(true)
+  })
 })

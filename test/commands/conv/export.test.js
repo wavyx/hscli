@@ -222,4 +222,101 @@ describe('hs conv export', () => {
     expect(output).toHaveLength(0)
     expect(scope.isDone()).toBe(true)
   })
+
+  it('handles response with no _embedded and no page metadata', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query(true)
+      .reply(200, {})
+
+    const stdout = await runCmd(ConvExportCommand, ['--format', 'json'])
+    const output = JSON.parse(stdout)
+
+    expect(output).toHaveLength(0)
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('parses --since 7d into an ISO modifiedSince', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query(
+        (q) =>
+          typeof q.modifiedSince === 'string' &&
+          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(q.modifiedSince),
+      )
+      .reply(200, fixture)
+
+    const stdout = await runCmd(ConvExportCommand, [
+      '--since',
+      '7d',
+      '--format',
+      'json',
+    ])
+    const output = JSON.parse(stdout)
+
+    expect(output).toHaveLength(2)
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('parses --since 2h into an ISO modifiedSince', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query(
+        (q) =>
+          typeof q.modifiedSince === 'string' &&
+          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(q.modifiedSince),
+      )
+      .reply(200, fixture)
+
+    const stdout = await runCmd(ConvExportCommand, [
+      '--since',
+      '2h',
+      '--format',
+      'json',
+    ])
+    const output = JSON.parse(stdout)
+
+    expect(output).toHaveLength(2)
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('parses --since 30m into an ISO modifiedSince', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query(
+        (q) =>
+          typeof q.modifiedSince === 'string' &&
+          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(q.modifiedSince),
+      )
+      .reply(200, fixture)
+
+    const stdout = await runCmd(ConvExportCommand, [
+      '--since',
+      '30m',
+      '--format',
+      'json',
+    ])
+    const output = JSON.parse(stdout)
+
+    expect(output).toHaveLength(2)
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('passes through --since as ISO date when not relative', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/conversations')
+      .query((q) => q.modifiedSince === '2024-01-01T00:00:00Z')
+      .reply(200, fixture)
+
+    const stdout = await runCmd(ConvExportCommand, [
+      '--since',
+      '2024-01-01T00:00:00Z',
+      '--format',
+      'json',
+    ])
+    const output = JSON.parse(stdout)
+
+    expect(output).toHaveLength(2)
+    expect(scope.isDone()).toBe(true)
+  })
 })

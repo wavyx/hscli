@@ -115,4 +115,30 @@ describe('hs tag usage', () => {
     expect(stdout).toContain('Tag not found: nonexistent')
     expect(scope.isDone()).toBe(true)
   })
+
+  it('defaults count to 0 when tag has no ticketCount field', async () => {
+    const noCountFixture = {
+      _embedded: {
+        tags: [
+          {
+            id: 3,
+            name: 'Empty',
+            slug: 'empty',
+            createdAt: '2024-03-01T00:00:00Z',
+          },
+        ],
+      },
+      page: { size: 50, totalElements: 1, totalPages: 1, number: 1 },
+    }
+
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/tags')
+      .query(true)
+      .reply(200, noCountFixture)
+
+    const stdout = await runCmd(TagUsageCommand, ['Empty'])
+
+    expect(stdout).toContain('Empty: 0')
+    expect(scope.isDone()).toBe(true)
+  })
 })

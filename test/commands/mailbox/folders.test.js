@@ -122,4 +122,19 @@ describe('hs mailbox folders', () => {
     expect(stdout).toContain('No results')
     expect(scope.isDone()).toBe(true)
   })
+
+  it('handles response with no _embedded.folders', async () => {
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/mailboxes/42/folders')
+      .reply(200, {})
+
+    const stdout = await runCmd(MailboxFoldersCommand, [
+      '42',
+      '--output',
+      'table',
+    ])
+
+    expect(stdout).toContain('No results')
+    expect(scope.isDone()).toBe(true)
+  })
 })

@@ -48,6 +48,10 @@ export default class ConvWatchCommand extends BaseCommand {
       hidden: true,
       default: false,
     }),
+    'max-polls': Flags.integer({
+      description: 'Maximum number of polls before exiting',
+      hidden: true,
+    }),
   }
 
   async run() {
@@ -97,16 +101,18 @@ export default class ConvWatchCommand extends BaseCommand {
 
     // First poll
     await poll()
+    let pollCount = 1
 
     if (flags.once) return
+    if (flags['max-polls'] && pollCount >= flags['max-polls']) return
 
     // Subsequent polls via setTimeout + async loop
     const loop = async () => {
       while (true) {
-        await new Promise((resolve) =>
-          setTimeout(resolve, flags.poll * 1000),
-        )
+        await new Promise((resolve) => setTimeout(resolve, flags.poll * 1000))
         await poll()
+        pollCount++
+        if (flags['max-polls'] && pollCount >= flags['max-polls']) return
       }
     }
 
