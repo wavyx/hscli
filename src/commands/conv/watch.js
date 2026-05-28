@@ -85,15 +85,14 @@ export default class ConvWatchCommand extends BaseCommand {
       if (items.length > 0) {
         await this.outputResults(items, columns)
 
-        // Find the latest createdAt among fetched items
+        // Find the latest createdAt among fetched items and bump lastSeen.
+        // HS API contract: every conversation has a valid ISO createdAt.
         const latest = items.reduce((max, item) => {
           const t = new Date(item.createdAt).getTime()
           return t > max ? t : max
         }, 0)
-        if (latest > 0) {
-          // Strip milliseconds — Help Scout rejects them
-          lastSeen = new Date(latest).toISOString().replace(/\.\d{3}Z$/, 'Z')
-        }
+        // Strip milliseconds — Help Scout rejects them
+        lastSeen = new Date(latest).toISOString().replace(/\.\d{3}Z$/, 'Z')
       } else {
         this.log('No new conversations.')
       }

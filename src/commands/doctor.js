@@ -86,10 +86,9 @@ export default class DoctorCommand extends BaseCommand {
 
     // 6. API reachable
     try {
-      const controller = new AbortController()
-      const timeout = setTimeout(() => controller.abort(), 5000)
-      await fetch('https://api.helpscout.net/v2', { signal: controller.signal })
-      clearTimeout(timeout)
+      await fetch('https://api.helpscout.net/v2', {
+        signal: AbortSignal.timeout(5000),
+      })
       results.push({ label: 'API reachable', ok: true })
     } catch {
       results.push({

@@ -243,4 +243,25 @@ describe('hs auth status', () => {
     expect(stdout).not.toContain('Name')
     expect(scope.isDone()).toBe(true)
   })
+
+  it('displays user info without email when only name is available', async () => {
+    mockGetTokens.mockResolvedValue({
+      accessToken: 'test-token',
+      refreshToken: 'test-refresh',
+      expiresAt: Date.now() + 86400000,
+      authMode: 'authorization_code',
+      credentialSource: 'byo',
+    })
+
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/users/me')
+      .reply(200, { id: 1, firstName: 'Solo', lastName: 'Name' })
+
+    const stdout = await runCmd(StatusCommand)
+
+    expect(stdout).toContain('Authenticated User')
+    expect(stdout).toContain('Solo Name')
+    expect(stdout).not.toContain('Email')
+    expect(scope.isDone()).toBe(true)
+  })
 })
