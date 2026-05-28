@@ -62,15 +62,15 @@ hs-backup/
 
 ## Resources Captured
 
-| Resource        | Endpoint                                                  | Layout                                                |
-| --------------- | --------------------------------------------------------- | ----------------------------------------------------- |
-| `users`         | `/v2/users`                                               | per-item under `account/users/`                       |
-| `teams`         | `/v2/teams`                                               | per-item under `account/teams/`                       |
-| `mailboxes`     | `/v2/mailboxes`                                           | `mailboxes/{id}/mailbox.json`                         |
-| `tags`          | `/v2/tags`                                                | single file `tags.json`                               |
-| `workflows`     | `/v2/workflows`                                           | single file `workflows.json`                          |
-| `webhooks`      | `/v2/webhooks`                                            | single file `webhooks.json`                           |
-| `customers`     | `/v2/customers`                                           | per-item under `customers/`                           |
+| Resource        | Endpoint                                   | Layout                                                |
+| --------------- | ------------------------------------------ | ----------------------------------------------------- |
+| `users`         | `/v2/users`                                | per-item under `account/users/`                       |
+| `teams`         | `/v2/teams`                                | per-item under `account/teams/`                       |
+| `mailboxes`     | `/v2/mailboxes`                            | `mailboxes/{id}/mailbox.json`                         |
+| `tags`          | `/v2/tags`                                 | single file `tags.json`                               |
+| `workflows`     | `/v2/workflows`                            | single file `workflows.json`                          |
+| `webhooks`      | `/v2/webhooks`                             | single file `webhooks.json`                           |
+| `customers`     | `/v2/customers`                            | per-item under `customers/`                           |
 | `conversations` | `/v2/conversations` (with `embed=threads`) | per-item under `conversations/{id}/conversation.json` |
 
 Conversations include their threads inline (and tags + primary customer
