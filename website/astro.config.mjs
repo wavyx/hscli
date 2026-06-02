@@ -10,6 +10,7 @@ export default defineConfig({
     starlight({
       title: 'hscli',
       description: 'Command-line interface for Help Scout',
+      customCss: ['./src/styles/helpscout.css'],
       social: [
         {
           icon: 'github',
