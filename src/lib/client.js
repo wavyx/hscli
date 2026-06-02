@@ -1,8 +1,14 @@
 import createDebug from 'debug'
-import { ApiError, RateLimitError, ServiceUnavailableError } from './errors.js'
+import {
+  ApiError,
+  CliError,
+  RateLimitError,
+  ServiceUnavailableError,
+} from './errors.js'
 
 const debug = createDebug('hs:client')
 const BASE_URL = 'https://api.helpscout.net'
+const BASE_ORIGIN = new URL(BASE_URL).origin
 
 function jitter() {
   return Math.floor(Math.random() * 1000)
@@ -25,11 +31,18 @@ export function createClient({
   onRefresh,
   timeout = 30_000,
   retry = true,
+  userAgent = 'hscli',
 }) {
   let token = accessToken
 
   async function request(method, path, { body, query, contentType } = {}) {
     const url = new URL(path, BASE_URL)
+    if (url.origin !== BASE_ORIGIN) {
+      throw new CliError(
+        `Refusing to send request to non-Help Scout host: ${url.origin}`,
+        { exitCode: 78 },
+      )
+    }
     if (query) {
       for (const [k, v] of Object.entries(query)) {
         if (v == null) continue
@@ -50,6 +63,7 @@ export function createClient({
       const headers = {
         authorization: `Bearer ${token}`,
         'content-type': contentType || 'application/json',
+        'user-agent': userAgent,
       }
 
       const res = await fetch(url, {

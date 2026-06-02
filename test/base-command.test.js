@@ -331,4 +331,27 @@ describe('BaseCommand', () => {
     expect(stdout).toContain('f@t.com')
     expect(stdout).not.toContain('First Name')
   })
+
+  it('sends an hscli User-Agent on API requests', async () => {
+    mockGetValidToken.mockResolvedValue('valid-token')
+    mockResolveCredentials.mockReturnValue({
+      clientId: 'cid',
+      clientSecret: 'csec',
+      source: 'profile',
+    })
+
+    nock.disableNetConnect()
+    try {
+      const scope = nock('https://api.helpscout.net')
+        .get('/v2/users/me')
+        .matchHeader('user-agent', /^hscli\/\d+\.\d+\.\d+/)
+        .reply(200, { id: 1, firstName: 'UA', lastName: 'User' })
+
+      const stdout = await captureLogs(UserMeCommand, ['--output', 'json'])
+      expect(stdout).toContain('UA')
+      expect(scope.isDone()).toBe(true)
+    } finally {
+      nock.enableNetConnect()
+    }
+  })
 })

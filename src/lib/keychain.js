@@ -1,33 +1,31 @@
-import Conf from 'conf'
 import createDebug from 'debug'
+import { CliError } from './errors.js'
 
 const debug = createDebug('hs:keychain')
 const SERVICE = 'hscli'
 
 /** @type {typeof import('@napi-rs/keyring').Entry | null} */
 let Entry = null
-/** @type {Conf | null} */
-let fallbackStore = null
 
 try {
   const mod = await import('@napi-rs/keyring')
   Entry = mod.Entry
   debug('using OS keychain via @napi-rs/keyring')
 } catch {
-  debug('keyring unavailable, falling back to encrypted file store')
+  debug('OS keychain unavailable')
 }
 
 function getEntry(account) {
   return new Entry(SERVICE, account)
 }
 
-function getFallbackStore() {
-  fallbackStore ??= new Conf({
-    projectName: 'hscli',
-    configName: 'credentials',
-    encryptionKey: `${SERVICE}-fallback`,
-  })
-  return fallbackStore
+function keychainRequired() {
+  throw new CliError(
+    'OS keychain unavailable. hscli stores credentials in your operating system ' +
+      'keychain (macOS Keychain, Windows Credential Manager, or libsecret on Linux) ' +
+      'and refuses to write them to disk in plaintext. Enable a system keychain and retry.',
+    { exitCode: 78 },
+  )
 }
 
 /**
@@ -44,13 +42,11 @@ function getFallbackStore() {
  * @returns {Promise<StoredTokens | null>}
  */
 export async function getTokens(profile) {
+  if (!Entry) return null
   const account = `${profile}/tokens`
   try {
-    if (Entry) {
-      const raw = getEntry(account).getPassword()
-      return raw ? JSON.parse(raw) : null
-    }
-    return getFallbackStore().get(account) ?? null
+    const raw = getEntry(account).getPassword()
+    return raw ? JSON.parse(raw) : null
   } catch (err) {
     debug('getTokens error: %s', err.message)
     return null
@@ -62,22 +58,16 @@ export async function getTokens(profile) {
  * @param {StoredTokens} tokens
  */
 export async function setTokens(profile, tokens) {
+  if (!Entry) keychainRequired()
   const account = `${profile}/tokens`
-  if (Entry) {
-    getEntry(account).setPassword(JSON.stringify(tokens))
-  } else {
-    getFallbackStore().set(account, tokens)
-  }
+  getEntry(account).setPassword(JSON.stringify(tokens))
 }
 
 /** @param {string} profile */
 export async function deleteTokens(profile) {
+  if (!Entry) return
   const account = `${profile}/tokens`
-  if (Entry) {
-    getEntry(account).deletePassword()
-  } else {
-    getFallbackStore().delete(account)
-  }
+  getEntry(account).deletePassword()
 }
 
 export function isKeychainAvailable() {

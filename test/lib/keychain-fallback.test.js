@@ -1,6 +1,8 @@
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
-// Mock @napi-rs/keyring to simulate unavailable native module
+// Simulate an environment where the native OS keyring is unavailable
+// (e.g. Linux without libsecret). hscli must refuse to store credentials
+// rather than silently fall back to a weakly-obfuscated file.
 vi.mock('@napi-rs/keyring', () => {
   throw new Error('Native module not available')
 })
@@ -8,7 +10,7 @@ vi.mock('@napi-rs/keyring', () => {
 const { getTokens, setTokens, deleteTokens, isKeychainAvailable } =
   await import('../../src/lib/keychain.js')
 
-const testProfile = `hscli-fallback-test-${Date.now()}`
+const testProfile = `hscli-nokeychain-${Date.now()}`
 
 const sampleTokens = {
   accessToken: 'fallback-access-token',
@@ -18,36 +20,22 @@ const sampleTokens = {
   credentialSource: 'byo',
 }
 
-describe('keychain fallback (no native keyring)', () => {
-  afterEach(async () => {
-    await deleteTokens(testProfile)
-  })
-
+describe('keychain when OS keychain is unavailable', () => {
   it('isKeychainAvailable returns false', () => {
     expect(isKeychainAvailable()).toBe(false)
   })
 
-  it('stores and retrieves tokens via fallback store', async () => {
-    await setTokens(testProfile, sampleTokens)
-    const result = await getTokens(testProfile)
-    expect(result).toEqual(sampleTokens)
+  it('setTokens throws a clear keychain-unavailable error (never writes plaintext)', async () => {
+    await expect(setTokens(testProfile, sampleTokens)).rejects.toThrow(
+      /keychain/i,
+    )
   })
 
-  it('deletes tokens via fallback store', async () => {
-    await setTokens(testProfile, sampleTokens)
-    await deleteTokens(testProfile)
-    const result = await getTokens(testProfile)
-    expect(result).toBeNull()
+  it('getTokens returns null instead of crashing', async () => {
+    await expect(getTokens(testProfile)).resolves.toBeNull()
   })
 
-  it('returns null for non-existent profile', async () => {
-    const result = await getTokens(`no-such-fallback-${Date.now()}`)
-    expect(result).toBeNull()
-  })
-
-  it('does not throw when deleting non-existent profile', async () => {
-    await expect(
-      deleteTokens(`nonexistent-fallback-${Date.now()}`),
-    ).resolves.toBeUndefined()
+  it('deleteTokens is a no-op that does not throw', async () => {
+    await expect(deleteTokens(testProfile)).resolves.toBeUndefined()
   })
 })

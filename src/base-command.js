@@ -84,6 +84,7 @@ export default class BaseCommand extends Command {
       accessToken: token,
       retry: !flags['no-retry'],
       timeout: flags.timeout,
+      userAgent: `hscli/${this.config.version}`,
       onRefresh: async () => {
         const stored = await getTokens(this.activeProfile)
         if (!stored?.refreshToken) throw new AuthRequiredError()

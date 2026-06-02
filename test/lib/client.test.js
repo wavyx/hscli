@@ -480,4 +480,57 @@ describe('createClient', () => {
       }
     })
   })
+
+  describe('host locking', () => {
+    it('refuses a protocol-relative path that resolves off-host', async () => {
+      nock.disableNetConnect()
+      try {
+        await expect(client.get('//evil.com/steal')).rejects.toThrow(
+          /Help Scout host/i,
+        )
+      } finally {
+        nock.enableNetConnect()
+      }
+    })
+
+    it('refuses an absolute off-host URL as the path', async () => {
+      nock.disableNetConnect()
+      try {
+        await expect(client.get('https://evil.com/steal')).rejects.toThrow(
+          /Help Scout host/i,
+        )
+      } finally {
+        nock.enableNetConnect()
+      }
+    })
+
+    it('still allows normal relative API paths', async () => {
+      const scope = nock(API_BASE).get('/v2/ok').reply(200, { ok: true })
+      const result = await client.get('/v2/ok')
+      expect(result).toEqual({ ok: true })
+      expect(scope.isDone()).toBe(true)
+    })
+  })
+
+  describe('User-Agent', () => {
+    it('sends the provided User-Agent header', async () => {
+      nock.disableNetConnect()
+      try {
+        const uaClient = createClient({
+          accessToken: 'test-token',
+          retry: false,
+          timeout: 5000,
+          userAgent: 'hscli/9.9.9',
+        })
+        const scope = nock(API_BASE)
+          .get('/v2/ua')
+          .matchHeader('user-agent', 'hscli/9.9.9')
+          .reply(200, { ok: true })
+        await uaClient.get('/v2/ua')
+        expect(scope.isDone()).toBe(true)
+      } finally {
+        nock.enableNetConnect()
+      }
+    })
+  })
 })
