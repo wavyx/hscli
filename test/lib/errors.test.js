@@ -33,7 +33,7 @@ describe('AuthRequiredError', () => {
   it('has exitCode 77 and correct message', () => {
     const err = new AuthRequiredError()
     expect(err.exitCode).toBe(77)
-    expect(err.message).toBe('Not authenticated. Run: hs auth login')
+    expect(err.message).toBe('Not authenticated. Run: hscli auth login')
     expect(err).toBeInstanceOf(CliError)
   })
 })

@@ -98,7 +98,7 @@ export default class LoginCommand extends BaseCommand {
         )
         this.log(
           chalk.yellow(
-            'run `hs auth setup` to configure your app ID and secret.',
+            'run `hscli auth setup` to configure your app ID and secret.',
           ),
         )
         this.exit(77)

@@ -71,7 +71,7 @@ describe('resolveCredentials', () => {
 
   it('throws ConfigError when no credentials configured', () => {
     expect(() => resolveCredentials({})).toThrow(
-      'No OAuth app configured. Run: hs auth setup',
+      'No OAuth app configured. Run: hscli auth setup',
     )
   })
 })
@@ -314,6 +314,7 @@ describe('authorizationCodeFlow', () => {
       clientId: 'test-id',
       clientSecret: 'test-secret',
       timeout: 5000,
+      port: 0,
     })
 
     // Wait for the server to start and open to be called
@@ -341,6 +342,7 @@ describe('authorizationCodeFlow', () => {
       clientId: 'test-id',
       clientSecret: 'test-secret',
       timeout: 5000,
+      port: 0,
     })
 
     await vi.waitFor(() => expect(capturedAuthUrl).toBeDefined())
@@ -371,6 +373,7 @@ describe('authorizationCodeFlow', () => {
       clientId: 'test-id',
       clientSecret: 'test-secret',
       timeout: 5000,
+      port: 0,
     })
     // Attach rejection handler immediately to avoid unhandled rejection warning
     const assertion = expect(flowPromise).rejects.toThrow(
@@ -396,6 +399,7 @@ describe('authorizationCodeFlow', () => {
       clientId: 'test-id',
       clientSecret: 'test-secret',
       timeout: 5000,
+      port: 0,
     })
     const assertion = expect(flowPromise).rejects.toThrow(
       'No authorization code received',
@@ -424,6 +428,7 @@ describe('authorizationCodeFlow', () => {
       clientId: 'test-id',
       clientSecret: 'test-secret',
       timeout: 5000,
+      port: 0,
     })
     const assertion = expect(flowPromise).rejects.toThrow(
       'Authorization code expired',
@@ -448,8 +453,52 @@ describe('authorizationCodeFlow', () => {
       clientId: 'test-id',
       clientSecret: 'test-secret',
       timeout: 50, // very short timeout
+      port: 0,
     })
 
     await expect(flowPromise).rejects.toThrow('Authentication timed out')
+  })
+
+  it('rejects with a helpful error when the fixed port is already in use', async () => {
+    const { createServer } = await import('node:http')
+    const blocker = createServer((_req, res) => res.end())
+    await new Promise((resolve) => blocker.listen(9999, '127.0.0.1', resolve))
+
+    try {
+      await expect(
+        authorizationCodeFlow({
+          clientId: 'test-id',
+          clientSecret: 'test-secret',
+          timeout: 5000,
+        }),
+      ).rejects.toThrow(/port 9999/i)
+    } finally {
+      await new Promise((resolve) => blocker.close(resolve))
+    }
+  })
+
+  it('defaults the loopback redirect to the fixed port 9999', async () => {
+    nock(TOKEN_URL)
+      .post(
+        '/v2/oauth2/token',
+        (body) => body.grant_type === 'authorization_code',
+      )
+      .reply(200, { access_token: 'tok', refresh_token: 'rt', expires_in: 100 })
+
+    const flowPromise = authorizationCodeFlow({
+      clientId: 'test-id',
+      clientSecret: 'test-secret',
+      timeout: 5000,
+    })
+
+    await vi.waitFor(() => expect(capturedAuthUrl).toBeDefined())
+
+    const authUrl = new URL(capturedAuthUrl)
+    const redirectUri = new URL(authUrl.searchParams.get('redirect_uri'))
+    expect(redirectUri.port).toBe('9999')
+
+    const state = authUrl.searchParams.get('state')
+    await fetch(`http://127.0.0.1:9999/callback?code=c&state=${state}`)
+    await flowPromise
   })
 })

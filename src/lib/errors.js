@@ -8,7 +8,7 @@ export class CliError extends Error {
 
 export class AuthRequiredError extends CliError {
   constructor() {
-    super('Not authenticated. Run: hs auth login', { exitCode: 77 })
+    super('Not authenticated. Run: hscli auth login', { exitCode: 77 })
   }
 }
 

@@ -11,6 +11,7 @@ const TOKEN_URL = 'https://api.helpscout.net/v2/oauth2/token'
 const AUTH_URL =
   'https://secure.helpscout.net/authentication/authorizeClientApplication'
 const REFRESH_BUFFER_MS = 5 * 60 * 1000
+const REDIRECT_PORT = 9999
 
 /**
  * @typedef {object} ResolvedCredentials
@@ -52,7 +53,7 @@ export function resolveCredentials({ flags, profile } = {}) {
     }
   }
 
-  throw new ConfigError('No OAuth app configured. Run: hs auth setup')
+  throw new ConfigError('No OAuth app configured. Run: hscli auth setup')
 }
 
 /**
@@ -60,12 +61,15 @@ export function resolveCredentials({ flags, profile } = {}) {
  * @param {string} options.clientId
  * @param {string} options.clientSecret
  * @param {number} [options.timeout]
+ * @param {number} [options.port] Loopback callback port (must match the
+ *   Redirection URL registered in the Help Scout OAuth app). Defaults to 9999.
  * @returns {Promise<{accessToken: string, refreshToken: string, expiresIn: number}>}
  */
 export function authorizationCodeFlow({
   clientId,
   clientSecret,
   timeout = 120_000,
+  port = REDIRECT_PORT,
 }) {
   return new Promise((resolve, reject) => {
     const state = randomBytes(16).toString('hex')
@@ -129,9 +133,20 @@ export function authorizationCodeFlow({
       }
     })
 
-    server.listen(0, '127.0.0.1', () => {
-      const port = server.address().port
-      const redirectUri = `http://127.0.0.1:${port}/callback`
+    server.on('error', (err) => {
+      clearTimeout(timer)
+      reject(
+        new CliError(
+          `Cannot start the local callback server on port ${port}: ${err.message}. ` +
+            'If the port is in use, close whatever is using it and run `hscli auth login` again.',
+          { exitCode: 78 },
+        ),
+      )
+    })
+
+    server.listen(port, '127.0.0.1', () => {
+      const boundPort = server.address().port
+      const redirectUri = `http://127.0.0.1:${boundPort}/callback`
       const authUrl = `${AUTH_URL}?client_id=${encodeURIComponent(clientId)}&state=${state}&redirect_uri=${encodeURIComponent(redirectUri)}`
       debug('opening browser for auth: %s', authUrl)
       open(authUrl)

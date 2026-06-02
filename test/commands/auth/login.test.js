@@ -143,7 +143,7 @@ describe('hs auth login', () => {
     const stdout = await runCmd(LoginCommand, ['--client-credentials'])
 
     expect(stdout).toContain('Invalid client credentials')
-    expect(stdout).toContain('hs auth setup')
+    expect(stdout).toContain('hscli auth setup')
   })
 
   it('runs authorization code flow when --client-credentials is NOT passed', async () => {

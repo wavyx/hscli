@@ -37,7 +37,7 @@ export default class DoctorCommand extends BaseCommand {
       ok: keychainOk,
       detail: keychainOk
         ? undefined
-        : 'OS keychain unavailable, using fallback file store',
+        : 'OS keychain unavailable; hscli cannot store credentials',
     })
 
     // 3. Active profile set
@@ -56,7 +56,7 @@ export default class DoctorCommand extends BaseCommand {
       results.push({
         label: 'Tokens present',
         ok: tokens !== null,
-        detail: tokens ? undefined : 'Run: hs auth login',
+        detail: tokens ? undefined : 'Run: hscli auth login',
       })
     } else {
       results.push({
@@ -74,7 +74,7 @@ export default class DoctorCommand extends BaseCommand {
         ok: notExpired,
         detail: notExpired
           ? undefined
-          : 'Token expired, re-authenticate with: hs auth login',
+          : 'Token expired, re-authenticate with: hscli auth login',
       })
     } else {
       results.push({

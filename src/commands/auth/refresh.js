@@ -20,7 +20,7 @@ export default class RefreshCommand extends BaseCommand {
     const tokens = await getTokens(this.activeProfile)
     if (!tokens?.refreshToken) {
       throw new CliError(
-        'No refresh token available. Client-credentials sessions cannot be refreshed this way — run `hs auth login` instead.',
+        'No refresh token available. Client-credentials sessions cannot be refreshed this way — run `hscli auth login` instead.',
         { exitCode: 77 },
       )
     }

@@ -22,7 +22,7 @@ export default class AliasListCommand extends BaseCommand {
 
     if (entries.length === 0) {
       this.log('No aliases configured.')
-      this.log('Create one: hs alias set <name> "<command>"')
+      this.log('Create one: hscli alias set <name> "<command>"')
       return
     }
 

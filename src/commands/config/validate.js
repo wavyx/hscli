@@ -60,7 +60,7 @@ export default class ConfigValidateCommand extends BaseCommand {
         results.push({
           label: 'OAuth app configured',
           ok: false,
-          detail: 'Run: hs auth setup',
+          detail: 'Run: hscli auth setup',
         })
       }
     } else {

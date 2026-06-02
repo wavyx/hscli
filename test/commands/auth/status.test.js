@@ -74,7 +74,7 @@ describe('hs auth status', () => {
     const stdout = await runCmd(StatusCommand)
 
     expect(stdout).toContain('Not authenticated')
-    expect(stdout).toContain('hs auth login')
+    expect(stdout).toContain('hscli auth login')
   })
 
   it('shows expired token status', async () => {
@@ -213,14 +213,14 @@ describe('hs auth status', () => {
     expect(stdout).toMatch(/\dd \d+h/)
   })
 
-  it('shows encrypted file when keychain unavailable', async () => {
+  it('reports keychain unavailable when no OS keychain is present', async () => {
     const { isKeychainAvailable } = await import('../../../src/lib/keychain.js')
     isKeychainAvailable.mockReturnValueOnce(false)
     mockGetTokens.mockResolvedValue(null)
 
     const stdout = await runCmd(StatusCommand)
 
-    expect(stdout).toContain('encrypted file')
+    expect(stdout).toContain('unavailable')
   })
 
   it('displays user info without name when only email is available', async () => {

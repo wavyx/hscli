@@ -33,13 +33,13 @@ export default async function commandNotFound(options) {
   }
 
   process.stderr.write(
-    `${chalk.red('Error:')} ${chalk.yellow(options.id)} is not a hs command.\n`,
+    `${chalk.red('Error:')} ${chalk.yellow(options.id)} is not a hscli command.\n`,
   )
   process.stderr.write(
-    `Run ${chalk.cyan('hs help')} for a list of available commands.\n`,
+    `Run ${chalk.cyan('hscli help')} for a list of available commands.\n`,
   )
   process.stderr.write(
-    `Run ${chalk.cyan('hs alias list')} to see configured aliases.\n`,
+    `Run ${chalk.cyan('hscli alias list')} to see configured aliases.\n`,
   )
   process.exit(127)
 }

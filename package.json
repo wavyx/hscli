@@ -14,12 +14,13 @@
     "url": "https://github.com/wavyx/hscli/issues"
   },
   "bin": {
-    "hs": "./bin/run.js"
+    "hscli": "./bin/run.js"
   },
   "files": [
     "bin",
     "src",
-    "oclif.manifest.json"
+    "oclif.manifest.json",
+    "CHANGELOG.md"
   ],
   "engines": {
     "node": ">=20"
@@ -34,7 +35,7 @@
     "inbox"
   ],
   "oclif": {
-    "bin": "hs",
+    "bin": "hscli",
     "dirname": "hscli",
     "commands": {
       "strategy": "pattern",

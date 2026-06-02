@@ -156,9 +156,9 @@ describe('command-not-found hook', () => {
     expect(exitCalls[0]).toBe(127)
     const writes = stderrSpy.mock.calls.map((c) => c[0]).join('')
     expect(writes).toContain('bogus')
-    expect(writes).toContain('is not a hs command')
-    expect(writes).toContain('hs help')
-    expect(writes).toContain('hs alias list')
+    expect(writes).toContain('is not a hscli command')
+    expect(writes).toContain('hscli help')
+    expect(writes).toContain('hscli alias list')
   })
 
   it('handles missing options.argv (undefined) gracefully', async () => {

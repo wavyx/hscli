@@ -19,7 +19,7 @@ export default class ProfileListCommand extends BaseCommand {
     if (activeTokens) names.add(active)
 
     if (names.size === 0) {
-      this.log('No profiles configured. Run: hs auth login')
+      this.log('No profiles configured. Run: hscli auth login')
       return
     }
 

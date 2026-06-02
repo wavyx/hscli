@@ -17,9 +17,7 @@ export default class StatusCommand extends BaseCommand {
     await this.parse(StatusCommand)
 
     const tokens = await getTokens(this.activeProfile)
-    const keychainType = isKeychainAvailable()
-      ? 'OS keychain'
-      : 'encrypted file'
+    const keychainType = isKeychainAvailable() ? 'OS keychain' : 'unavailable'
 
     this.log(chalk.bold('Auth Status'))
     this.log('')
@@ -29,7 +27,7 @@ export default class StatusCommand extends BaseCommand {
     if (!tokens) {
       this.log(`  Status:     ${chalk.red('Not authenticated')}`)
       this.log('')
-      this.log(`Run ${chalk.cyan('hs auth login')} to authenticate.`)
+      this.log(`Run ${chalk.cyan('hscli auth login')} to authenticate.`)
       return
     }
 

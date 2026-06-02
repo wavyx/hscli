@@ -89,7 +89,7 @@ describe('hs config validate', () => {
     expect(stdout).toContain('OAuth app configured')
     expect(stdout).toContain('FAIL')
     expect(stdout).toContain('1 check failed')
-    expect(stdout).toContain('Run: hs auth setup')
+    expect(stdout).toContain('Run: hscli auth setup')
 
     if (prevId !== undefined) process.env.HSCLI_APP_ID = prevId
     if (prevSecret !== undefined) process.env.HSCLI_APP_SECRET = prevSecret
