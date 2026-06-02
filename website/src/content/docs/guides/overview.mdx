@@ -1,0 +1,38 @@
+---
+title: Overview
+description: What hscli is, who it's for, and why it's built the way it is.
+---
+
+**hscli** is a fast, scriptable command-line interface for [Help Scout](https://www.helpscout.com/).
+It drives conversations, customers, reporting, and full-account backups from your
+terminal — and it's designed so that **CI pipelines and AI agents** can use it just
+as easily as a human can.
+
+## Why it exists
+
+The Help Scout web app is built for interactive work. hscli is built for the opposite:
+repeatable, scriptable, unattended work. Three properties make that reliable.
+
+- **Structured output** — every command supports `--output table|json|yaml|csv`, so the
+  result is machine-readable with no scraping.
+- **Deterministic exit codes** — `0` success, `2` auth error, `5` rate-limited, and so
+  on. A script or agent always knows what happened. See [Exit codes](/automation/exit-codes/).
+- **Secure by default** — OAuth tokens live only in your OS keychain, never in plaintext
+  on disk, and the `hscli api` escape hatch is locked to the Help Scout host.
+
+## A first taste
+
+```bash frame="terminal" title="zsh — hscli"
+# list the active queue as a table
+hscli conv list --status active
+
+# or as JSON for a script or an agent
+hscli conv list --status active --output json --fields id,subject
+```
+
+## Where to next
+
+- [Installation](/guides/installation/) — get the `hscli` command on your machine.
+- [Authentication](/guides/authentication/) — connect your Help Scout account.
+- [Using with agents](/automation/agents/) — point Claude Code or Codex at hscli.
+- [Command reference](/reference/commands/) — every command, flag, and exit code.

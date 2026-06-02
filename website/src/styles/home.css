@@ -1,0 +1,69 @@
+/* ============================================================
+   hscli · splash homepage styles (Starlight)
+   Loaded globally via customCss but scoped to the home page.
+   Uses Starlight --sl-* tokens so it follows light/dark for free.
+   ============================================================ */
+
+:root {
+  --term-bg: #0a141b;
+  --term-border: #1e2e38;
+  --term-fg: #d6e2ea;
+}
+
+/* Roomier hero on the splash template */
+.hscli-home + * , .hero { --hscli-maxw: 1100px; }
+
+/* ---------------- Terminal showpiece (hero image.html) ---------------- */
+.term {
+  width: 100%;
+  background: var(--term-bg);
+  border: 1px solid var(--term-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(42,157,244,.08);
+  text-align: left;
+}
+.term__bar { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--term-border); }
+.term__dots { display: flex; gap: 7px; }
+.term__dots i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+.term__dots i:nth-child(1){ background:#ff5f57; } .term__dots i:nth-child(2){ background:#febc2e; } .term__dots i:nth-child(3){ background:#28c840; }
+.term__title { font-family: var(--sl-font-mono); font-size: 12px; color: #7e94a2; margin: 0 auto; }
+.term__body { padding: 18px 20px; font-family: var(--sl-font-mono); font-size: 13px; line-height: 1.75; overflow-x: auto; color: var(--term-fg); }
+.term__body .row { white-space: pre; }
+.term__body .out { color: #93a7b4; }
+.t-prompt{color:#4facf4} .t-cmd{color:#eaf1f6;font-weight:600} .t-sub{color:#87c8f8}
+.t-flag{color:#ffb454} .t-str{color:#34c77b} .t-comment{color:#5e7585;font-style:italic}
+.t-dim{color:#6e8492}
+
+/* ---------------- Custom sections below the hero ---------------- */
+.hscli-home { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+.hscli-home .sec-head { max-width: 620px; margin: 4rem 0 2rem; }
+.hscli-home .sec-head.center { margin-inline: auto; text-align: center; }
+.hscli-home .sec-eyebrow { font-family: var(--sl-font-mono); font-size: .75rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--sl-color-text-accent); margin: 0 0 .6rem; }
+.hscli-home .sec-title { font-family: 'Space Grotesk Variable', 'Space Grotesk', var(--sl-font); font-weight: 700; font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.02em; margin: 0 0 .5rem; color: var(--sl-color-white); }
+.hscli-home .sec-desc { color: var(--sl-color-gray-2); font-size: 1.05rem; margin: 0; }
+
+/* features */
+.feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.feature-card { background: var(--sl-color-gray-6); border: 1px solid var(--sl-color-hairline); border-radius: 16px; padding: 1.4rem; transition: border-color .15s, transform .15s; }
+.feature-card:hover { border-color: var(--sl-color-accent); transform: translateY(-2px); }
+.feature-card__icon { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; background: var(--sl-color-accent-low); color: var(--sl-color-text-accent); margin-bottom: 1rem; }
+.feature-card h3 { font-family: 'Space Grotesk Variable', 'Space Grotesk', var(--sl-font); font-size: 1.05rem; margin: 0 0 .5rem; color: var(--sl-color-white); }
+.feature-card p { margin: 0; font-size: .9rem; line-height: 1.6; color: var(--sl-color-gray-2); }
+.feature-card code { font-family: var(--sl-font-mono); font-size: .8rem; color: var(--sl-color-text-accent); }
+
+/* recipes band — COBALT/CORAL: coral energizes this section */
+.recipes-band { margin: 4rem -50vw 0; padding: 4rem 50vw; background: var(--sl-color-gray-6); border-block: 1px solid var(--sl-color-hairline); }
+.recipes-inner { max-width: 1100px; margin: 0 auto; }
+.recipes-band .sec-eyebrow { color: var(--hs-coral); }
+.recipe-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+.recipe { background: var(--sl-color-black); border: 1px solid var(--sl-color-hairline); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+.recipe__head { padding: 1.1rem 1.2rem .9rem; }
+.recipe__tag { display: inline-flex; align-items: center; gap: .45rem; font-family: var(--sl-font-mono); font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--hs-coral); margin-bottom: .6rem; }
+.recipe h3 { font-family: 'Space Grotesk Variable', 'Space Grotesk', var(--sl-font); font-size: 1.05rem; margin: 0 0 .35rem; color: var(--sl-color-white); }
+.recipe p { margin: 0; font-size: .85rem; line-height: 1.55; color: var(--sl-color-gray-2); }
+.recipe__code { margin-top: auto; background: var(--term-bg); border-top: 1px solid var(--term-border); padding: .9rem 1rem; font-family: var(--sl-font-mono); font-size: .75rem; line-height: 1.7; overflow-x: auto; color: var(--term-fg); }
+.recipe__code .row { white-space: pre; }
+
+@media (max-width: 980px) { .feature-grid { grid-template-columns: repeat(2,1fr); } .recipe-grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .feature-grid { grid-template-columns: 1fr; } }

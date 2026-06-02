@@ -1,0 +1,53 @@
+---
+title: Output & filtering
+description: Shape hscli output with formats, jq expressions, and field projection.
+---
+
+Every hscli command shares the same output machinery, so once you learn it for one
+command you know it for all of them.
+
+## Formats
+
+Set with `--output` (or the `HSCLI_OUTPUT` env var).
+
+| Value | Use it for |
+| --- | --- |
+| `table` | Human-readable terminal output (default). |
+| `json` | Agents, `jq`, and scripting. |
+| `yaml` | Config files and diffs. |
+| `csv` | Spreadsheets and BI tools. |
+
+```bash frame="terminal"
+hscli conv list --output json
+hscli report --output csv > report.csv
+```
+
+## Filter with `--jq`
+
+Apply a [jq](https://jqlang.github.io/jq/) expression to JSON output without leaving the
+command:
+
+```bash frame="terminal" title="ids of conversations tagged resolved"
+hscli conv list --status active --jq '.[] | select(.tags[]? == "resolved") | .id'
+```
+
+## Project with `--fields`
+
+Trim the payload to just the columns you need — faster, and easier for an agent to read:
+
+```bash frame="terminal"
+hscli conv list --output json --fields id,subject,status
+```
+
+## Compose with the shell
+
+```bash frame="terminal" title="close everything tagged resolved"
+hscli conv list --status active \
+  --jq '.[] | select(.tags[]? == "resolved") | .id' \
+  | xargs -I{} hscli conv status {} --set closed
+```
+
+:::note
+`--jq` runs inside hscli, so you don't need `jq` installed — but piping to real `jq`,
+`xargs`, `awk`, etc. works exactly as you'd expect.
+:::

@@ -1,0 +1,38 @@
+---
+title: Customers
+description: Search, create, and manage Help Scout customer records.
+---
+
+The `customer` group works with the people behind your conversations. See the
+[command reference](/reference/commands/#customer) for all flags.
+
+## Search and list
+
+```bash frame="terminal" title="zsh — hscli"
+hscli customer list --query "acme"
+hscli customer list --email lou@hey.com --output json
+```
+
+## Read a profile
+
+```bash frame="terminal"
+hscli customer get 99120 --output yaml
+```
+
+## Create a record
+
+```bash frame="terminal"
+hscli customer create --email kai@studio.co --name "Kai Okafor"
+```
+
+## Merge duplicates
+
+```bash frame="terminal"
+# fold the duplicate (id 99121) into the canonical record (id 99120)
+hscli customer merge 99121 --into 99120
+```
+
+:::caution
+`customer merge` is irreversible. Run a [backup](/guides/backups/) first if you're merging
+in bulk.
+:::

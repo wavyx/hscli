@@ -1,0 +1,181 @@
+/* ============================================================
+   hscli · Starlight theme override
+   Drop in as a customCss entry. Maps the hscli design system
+   (Help Scout Cobalt + Coral) onto Starlight's --sl-* tokens.
+   Dark is the default; light is fully supported.
+   ============================================================ */
+
+/* ---------------- Fonts ----------------
+   Loaded here for convenience. For production, prefer Fontsource
+   (see README) so fonts are self-hosted and base-path safe. */
+@import '@fontsource-variable/hanken-grotesk';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/jetbrains-mono';
+
+:root {
+  /* hscli brand constants */
+  --hs-cobalt: #1292EE;
+  --hs-coral:  #FF6B5C;
+
+  /* Starlight type system */
+  --sl-font: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  --sl-font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+/* ===================== DARK (default) ===================== */
+:root {
+  /* accent ramp — Cobalt (matches mockup --accent #2A9DF4) */
+  --sl-color-accent-low:  #07314f;
+  --sl-color-accent:      #2a9df4;
+  --sl-color-accent-high: #9fd2f7;
+
+  /* gray ramp tuned to Help Scout "Mirage" navy */
+  --sl-color-white:  #eaf1f6;
+  --sl-color-gray-1: #dce6ec;
+  --sl-color-gray-2: #9fb2bf;
+  --sl-color-gray-3: #6e8492;
+  --sl-color-gray-4: #3a5260;
+  --sl-color-gray-5: #2a3d49;
+  --sl-color-gray-6: #16242e;
+  --sl-color-black:  #0e1a22;
+
+  --sl-color-bg-nav: color-mix(in srgb, var(--sl-color-black) 82%, transparent);
+  --sl-color-bg-sidebar: var(--sl-color-black);
+  --sl-color-hairline: #213139;
+  --sl-color-hairline-shade: #1a2932;
+  --sl-color-text-accent: #4facf4;
+}
+
+/* ===================== LIGHT ===================== */
+:root[data-theme='light'] {
+  --sl-color-accent-low:  #d6ebfb;
+  --sl-color-accent:      #0b73d6;
+  --sl-color-accent-high: #073257;
+
+  --sl-color-white:  #16242e;   /* darkest (text/headings) */
+  --sl-color-gray-1: #1f2d37;
+  --sl-color-gray-2: #54616c;
+  --sl-color-gray-3: #8493a0;
+  --sl-color-gray-4: #ccd8e2;
+  --sl-color-gray-5: #e2e9f0;
+  --sl-color-gray-6: #f5f8fc;
+  --sl-color-gray-7: #fbfcfe;
+  --sl-color-black:  #ffffff;   /* page bg */
+
+  --sl-color-bg-nav: color-mix(in srgb, #ffffff 82%, transparent);
+  --sl-color-bg-sidebar: #ffffff;
+  --sl-color-hairline: #e2e9f0;
+  --sl-color-text-accent: #0b73d6;
+}
+
+/* ---------------- Chrome polish ---------------- */
+
+/* Frosted, hairline header (matches mockup) */
+.header {
+  backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+/* Display font on headings for techy character */
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3,
+h1#_top,
+.hero h1,
+.hero .tagline {
+  font-family: 'Space Grotesk Variable', 'Space Grotesk', var(--sl-font);
+  letter-spacing: -0.02em;
+}
+
+/* Active sidebar item: cobalt pill + left rule */
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover {
+  background: var(--sl-color-accent-low);
+  color: var(--sl-color-text-accent);
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Eyebrow / mono small caps used in custom content */
+.eyebrow {
+  font-family: var(--sl-font-mono);
+  font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--sl-color-text-accent);
+}
+
+/* Inline code → cobalt, subtle chip */
+.sl-markdown-content :not(pre) > code {
+  color: var(--sl-color-text-accent);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 5px;
+}
+
+/* Hero primary action = cobalt; minimal = ghost. Starlight handles
+   variants via --sl-color-accent automatically. */
+
+/* Table header: mono eyebrow style */
+.sl-markdown-content th {
+  font-family: var(--sl-font-mono);
+  font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+}
+
+/* ---------------- Cobalt / Coral split ----------------
+   Coral is the *accent on energy* — used in custom badges and the
+   homepage "recipes" band. Cobalt stays the product/structure color. */
+
+/* Badges (used in the command reference) */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--sl-font-mono); font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.03em; padding: 2px 9px; border-radius: 999px;
+  border: 1px solid var(--sl-color-gray-4); color: var(--sl-color-gray-2);
+  white-space: nowrap; vertical-align: middle;
+}
+.badge--dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.badge--accent { color: var(--sl-color-text-accent); border-color: var(--sl-color-accent); background: var(--sl-color-accent-low); }
+.badge--lime   { color: #34c77b; border-color: color-mix(in srgb, #34c77b 40%, transparent); background: color-mix(in srgb, #34c77b 12%, transparent); }
+.badge--coral {
+  color: var(--hs-coral);
+  border: 1px solid color-mix(in srgb, var(--hs-coral) 40%, transparent);
+  background: color-mix(in srgb, var(--hs-coral) 12%, transparent);
+}
+
+/* ---------------- Doc tables (match the mockup's bordered .doc-tbl) ---------------- */
+.sl-markdown-content table {
+  width: 100%;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 10px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: 0.9rem;
+}
+.sl-markdown-content thead th {
+  background: var(--sl-color-gray-6);
+}
+.sl-markdown-content :is(th, td) {
+  border: none;
+  border-bottom: 1px solid var(--sl-color-hairline);
+  padding: 0.7rem 1rem;
+  vertical-align: top;
+}
+.sl-markdown-content tbody tr:last-child :is(th, td) {
+  border-bottom: none;
+}
+.sl-markdown-content tbody tr:hover td {
+  background: color-mix(in srgb, var(--sl-color-gray-6) 60%, transparent);
+}
+.sl-markdown-content td code {
+  white-space: nowrap;
+}
+
+/* ---------------- Asides: cobalt "tip" to match the mockup's callouts ---------------- */
+.starlight-aside--tip {
+  border-inline-start-color: var(--sl-color-accent);
+  background-color: var(--sl-color-accent-low);
+}
+.starlight-aside--tip .starlight-aside__title {
+  color: var(--sl-color-text-accent);
+}

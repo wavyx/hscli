@@ -1,0 +1,33 @@
+---
+title: Exit codes
+description: hscli returns deterministic exit codes so scripts and agents can branch on the result.
+---
+
+hscli returns **deterministic exit codes**. Scripts and [agents](/automation/agents/) can
+branch on the result without parsing output.
+
+| Code | Meaning |
+| --- | --- |
+| `0` | Success |
+| `1` | Usage / argument error |
+| `2` | Authentication error |
+| `4` | Resource not found |
+| `5` | Rate limited — retry with backoff |
+| `6` | Help Scout API error (5xx) |
+
+## Branching on the result
+
+```bash frame="terminal" title="retry on rate limit"
+hscli conv list --status active --output json
+case $? in
+  0) echo "ok" ;;
+  2) echo "re-authenticate: hscli auth login" ; exit 2 ;;
+  5) echo "rate limited — sleeping" ; sleep 30 ;;
+  *) echo "unexpected error" ; exit 1 ;;
+esac
+```
+
+:::tip
+Combine with `--quiet` to suppress non-data output when you only care about the exit
+code and the JSON payload.
+:::

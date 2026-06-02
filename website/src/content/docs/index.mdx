@@ -1,60 +1,114 @@
 ---
 title: hscli
-description: A fast, scriptable Help Scout CLI for terminals, CI pipelines, and AI agents.
+description: A fast, scriptable CLI for Help Scout — built for terminals, CI pipelines, and AI agents.
 template: splash
 hero:
-  tagline: A fast, scriptable CLI for Help Scout — built for terminals, CI pipelines, and AI agents like Claude Code and Codex.
+  title: Help Scout, from your terminal.
+  tagline: A fast, scriptable CLI for conversations, customers, reporting, and backups — built for terminals, CI pipelines, and AI agents. Every command speaks JSON and returns clean exit codes.
+  image:
+    html: |
+      <div class="term">
+        <div class="term__bar"><span class="term__dots"><i></i><i></i><i></i></span><span class="term__title">zsh — hscli</span></div>
+        <div class="term__body">
+          <div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">conv list</span> <span class="t-flag">--status</span> active <span class="t-flag">--output</span> table</div>
+          <div class="row out">ID     SUBJECT                      CUSTOMER          STATUS</div>
+          <div class="row out">4831   Refund for order #2207       amir@acme.io      <span class="t-str">active</span></div>
+          <div class="row out">4830   Can't reset my password      lou@hey.com       <span class="t-str">active</span></div>
+          <div class="row">&nbsp;</div>
+          <div class="row"><span class="t-prompt">$</span> <span class="t-comment"># close everything already tagged "resolved"</span></div>
+          <div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">conv list</span> <span class="t-flag">--status</span> active <span class="t-flag">--jq</span> <span class="t-str">'.[]|select(.tags[]?=="resolved").id'</span> \</div>
+          <div class="row">&nbsp;&nbsp;| xargs -I{} <span class="t-cmd">hscli</span> <span class="t-sub">conv status</span> {} <span class="t-flag">--set</span> closed</div>
+          <div class="row out"><span class="t-str">✓</span> 12 conversations closed <span class="t-dim">· exit 0</span></div>
+        </div>
+      </div>
   actions:
     - text: Get started
-      link: /hscli/authentication/
+      link: /guides/authentication/
       icon: right-arrow
-    - text: View on GitHub
+      variant: primary
+    - text: Star on GitHub
       link: https://github.com/wavyx/hscli
       icon: external
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+{/* ── Custom marketing sections below the Starlight hero ── */}
 
-## Install
+<div class="hscli-home">
 
-```bash
-npm install -g @wavyx/hscli
-```
+  <div class="sec-head">
+    <p class="sec-eyebrow">Why hscli</p>
+    <h2 class="sec-title">Built for automation, not clicking.</h2>
+    <p class="sec-desc">Four design decisions that make hscli safe to hand to a script — or an agent.</p>
+  </div>
 
-Requires Node.js 20+. The command is `hscli`.
+  <div class="feature-grid">
+    <article class="feature-card">
+      <div class="feature-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
+      <h3>Agent &amp; workflow ready</h3>
+      <p>JSON output, deterministic exit codes, and a raw <code>hscli api</code> hatch let agents and pipelines drive Help Scout directly.</p>
+    </article>
+    <article class="feature-card">
+      <div class="feature-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h7l2-3 3 6 2-3h4"/></svg></div>
+      <h3>Pipe-friendly output</h3>
+      <p>Every command supports <code>--output table|json|yaml|csv</code>, plus <code>--jq</code> and <code>--fields</code> for inline filtering.</p>
+    </article>
+    <article class="feature-card">
+      <div class="feature-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h3>Secure by default</h3>
+      <p>OAuth tokens live only in your OS keychain — never written to disk in plaintext. <code>hscli api</code> is locked to the Help Scout host.</p>
+    </article>
+    <article class="feature-card">
+      <div class="feature-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></div>
+      <h3>Full account backups</h3>
+      <p><code>hscli backup</code> dumps your whole account to JSON with incremental sync, resume, deletion detection, and attachments.</p>
+    </article>
+  </div>
 
-<CardGrid>
-	<Card title="Agent & workflow ready" icon="rocket">
-		JSON output, deterministic exit codes, and a raw `hscli api` hatch let AI
-		agents (Claude Code, Codex) and CI pipelines drive Help Scout directly — no
-		SDK glue required.
-	</Card>
-	<Card title="Pipe-friendly" icon="bars">
-		Every command supports `--output table|json|yaml|csv`, plus `--jq` and
-		`--fields` for inline filtering and projection.
-	</Card>
-	<Card title="Secure by default" icon="approve-check">
-		OAuth tokens live only in your OS keychain — never written to disk in
-		plaintext, and `hscli api` is locked to the Help Scout host.
-	</Card>
-	<Card title="Full account backups" icon="cloud-download">
-		`hscli backup` dumps your whole account to JSON with incremental sync,
-		resume, deletion detection, and attachments.
-	</Card>
-</CardGrid>
+  <div class="recipes-band">
+    <div class="recipes-inner">
+      <div class="sec-head center">
+        <p class="sec-eyebrow">What you can actually do</p>
+        <h2 class="sec-title">Real work, one line at a time.</h2>
+        <p class="sec-desc">hscli composes with the tools you already use — <code>jq</code>, <code>xargs</code>, cron, and your CI runner.</p>
+      </div>
+      <div class="recipe-grid">
+        <article class="recipe">
+          <div class="recipe__head">
+            <span class="recipe__tag">Triage</span>
+            <h3>Let an agent clear the queue</h3>
+            <p>Pipe active conversations into your model and act on its decisions — no integration code.</p>
+          </div>
+          <div class="recipe__code">
+            <div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">conv list</span> <span class="t-flag">--status</span> active \\</div>
+            <div class="row">&nbsp;&nbsp;<span class="t-flag">--output</span> json | <span class="t-cmd">claude</span> <span class="t-flag">-p</span> <span class="t-str">"tag &amp; assign"</span></div>
+          </div>
+        </article>
+        <article class="recipe">
+          <div class="recipe__head">
+            <span class="recipe__tag">Backup</span>
+            <h3>Nightly snapshot in CI</h3>
+            <p>Incremental, resumable, deletion-aware. Drop it in cron or a GitHub Action.</p>
+          </div>
+          <div class="recipe__code">
+            <div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">backup</span> <span class="t-flag">--out</span> ./hs-data \\</div>
+            <div class="row">&nbsp;&nbsp;<span class="t-flag">--incremental</span> <span class="t-flag">--attachments</span></div>
+            <div class="row out"><span class="t-str">✓</span> 4,210 convs · 38 MB</div>
+          </div>
+        </article>
+        <article class="recipe">
+          <div class="recipe__head">
+            <span class="recipe__tag">Report</span>
+            <h3>Pull metrics to a sheet</h3>
+            <p>Stream any report as CSV straight into your BI tool or a spreadsheet.</p>
+          </div>
+          <div class="recipe__code">
+            <div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">report</span> <span class="t-flag">--from</span> 2026-05-01 \\</div>
+            <div class="row">&nbsp;&nbsp;<span class="t-flag">--output</span> csv &gt; may.csv</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
 
-## Built for agents and automation
-
-Because every command speaks JSON and returns clean [exit codes](/hscli/commands/),
-an AI coding agent or a shell script can operate Help Scout end to end:
-
-```bash
-# Triage the active inbox, then close everything already tagged "resolved"
-hscli conv list --status active --output json \
-  --jq '.[] | select(.tags[]? == "resolved") | .id' \
-  | xargs -I {} hscli conv status {} --set closed
-```
-
-Point an agent at `hscli --help` (or this reference) and it has a complete,
-self-describing toolset for conversations, customers, reporting, and backups.
+</div>

@@ -1,0 +1,38 @@
+---
+title: Backups & restore
+description: Dump your whole Help Scout account to JSON with incremental sync and resume.
+---
+
+`hscli backup` dumps your entire Help Scout account to JSON — conversations, customers,
+and attachments — with **incremental sync**, **resume**, and **deletion detection**. See
+the [command reference](/reference/commands/#backup) for all flags.
+
+## Full backup
+
+```bash frame="terminal" title="zsh — hscli"
+$ hscli backup --out ./hs-data --attachments
+✓ 4,210 convs · 1,980 customers · 38 MB · exit 0
+```
+
+The output directory is a plain tree of JSON files — diff it, grep it, or commit it.
+
+## Incremental sync
+
+After the first run, `--incremental` only fetches what changed since the last sync,
+including detecting deletions.
+
+```bash frame="terminal"
+hscli backup --out ./hs-data --incremental --attachments
+```
+
+## Status & resume
+
+```bash frame="terminal"
+hscli backup status --out ./hs-data     # show last sync + deltas
+hscli backup resume --out ./hs-data     # finish an interrupted run
+```
+
+:::tip[Automate it]
+Run an incremental backup nightly in [CI](/automation/ci/) so you always have an
+up-to-date, restorable snapshot.
+:::

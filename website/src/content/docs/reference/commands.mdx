@@ -1,0 +1,99 @@
+---
+title: Command reference
+description: Every hscli command, flag, and exit code in one place.
+---
+
+Every command is built from the same grammar:
+
+```text
+hscli <group> <action> [target] [flags]
+```
+
+Run `hscli <group> --help` for the live, self-describing version of any group.
+
+## conv <span class="badge badge--accent badge--dot">conversations</span>
+
+List, read, and act on conversations — the workhorse of hscli.
+See the [Conversations guide](/guides/conversations/) for worked examples.
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `conv list` | List conversations in an inbox. | `--status` `--tag` `--assigned` |
+| `conv get <id>` | Fetch a single conversation with threads. | `--threads` |
+| `conv reply <id>` | Post a reply or note. | `--note` `--body` |
+| `conv status <id>` | Change status (`active` · `pending` · `closed`). | `--set` |
+| `conv tag <id>` | Add or remove tags. | `--add` `--remove` |
+| `conv snooze <id>` | Snooze until a time. | `--until` `--stdin` |
+
+## customer <span class="badge badge--dot">people</span>
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `customer list` | Search and list customers. | `--query` `--email` |
+| `customer get <id>` | Fetch one customer profile. | — |
+| `customer create` | Create a customer record. | `--email` `--name` |
+| `customer merge <id>` | Merge duplicate records. | `--into` |
+
+## report <span class="badge badge--dot">metrics</span>
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `report` | Volume, replies, and resolution metrics. | `--from` `--to` `--inbox` |
+| `report happiness` | CSAT / satisfaction ratings. | `--from` `--to` |
+| `report productivity` | Per-agent response & resolution times. | `--user` |
+
+## backup <span class="badge badge--dot">archive</span>
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `backup` | Dump the whole account to JSON. | `--out` `--incremental` `--attachments` |
+| `backup status` | Show last sync state and deltas. | `--out` |
+| `backup resume` | Resume an interrupted backup. | `--out` |
+
+## auth <span class="badge badge--dot">credentials</span>
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `auth login` | OAuth login; stores token in keychain. | `--device` `--profile` |
+| `auth status` | Show authenticated profiles. | — |
+| `auth logout` | Remove a token from the keychain. | `--profile` |
+
+## api <span class="badge badge--coral badge--dot">escape hatch</span>
+
+Reach any Help Scout endpoint directly — locked to the Help Scout host. See the
+[`hscli api` reference](/reference/api/).
+
+```bash frame="terminal"
+hscli api GET /v2/mailboxes --jq '.[] | .name'
+hscli api POST /v2/conversations/4831/tags --data '{"tags":["vip"]}'
+```
+
+## Global flags
+
+These work on every command.
+
+| Flag | Description | Default |
+| --- | --- | --- |
+| `--output` | Output format (`table` · `json` · `yaml` · `csv`). | `table` |
+| `--jq` | Apply a jq expression to JSON output. | — |
+| `--fields` | Project a comma-separated subset of fields. | all |
+| `--profile` | Use a named auth profile. | `default` |
+| `--quiet` | Suppress non-data output. | `false` |
+| `--help` | Self-describing help for any command. | — |
+
+See [Output & filtering](/automation/output/) for details.
+
+## Exit codes
+
+Deterministic, so scripts and agents can branch on the result.
+
+| Code | Meaning |
+| --- | --- |
+| `0` | <span class="badge badge--lime badge--dot">success</span> |
+| `1` | Usage / argument error |
+| `2` | Authentication error |
+| `4` | Resource not found |
+| `5` | Rate limited — retry with backoff |
+| `6` | Help Scout API error (5xx) |
+
+Full guide: [Exit codes](/automation/exit-codes/).

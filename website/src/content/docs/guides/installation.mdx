@@ -1,0 +1,37 @@
+---
+title: Installation
+description: Install the hscli command with npm and verify it works.
+---
+
+hscli ships as a single npm package. Install it globally to get the `hscli` command on
+your `PATH`.
+
+```bash frame="terminal" title="install"
+npm install -g @wavyx/hscli
+```
+
+:::note
+Requires **Node.js 20 or newer**. The installed command is `hscli`.
+:::
+
+## Verify
+
+```bash frame="terminal" title="verify"
+hscli --version
+hscli --help
+```
+
+`hscli --help` is fully self-describing — it lists every command group and flag, which
+is also how an [AI agent](/automation/agents/) discovers the tool.
+
+## Update & uninstall
+
+```bash frame="terminal"
+npm update -g @wavyx/hscli   # update
+npm uninstall -g @wavyx/hscli # remove
+```
+
+## Next
+
+Connect your account in [Authentication](/guides/authentication/), then try a command
+from the [reference](/reference/commands/).

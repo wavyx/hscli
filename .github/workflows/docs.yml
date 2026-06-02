@@ -4,11 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'docs/**'
       - 'website/**'
-      - 'src/commands/**'
-      - 'scripts/gen-commands.mjs'
-      - 'scripts/build-docs-content.mjs'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
 
@@ -32,18 +28,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
-
-      # Build the oclif manifest, then regenerate the canonical command reference.
-      - run: npm ci
-      - run: npm run build
-      - run: npm run docs:commands
-
-      # Build the Starlight site (its build step syncs docs/ -> content, then astro build).
+          cache-dependency-path: website/package-lock.json
       - run: npm ci
         working-directory: website
       - run: npm run build
         working-directory: website
-
       - uses: actions/upload-pages-artifact@v3
         with:
           path: website/dist

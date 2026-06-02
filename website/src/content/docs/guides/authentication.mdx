@@ -1,0 +1,81 @@
+---
+title: Authentication
+description: Authenticate hscli with Help Scout using OAuth, stored securely in your OS keychain.
+---
+
+hscli authenticates with Help Scout over **OAuth 2.0** and stores your tokens in the
+operating-system keychain — never in plaintext on disk. One `hscli auth login` and every
+command is ready to run.
+
+## Logging in
+
+Run the interactive login. hscli opens your browser, completes the OAuth flow, and writes
+the resulting token to your keychain (Keychain on macOS, Credential Manager on Windows,
+libsecret on Linux).
+
+```bash frame="terminal" title="zsh — hscli"
+$ hscli auth login
+# → opens https://secure.helpscout.net/authentication/oauth ...
+✓ Authenticated as jordan@acme.io (Acme Support)
+✓ Token stored in keychain · scope: convos, customers, reports
+```
+
+:::tip[Headless machine?]
+Pass `--device` to use the device-code flow — hscli prints a short code and URL you open
+on any other device.
+:::
+
+## Non-interactive auth
+
+For CI and servers, skip the browser entirely. Provide a personal access token through an
+environment variable and hscli will use it for every command, never touching the keychain.
+
+```bash frame="terminal" title="ci.sh"
+export HSCLI_TOKEN="$HELPSCOUT_PAT"
+hscli conv list --status active --output json
+# no prompt, no keychain — reads the token from the env
+```
+
+### Environment variables
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| `HSCLI_TOKEN` | Personal access token. Overrides the keychain when set. | — |
+| `HSCLI_PROFILE` | Named profile to use for multi-account setups. | `default` |
+| `HSCLI_OUTPUT` | Default output format for every command. | `table` |
+| `HSCLI_NO_COLOR` | Disable ANSI colors in terminal output. | `false` |
+
+:::caution[Never commit your token]
+Store `HSCLI_TOKEN` as a masked secret in your CI provider. hscli redacts it from all
+logs and error output.
+:::
+
+## Multiple accounts
+
+Manage several Help Scout accounts with named profiles. Each profile keeps its own
+keychain entry; switch with `--profile` or the `HSCLI_PROFILE` variable.
+
+```bash frame="terminal" title="zsh — hscli"
+$ hscli auth login --profile staging
+$ hscli conv list --profile staging
+$ hscli auth status
+default   jordan@acme.io     ✓ valid
+staging   bot@acme-test.io   ✓ valid
+```
+
+## Using with agents
+
+Because hscli is fully self-describing, an AI agent can discover the entire surface from
+`hscli --help` and operate it safely. Three properties make this reliable:
+
+- **Deterministic exit codes** — `0` success, `1` usage error, `2` auth error, `4` not
+  found, `5` rate-limited. The agent always knows what happened.
+- **Structured output** — `--output json` gives the agent machine-readable data with no
+  scraping.
+- **A locked escape hatch** — `hscli api` reaches any endpoint, but only on the Help Scout
+  host, so a hallucinated URL can't exfiltrate the token.
+
+:::note[Tip for Claude Code & Codex]
+Add `hscli --help` to your agent's context, or drop this docs URL into the prompt. No SDK
+or wrapper code required. See [Using with agents](/automation/agents/).
+:::

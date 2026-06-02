@@ -12,5 +12,3 @@ docs/superpowers/
 website/node_modules/
 website/dist/
 website/.astro/
-# generated into the site at build from canonical docs/*.md
-website/src/content/docs/*.md

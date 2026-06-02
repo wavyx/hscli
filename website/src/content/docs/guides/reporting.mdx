@@ -1,0 +1,44 @@
+---
+title: Reporting
+description: Pull volume, happiness, and productivity metrics as JSON or CSV.
+---
+
+The `report` group turns Help Scout's reporting into data you can pipe anywhere. See the
+[command reference](/reference/commands/#report) for all flags.
+
+## Volume & resolution
+
+```bash frame="terminal" title="zsh — hscli"
+$ hscli report --from 2026-05-01 --output json --fields inbox,replies,resolved
+[
+  { "inbox": "Support", "replies": 1284, "resolved": 1102 },
+  { "inbox": "Billing", "replies": 331,  "resolved": 318  }
+]
+```
+
+## Happiness (CSAT)
+
+```bash frame="terminal"
+hscli report happiness --from 2026-05-01 --to 2026-05-31
+```
+
+## Per-agent productivity
+
+```bash frame="terminal"
+hscli report productivity --user jordan@acme.io
+```
+
+## Straight into a spreadsheet
+
+```bash frame="terminal" title="export to CSV"
+hscli report --from 2026-05-01 --output csv > may.csv
+```
+
+```text title="may.csv"
+inbox,replies,resolved,sat
+Support,1284,1102,94%
+```
+
+:::tip
+Schedule this in [CI](/automation/ci/) to keep a dashboard or Google Sheet fresh.
+:::

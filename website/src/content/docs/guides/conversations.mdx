@@ -1,0 +1,56 @@
+---
+title: Conversations
+description: List, read, and act on Help Scout conversations from the terminal.
+---
+
+The `conv` group is the workhorse of hscli. It lists, reads, and acts on conversations.
+Full flag details are in the [command reference](/reference/commands/#conv).
+
+## List the queue
+
+```bash frame="terminal" title="zsh — hscli"
+$ hscli conv list --status active --output table
+ID     SUBJECT                      CUSTOMER          STATUS
+4831   Refund for order #2207       amir@acme.io      active
+4830   Can't reset my password      lou@hey.com       active
+```
+
+Filter by `--status`, `--tag`, `--assigned`, or a mailbox with `--inbox`.
+
+## Read one conversation
+
+```bash frame="terminal"
+hscli conv get 4831 --threads
+```
+
+## Reply or add a note
+
+```bash frame="terminal"
+# customer-facing reply
+hscli conv reply 4831 --body "Your refund is on the way — sorry for the trouble!"
+
+# internal note (not sent to the customer)
+hscli conv reply 4831 --note --body "Refunded via Stripe, ref #ch_123"
+```
+
+## Change status, tag, and snooze
+
+```bash frame="terminal"
+hscli conv status 4831 --set closed
+hscli conv tag 4831 --add vip --remove waiting
+hscli conv snooze 4831 --until "next monday 9am"
+```
+
+## Bulk actions with pipes
+
+Because every command speaks JSON, you can compose them with `jq` and `xargs`:
+
+```bash frame="terminal" title="close everything tagged resolved"
+hscli conv list --status active \
+  --jq '.[] | select(.tags[]? == "resolved") | .id' \
+  | xargs -I{} hscli conv status {} --set closed
+```
+
+:::tip
+Pair this with [agents](/automation/agents/) to triage the queue automatically.
+:::

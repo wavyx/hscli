@@ -1,0 +1,42 @@
+---
+title: Using with agents
+description: Point an AI agent like Claude Code or Codex at hscli to operate Help Scout end to end.
+---
+
+hscli is built to be driven by AI agents as easily as by a human. Point an agent at
+`hscli --help` and it has a complete, self-describing toolset for conversations,
+customers, reporting, and backups — **no SDK glue required**.
+
+## Why it works for agents
+
+- **Self-describing** — `hscli --help` and `hscli <group> --help` enumerate every command
+  and flag, so the agent can discover the surface at runtime.
+- **Structured output** — `--output json` returns machine-readable data with no scraping.
+- **Deterministic [exit codes](/automation/exit-codes/)** — the agent always knows whether
+  a step succeeded, needs re-auth, or was rate-limited.
+- **A locked escape hatch** — `hscli api` can reach any endpoint, but only on the Help
+  Scout host, so a hallucinated URL can't exfiltrate the token.
+
+## Give the agent context
+
+The simplest setup is to let the agent read the help text, or drop this docs URL into the
+prompt:
+
+```bash frame="terminal" title="claude code"
+hscli --help            # full command tree
+hscli conv --help       # one group in detail
+```
+
+## A real loop
+
+```bash frame="terminal" title="triage the active queue"
+hscli conv list --status active --output json --fields id,subject \
+  | claude -p "for each, suggest one tag and an assignee; return JSON" \
+  | hscli conv tag --stdin
+```
+
+:::caution
+For unattended agents, authenticate non-interactively with `HSCLI_TOKEN` (see
+[Authentication](/guides/authentication/#non-interactive-auth)) and scope the token to
+only what the agent needs.
+:::

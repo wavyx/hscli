@@ -1,0 +1,38 @@
+---
+title: hscli api
+description: The raw escape hatch — reach any Help Scout endpoint, locked to the Help Scout host.
+---
+
+`hscli api` is the **escape hatch**. When a high-level command doesn't exist yet, call any
+Help Scout API endpoint directly. Requests are **locked to the Help Scout host**, so a
+mistyped or hallucinated URL can't send your token anywhere else.
+
+## Usage
+
+```text
+hscli api <METHOD> <path> [--data <json>] [flags]
+```
+
+```bash frame="terminal" title="zsh — hscli"
+# GET — list mailbox names
+hscli api GET /v2/mailboxes --jq '.[] | .name'
+
+# POST — add a tag to a conversation
+hscli api POST /v2/conversations/4831/tags --data '{"tags":["vip"]}'
+
+# PUT / PATCH / DELETE all work the same way
+hscli api DELETE /v2/conversations/4831/tags/vip
+```
+
+## Notes
+
+- The path is relative to the Help Scout API host; you cannot point it elsewhere.
+- All [global flags](/reference/commands/#global-flags) apply, including `--output`,
+  `--jq`, and `--fields`.
+- Authentication uses the same token as every other command — see
+  [Authentication](/guides/authentication/).
+
+:::caution
+`hscli api` is unguarded by design. It performs exactly the request you describe, with no
+high-level validation. Prefer a dedicated command (e.g. `conv tag`) when one exists.
+:::

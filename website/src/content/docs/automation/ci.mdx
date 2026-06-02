@@ -1,0 +1,52 @@
+---
+title: CI pipelines
+description: Run hscli unattended in CI for backups, reports, and scheduled cleanup.
+---
+
+hscli is well-suited to CI: authenticate with a token secret, branch on
+[exit codes](/automation/exit-codes/), and let scheduled jobs do the repetitive work.
+
+## Authenticate without a browser
+
+Store a personal access token as a masked secret and expose it as `HSCLI_TOKEN`:
+
+```bash frame="terminal" title="ci.sh"
+export HSCLI_TOKEN="$HELPSCOUT_PAT"
+hscli auth status   # ✓ valid
+```
+
+## Nightly backup (GitHub Actions)
+
+```yaml title=".github/workflows/backup.yml"
+name: Nightly Help Scout backup
+on:
+  schedule: [{ cron: "0 3 * * *" }]   # 03:00 UTC daily
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: npm install -g @wavyx/hscli
+      - run: hscli backup --out ./hs-data --incremental --attachments
+        env:
+          HSCLI_TOKEN: ${{ secrets.HELPSCOUT_PAT }}
+      - uses: actions/upload-artifact@v4
+        with: { name: hs-backup, path: ./hs-data }
+```
+
+## Scheduled cleanup
+
+```bash frame="terminal" title="close stale resolved threads"
+hscli conv list --status active \
+  --jq '.[] | select(.tags[]? == "resolved") | .id' \
+  | xargs -I{} hscli conv status {} --set closed
+```
+
+:::caution
+Never echo `HSCLI_TOKEN` in logs. hscli redacts it from its own output, but your own
+`echo`/`set -x` lines will not be redacted.
+:::
