@@ -123,6 +123,7 @@
   },
   "scripts": {
     "build": "oclif manifest",
+    "docs:commands": "node scripts/gen-commands.mjs",
     "lint": "eslint . && prettier --check .",
     "lint:fix": "eslint --fix . && prettier --write .",
     "test": "vitest run",

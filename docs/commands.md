@@ -1,656 +1,1228 @@
-# Command Reference
-
-All commands support the following global flags:
-
-| Flag             | Description                                                            |
-| ---------------- | ---------------------------------------------------------------------- |
-| `--output`, `-o` | Output format: `table` (default in TTY) or `json` (default when piped) |
-| `--profile`      | Named auth profile to use (overrides active profile)                   |
-| `--no-color`     | Disable color output (also honors `NO_COLOR` env var)                  |
-| `--verbose`      | Show detailed API request/response info on errors                      |
-
+---
+title: Commands
+description: Full command reference for the hscli command-line interface.
 ---
 
-## Auth
+<!-- AUTO-GENERATED from the oclif manifest by scripts/gen-commands.mjs — do not edit by hand. -->
 
-Authentication and OAuth management.
+Reference for `hscli` v0.8.0 (68 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
 
-### `hscli auth setup`
+## Top-level
 
-Configure your own Help Scout OAuth app. Opens a browser to Help Scout's My Apps page and walks through creating an app. Validates credentials against the API before saving.
+### `hscli api`
 
-```
-USAGE
-  hscli auth setup [--app-id <id> --app-secret <secret>]
-
-FLAGS
-  --app-id       OAuth app ID (skip interactive prompt; requires --app-secret)
-  --app-secret   OAuth app secret (skip interactive prompt; requires --app-id)
-
-EXAMPLES
-  hscli auth setup
-  hscli auth setup --app-id abc123 --app-secret xyz789
-```
-
-### `hscli auth login`
-
-Authenticate with Help Scout. Uses Authorization Code flow by default (opens browser). Use `--client-credentials` for non-interactive CI/CD authentication.
+Make a raw API request
 
 ```
-USAGE
-  hscli auth login [--client-credentials] [--app-id <id> --app-secret <secret>]
-
-FLAGS
-  --client-credentials   Use client credentials grant (no browser)
-  --app-id               OAuth app ID (overrides profile/env)
-  --app-secret           OAuth app secret (overrides profile/env)
-
-EXAMPLES
-  hscli auth login
-  hscli auth login --client-credentials
-  hscli auth login --app-id abc123 --app-secret xyz789
-  hscli auth login --profile work
+hscli api <method> <path> [flags]
 ```
 
-### `hscli auth logout`
+- `--body <value>` — Request body (JSON string, @file, or pipe stdin)
+- `--content-type <value>` — Content-Type header
 
-Remove stored credentials for the active profile (or the profile specified with `--profile`).
+Examples:
 
-```
-USAGE
-  hscli auth logout
-
-EXAMPLES
-  hscli auth logout
-  hscli auth logout --profile work
+```bash
+hscli api GET /v2/conversations
+hscli api POST /v2/conversations --body '{"subject":"test"}'
+hscli api DELETE /v2/webhooks/1
 ```
 
-### `hscli auth status`
+### `hscli backup`
 
-Show the current authentication state: profile, keychain type, auth mode, token validity, and authenticated user info.
-
-```
-USAGE
-  hscli auth status
-
-EXAMPLES
-  hscli auth status
-```
-
-### `hscli auth refresh`
-
-Force-refresh the stored access token. Only works with Authorization Code sessions (requires a refresh token). Client Credentials sessions should re-authenticate with `hscli auth login`.
+Full account backup with incremental refresh, resume, deletion detection, attachment downloads, and optional compression
 
 ```
-USAGE
-  hscli auth refresh
-
-EXAMPLES
-  hscli auth refresh
+hscli backup [flags]
 ```
 
----
+- `--out <value>` _(required)_ — Target output directory
+- `--full` — Force full re-sync, ignore manifest lastSyncedAt
+- `--resume` — Continue interrupted run from checkpoint
+- `--reconcile` — After fetch, ID-scan to detect deletions (writes tombstones)
+- `--keep-history` — Append delta log to _history/
+- `--since <value>` — Override lastSyncedAt (ISO date or relative: 7d, 30d, 1h)
+- `--include <value>` — CSV resource subset
+- `--exclude <value>` — CSV resource exclusion
+- `--attachments` — Download attachment binaries (immutable, skips existing)
+- `--compress` — Final tar.gz step (incompatible with future incremental on same dir)
+- `--parallel <value>` — Concurrent attachment downloads
+- `--dry-run` — Show plan, no writes
 
-## Conversations
+Examples:
 
-Query, create, and manage Help Scout conversations.
-
-### `hscli conv list`
-
-List conversations with optional filters.
-
+```bash
+hscli backup --out ~/hs-backup
+hscli backup --out ~/hs-backup --reconcile --keep-history
+hscli backup --out ~/hs-backup --full --attachments --compress
+hscli backup --out ~/hs-backup --include conversations,customers
+hscli backup --out ~/hs-backup --dry-run
 ```
-USAGE
-  hscli conv list [--status <status>] [--mailbox <id>] [--tag <tag>] [--since <duration>]
-
-FLAGS
-  --mailbox       Filter by mailbox ID
-  --status        Filter by status: active (default), pending, closed, spam, all
-  --tag           Filter by tag name
-  --assigned-to   Filter by assignee user ID
-  --query         Search query
-  --since         Modified since (ISO date or relative: 7d, 30d, 1h)
-  --limit         Max results to return (default: 25)
-
-EXAMPLES
-  hscli conv list
-  hscli conv list --status closed --mailbox 123
-  hscli conv list --since 7d
-  hscli conv list --query "billing issue"
-```
-
-### `hscli conv get`
-
-Get a single conversation by ID, including thread details.
-
-```
-USAGE
-  hscli conv get <id>
-
-ARGUMENTS
-  id   Conversation ID (required)
-
-EXAMPLES
-  hscli conv get 123
-  hscli conv get 123 --output json
-```
-
-### `hscli conv create`
-
-Create a new conversation.
-
-```
-USAGE
-  hscli conv create --mailbox <id> --customer <email> --subject <text> --body <text>
-
-FLAGS
-  --mailbox      Mailbox ID (required)
-  --customer     Customer email address (required)
-  --subject      Conversation subject (required)
-  --body         Message body: plain text, @filename to read from file, or pipe stdin
-  --type         Conversation type: email (default), chat, phone
-  --tag          Comma-separated tags to apply
-  --assign-to    User ID to assign the conversation to
-
-EXAMPLES
-  hscli conv create --mailbox 1 --customer user@example.com --subject "Help" --body "Details"
-  hscli conv create --mailbox 1 --customer user@example.com --subject "Chat" --type chat --body @message.txt
-  hscli conv create --mailbox 1 --customer user@example.com --subject "Tagged" --body "Hi" --tag billing,urgent
-```
-
-### `hscli conv reply`
-
-Reply to a conversation. The reply is sent to the customer.
-
-```
-USAGE
-  hscli conv reply <id> --body <text>
-
-ARGUMENTS
-  id   Conversation ID (required)
-
-FLAGS
-  --body    Reply body: plain text, @filename, or pipe stdin
-  --cc      Comma-separated CC recipients
-  --bcc     Comma-separated BCC recipients
-  --draft   Save as draft without sending
-
-EXAMPLES
-  hscli conv reply 123 --body "Thanks for reaching out"
-  hscli conv reply 123 --body @reply.txt --cc "manager@example.com"
-  hscli conv reply 123 --body "Draft reply" --draft
-```
-
-### `hscli conv note`
-
-Add an internal note to a conversation. Notes are not visible to the customer.
-
-```
-USAGE
-  hscli conv note <id> --body <text>
-
-ARGUMENTS
-  id   Conversation ID (required)
-
-FLAGS
-  --body   Note body: plain text, @filename, or pipe stdin
-
-EXAMPLES
-  hscli conv note 123 --body "Internal note about this ticket"
-  hscli conv note 123 --body @notes.txt
-```
-
-### `hscli conv status`
-
-Change the status of a conversation.
-
-```
-USAGE
-  hscli conv status <id> --set <status>
-
-ARGUMENTS
-  id   Conversation ID (required)
-
-FLAGS
-  --set   Status to set: active, pending, closed, spam (required)
-
-EXAMPLES
-  hscli conv status 123 --set closed
-  hscli conv status 123 --set active
-```
-
-### `hscli conv assign`
-
-Assign a conversation to a user.
-
-```
-USAGE
-  hscli conv assign <id> --user <user>
-
-ARGUMENTS
-  id   Conversation ID (required)
-
-FLAGS
-  --user   User ID to assign to, or "me" for the authenticated user (required)
-
-EXAMPLES
-  hscli conv assign 123 --user 456
-  hscli conv assign 123 --user me
-```
-
-### `hscli conv tag`
-
-Add or remove tags on a conversation. Fetches the current tags, applies changes, and sends the updated list.
-
-```
-USAGE
-  hscli conv tag <id> [--add <tags>] [--remove <tags>]
-
-ARGUMENTS
-  id   Conversation ID (required)
-
-FLAGS
-  --add      Comma-separated tags to add
-  --remove   Comma-separated tags to remove
-
-EXAMPLES
-  hscli conv tag 123 --add billing,urgent
-  hscli conv tag 123 --remove spam
-  hscli conv tag 123 --add vip --remove low-priority
-```
-
-### `hscli conv move`
-
-Move a conversation to a different mailbox.
-
-```
-USAGE
-  hscli conv move <id> --to-mailbox <id>
-
-ARGUMENTS
-  id   Conversation ID (required)
-
-FLAGS
-  --to-mailbox   Destination mailbox ID (required)
-
-EXAMPLES
-  hscli conv move 123 --to-mailbox 456
-```
-
-### `hscli conv delete`
-
-Delete a conversation. Prompts for confirmation unless `--yes` is passed.
-
-```
-USAGE
-  hscli conv delete <id> [--yes]
-
-ARGUMENTS
-  id   Conversation ID (required)
-
-FLAGS
-  -y, --yes   Skip confirmation prompt
-
-EXAMPLES
-  hscli conv delete 123
-  hscli conv delete 123 --yes
-```
-
----
-
-## Mailboxes
-
-List and inspect Help Scout mailboxes.
-
-### `hscli mailbox list`
-
-List all mailboxes.
-
-```
-USAGE
-  hscli mailbox list [--limit <n>]
-
-FLAGS
-  --limit   Max results to return (default: 25)
-
-EXAMPLES
-  hscli mailbox list
-  hscli mailbox list --limit 50
-```
-
-### `hscli mailbox get`
-
-Get details for a single mailbox.
-
-```
-USAGE
-  hscli mailbox get <id>
-
-ARGUMENTS
-  id   Mailbox ID (required)
-
-EXAMPLES
-  hscli mailbox get 123
-```
-
----
-
-## Users
-
-### `hscli user me`
-
-Show the currently authenticated user.
-
-```
-USAGE
-  hscli user me
-
-EXAMPLES
-  hscli user me
-  hscli user me --output json
-```
-
----
-
-## Customers
-
-Create and update Help Scout customers.
-
-### `hscli customer create`
-
-Create a new customer.
-
-```
-USAGE
-  hscli customer create --email <email> [--first <name>] [--last <name>]
-
-FLAGS
-  --email       Customer email address (required)
-  --first       First name
-  --last        Last name
-  --company     Company / organization name
-  --phone       Phone number
-  --job-title   Job title
-
-EXAMPLES
-  hscli customer create --email user@example.com
-  hscli customer create --email user@example.com --first Jane --last Doe --company Acme
-  hscli customer create --email user@example.com --phone 555-1234 --job-title "Support Lead"
-```
-
-### `hscli customer update`
-
-Update an existing customer using JSON Patch.
-
-```
-USAGE
-  hscli customer update <id> [--email <email>] [--first <name>] [--last <name>]
-
-ARGUMENTS
-  id   Customer ID (required)
-
-FLAGS
-  --email       Customer email address
-  --first       First name
-  --last        Last name
-  --company     Company / organization name
-  --phone       Phone number
-  --job-title   Job title
-
-EXAMPLES
-  hscli customer update 42 --first Jane --last Doe
-  hscli customer update 42 --email new@example.com --company Acme
-  hscli customer update 42 --job-title "VP of Engineering"
-```
-
----
-
-## Profiles
-
-Manage named authentication profiles for multiple Help Scout accounts.
-
-### `hscli profile list`
-
-List all configured profiles. The active profile is marked with `*`.
-
-```
-USAGE
-  hscli profile list
-
-EXAMPLES
-  hscli profile list
-```
-
-### `hscli profile use`
-
-Switch the active profile.
-
-```
-USAGE
-  hscli profile use <name>
-
-ARGUMENTS
-  name   Profile name to activate (required)
-
-EXAMPLES
-  hscli profile use work
-```
-
-### `hscli profile current`
-
-Print the name of the currently active profile.
-
-```
-USAGE
-  hscli profile current
-
-EXAMPLES
-  hscli profile current
-```
-
----
-
-## Config
-
-Read and write per-profile configuration values.
-
-### `hscli config get`
-
-Get a config value for the active profile.
-
-```
-USAGE
-  hscli config get <key>
-
-ARGUMENTS
-  key   Config key to read (required)
-
-EXAMPLES
-  hscli config get default_output
-  hscli config get page_size
-```
-
-### `hscli config set`
-
-Set a config value for the active profile.
-
-```
-USAGE
-  hscli config set <key> <value>
-
-ARGUMENTS
-  key     Config key to set (required)
-  value   Value to assign (required)
-
-EXAMPLES
-  hscli config set default_output json
-  hscli config set page_size 50
-```
-
-### `hscli config list`
-
-List all config values for the active profile.
-
-```
-USAGE
-  hscli config list
-
-EXAMPLES
-  hscli config list
-```
-
----
-
-## Diagnostics
 
 ### `hscli doctor`
 
-Run diagnostic checks on the CLI environment. Checks config directory access, keychain availability, active profile, token presence and validity, and API reachability.
+Run diagnostic checks on the CLI environment
 
 ```
-USAGE
-  hscli doctor
+hscli doctor [flags]
+```
 
-EXAMPLES
-  hscli doctor
+Examples:
+
+```bash
+hscli doctor
 ```
 
 ### `hscli version`
 
-Show CLI version, Node.js version, API base URL, and platform info.
+Show CLI version and environment info
 
 ```
-USAGE
-  hscli version
-
-EXAMPLES
-  hscli version
+hscli version [flags]
 ```
 
----
+Examples:
 
-## Data Portability
-
-See [docs/backup.md](backup.md) for the full guide.
-
-### `hscli backup`
-
-Full account backup with incremental refresh, resume, deletion detection, optional attachment downloads, and optional compression.
-
-```
-USAGE
-  hscli backup --out <dir> [--full] [--resume] [--reconcile] [--keep-history]
-            [--since DATE] [--include LIST] [--exclude LIST]
-            [--attachments] [--compress] [--parallel N] [--dry-run]
-
-EXAMPLES
-  hscli backup --out ~/hs-backup
-  hscli backup --out ~/hs-backup --reconcile --keep-history
-  hscli backup --out ~/hs-backup --full --attachments --compress
-  hscli backup --out ~/hs-backup --include conversations,customers
-  hscli backup --out ~/hs-backup --dry-run
+```bash
+hscli version
 ```
 
-### `hscli conv dump <id>`
+## hscli alias
 
-Dump a single conversation with threads, customers, tags, and attachment metadata as one self-contained JSON.
+### `hscli alias list`
 
-```
-USAGE
-  hscli conv dump <id> [--out FILE]
-
-EXAMPLES
-  hscli conv dump 3336043008 > conv-3336043008.json
-  hscli conv dump 3336043008 --out conv-3336043008.json
-```
-
-### `hscli conv export --embed`
-
-`hscli conv export` already supports bulk export to JSON/CSV/NDJSON. Pass `--embed threads` to include thread bodies inline via HAL `embed` query (single request per page). Only `threads` is supported by the Help Scout API on the conversations endpoint.
+List all configured aliases
 
 ```
-USAGE
-  hscli conv export --embed threads --format json|ndjson
-
-EXAMPLES
-  hscli conv export --embed threads --format ndjson > full.ndjson
-  hscli conv export --embed threads --status closed --format json
+hscli alias list [flags]
 ```
 
-`--embed` is incompatible with `--format csv`.
+Examples:
 
----
-
-## Beacon Utilities
-
-See [docs/beacon.md](beacon.md) for the full guide including limitations.
-
-### `hscli beacon sign`
-
-Generate HMAC-SHA256 signature for Beacon Secure Mode.
-
-```
-USAGE
-  hscli beacon sign --email <email> --secret <key>
-
-EXAMPLES
-  hscli beacon sign --email user@example.com --secret YOUR_KEY
-  HSCLI_BEACON_SECRET=KEY hscli beacon sign --email user@example.com
+```bash
+hscli alias list
 ```
 
-### `hscli beacon verify`
+### `hscli alias set`
 
-Verify a signature. Exit 0 on match, exit 1 on mismatch.
-
-```
-USAGE
-  hscli beacon verify --email <email> --secret <key> --signature <sig>
-```
-
-### `hscli beacon embed <beaconId>`
-
-Generate `<script>` embed block for the Beacon widget.
+Create or update an alias
 
 ```
-USAGE
-  hscli beacon embed <beaconId> [--color HEX] [--position left|right]
-                              [--style icon|text|iconAndText|manual]
-                              [--text "Help"] [--icon-image NAME]
+hscli alias set <name> <command> [flags]
+```
 
-EXAMPLES
-  hscli beacon embed abc-123
-  hscli beacon embed abc-123 --color "#5b21b6" --position right --style iconAndText --text Help
+Examples:
+
+```bash
+hscli alias set ll "conv list --limit 50"
+hscli alias set inbox "conv list --mailbox 42 --status active"
+```
+
+### `hscli alias unset`
+
+Remove an alias
+
+```
+hscli alias unset <name> [flags]
+```
+
+Examples:
+
+```bash
+hscli alias unset ll
+```
+
+## hscli auth
+
+### `hscli auth login`
+
+Authenticate with Help Scout
+
+```
+hscli auth login [flags]
+```
+
+- `--client-credentials` — Use client credentials grant (no browser)
+- `--app-id <value>` — OAuth app ID (overrides profile/env)
+- `--app-secret <value>` — OAuth app secret (overrides profile/env)
+
+Examples:
+
+```bash
+hscli auth login
+hscli auth login --client-credentials
+hscli auth login --app-id <id> --app-secret <secret>
+```
+
+### `hscli auth logout`
+
+Log out and remove stored credentials
+
+```
+hscli auth logout [flags]
+```
+
+Examples:
+
+```bash
+hscli auth logout
+```
+
+### `hscli auth refresh`
+
+Force-refresh the stored access token
+
+```
+hscli auth refresh [flags]
+```
+
+Examples:
+
+```bash
+hscli auth refresh
+```
+
+### `hscli auth setup`
+
+Configure your own Help Scout OAuth app
+
+```
+hscli auth setup [flags]
+```
+
+- `--app-id <value>` — OAuth app ID (skip prompt)
+- `--app-secret <value>` — OAuth app secret (skip prompt)
+
+Examples:
+
+```bash
+hscli auth setup
+hscli auth setup --app-id <id> --app-secret <secret>
+```
+
+### `hscli auth status`
+
+Show current authentication status
+
+```
+hscli auth status [flags]
+```
+
+Examples:
+
+```bash
+hscli auth status
+```
+
+## hscli beacon
+
+### `hscli beacon embed`
+
+Generate the <script> embed block to add a Beacon to your website
+
+```
+hscli beacon embed <beaconId> [flags]
+```
+
+- `--color <value>` — Hex color (e.g. #5b21b6)
+- `--position <left|right>` — Button position
+- `--style <icon|text|iconAndText|manual>` — Button style
+- `--text <value>` — Button text (for text/iconAndText)
+- `--icon-image <message|beacon|search|buoy|question>` — Icon variant
+
+Examples:
+
+```bash
+hscli beacon embed BEACON_ID
+hscli beacon embed BEACON_ID --color "#5b21b6" --position right
+hscli beacon embed BEACON_ID --style iconAndText --text "Help"
 ```
 
 ### `hscli beacon identify-snippet`
 
-Generate server-side identify code with HMAC signing for the chosen stack.
+Generate server-side identify snippet with HMAC signing for node, rails, php, django, python
 
 ```
-USAGE
-  hscli beacon identify-snippet --beacon-id <id> --secret <key>
-                              [--stack node|rails|php|django|python]
-
-EXAMPLES
-  hscli beacon identify-snippet --beacon-id abc-123 --secret KEY
-  hscli beacon identify-snippet --beacon-id abc-123 --secret KEY --stack rails
+hscli beacon identify-snippet [flags]
 ```
+
+- `--beacon-id <value>` _(required)_ — Beacon ID
+- `--secret <value>` _(required)_ — Beacon secret key
+- `--stack <node|rails|php|django|python>` — Server-side stack
+
+Examples:
+
+```bash
+hscli beacon identify-snippet --beacon-id BEACON_ID --secret KEY
+hscli beacon identify-snippet --beacon-id BEACON_ID --secret KEY --stack rails
+```
+
+### `hscli beacon sign`
+
+Generate Beacon Secure Mode HMAC-SHA256 signature for an email
+
+```
+hscli beacon sign [flags]
+```
+
+- `--email <value>` _(required)_ — Customer email address to sign
+- `--secret <value>` _(required)_ — Beacon secret key (from Beacon settings → Contact tab)
+
+Examples:
+
+```bash
+hscli beacon sign --email user@example.com --secret YOUR_KEY
+hscli beacon sign --email user@example.com --secret YOUR_KEY --output json
+```
+
+### `hscli beacon verify`
+
+Verify a Beacon Secure Mode HMAC signature (exit 0 on match, exit 1 on mismatch)
+
+```
+hscli beacon verify [flags]
+```
+
+- `--email <value>` _(required)_ — Customer email
+- `--secret <value>` _(required)_ — Beacon secret key
+- `--signature <value>` _(required)_ — Signature to verify
+
+Examples:
+
+```bash
+hscli beacon verify --email user@example.com --secret KEY --signature SIG
+```
+
+## hscli config
+
+### `hscli config get`
+
+Get a config value for the active profile
+
+```
+hscli config get <key> [flags]
+```
+
+Examples:
+
+```bash
+hscli config get apiBase
+hscli config get clientId
+```
+
+### `hscli config list`
+
+List all config for the active profile
+
+```
+hscli config list [flags]
+```
+
+Examples:
+
+```bash
+hscli config list
+```
+
+### `hscli config set`
+
+Set a config value for the active profile
+
+```
+hscli config set <key> <value> [flags]
+```
+
+Examples:
+
+```bash
+hscli config set apiBase https://api.helpscout.net
+hscli config set output json
+```
+
+### `hscli config validate`
+
+Validate CLI configuration
+
+```
+hscli config validate [flags]
+```
+
+Examples:
+
+```bash
+hscli config validate
+```
+
+## hscli conv
+
+### `hscli conv assign`
+
+Assign a conversation to a user
+
+```
+hscli conv assign <id> [flags]
+```
+
+- `--user <value>` _(required)_ — User ID to assign to, or "me" for the authenticated user
+
+Examples:
+
+```bash
+hscli conv assign 123 --user 456
+hscli conv assign 123 --user me
+```
+
+### `hscli conv attachments`
+
+List attachments for a conversation
+
+```
+hscli conv attachments <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli conv attachments 123
+hscli conv attachments 123 --output json
+```
+
+### `hscli conv bulk-status`
+
+Batch change status on multiple conversations
+
+```
+hscli conv bulk-status [flags]
+```
+
+- `--mailbox <value>` — Filter by mailbox ID
+- `--status <value>` — Filter by current status
+- `--tag <value>` — Filter by tag
+- `--set <active|pending|closed|spam>` _(required)_ — Status to set
+- `--limit <value>` — Max conversations to update
+- `-y, --yes` — Skip confirmation prompt
+
+Examples:
+
+```bash
+hscli conv bulk-status --status active --set closed
+hscli conv bulk-status --mailbox 42 --set pending --yes
+hscli conv bulk-status --tag vip --set active --limit 50
+```
+
+### `hscli conv count`
+
+Count conversations
+
+```
+hscli conv count [flags]
+```
+
+- `--status <active|pending|closed|spam|all>` — Filter by status
+- `--mailbox <value>` — Filter by mailbox ID
+- `--tag <value>` — Filter by tag
+
+Examples:
+
+```bash
+hscli conv count
+hscli conv count --status active
+hscli conv count --mailbox 123 --tag billing
+```
+
+### `hscli conv create`
+
+Create a new conversation
+
+```
+hscli conv create [flags]
+```
+
+- `--mailbox <value>` _(required)_ — Mailbox ID
+- `--customer <value>` _(required)_ — Customer email address
+- `--subject <value>` _(required)_ — Conversation subject
+- `--body <value>` — Message body (text, @file, or pipe stdin)
+- `--type <email|chat|phone>` — Conversation type
+- `--tag <value>` — Comma-separated tags
+- `--assign-to <value>` — User ID to assign to
+
+Examples:
+
+```bash
+hscli conv create --mailbox 1 --customer user@example.com --subject "Help needed" --body "Details here"
+hscli conv create --mailbox 1 --customer user@example.com --subject "Chat" --type chat --body @message.txt
+hscli conv create --mailbox 1 --customer user@example.com --subject "Tagged" --body "Hi" --tag billing,urgent
+```
+
+### `hscli conv delete`
+
+Delete a conversation
+
+```
+hscli conv delete <id> [flags]
+```
+
+- `-y, --yes` — Skip confirmation prompt
+
+Examples:
+
+```bash
+hscli conv delete 123
+hscli conv delete 123 --yes
+```
+
+### `hscli conv dump`
+
+Dump a single conversation with threads, customers, tags, and attachment metadata
+
+```
+hscli conv dump <id> [flags]
+```
+
+- `--out <value>` — Write JSON dump to file instead of stdout
+
+Examples:
+
+```bash
+hscli conv dump 123 > conv-123.json
+hscli conv dump 123 --out conv-123.json
+```
+
+### `hscli conv edit-note`
+
+Edit a note or thread body
+
+```
+hscli conv edit-note <id> <threadId> [flags]
+```
+
+- `--body <value>` — New body text (text, @file, or pipe stdin)
+
+Examples:
+
+```bash
+hscli conv edit-note 123 456 --body "Updated note"
+hscli conv edit-note 123 456 --body @updated.txt
+```
+
+### `hscli conv export`
+
+Bulk export conversations
+
+```
+hscli conv export [flags]
+```
+
+- `--mailbox <value>` — Filter by mailbox ID
+- `--status <active|pending|closed|spam|all>` — Filter by status
+- `--since <value>` — Modified since (ISO date or relative: 7d, 30d, 1h)
+- `--format <json|csv|ndjson>` — Output format
+- `--tag <value>` — Filter by tag
+- `--embed <value>` — Embed related resources (csv: threads)
+- `--source <value>` — Filter by source.type (client-side post-fetch): api, beacon, channel, chat, consumer, coreapi, customer, email
+
+Examples:
+
+```bash
+hscli conv export --format json > data.json
+hscli conv export --mailbox 42 --format csv > report.csv
+hscli conv export --since 30d --format ndjson
+hscli conv export --status closed --tag vip
+```
+
+### `hscli conv get`
+
+Get a conversation by ID
+
+```
+hscli conv get <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli conv get 123
+hscli conv get 123 --output json
+```
+
+### `hscli conv list`
+
+List conversations
+
+```
+hscli conv list [flags]
+```
+
+- `--mailbox <value>` — Filter by mailbox ID
+- `--status <active|pending|closed|spam|all>` — Filter by status
+- `--tag <value>` — Filter by tag
+- `--assigned-to <value>` — Filter by assignee (user ID)
+- `--query <value>` — Search query
+- `--since <value>` — Modified since (ISO date or relative: 7d, 30d, 1h)
+- `--limit <value>` — Max results to return
+- `--source <value>` — Filter by source.type (client-side post-fetch): api, beacon, channel, chat, consumer, coreapi, customer, email
+
+Examples:
+
+```bash
+hscli conv list
+hscli conv list --status closed --mailbox 123
+hscli conv list --since 7d
+hscli conv list --query "billing issue"
+```
+
+### `hscli conv move`
+
+Move a conversation to another mailbox
+
+```
+hscli conv move <id> [flags]
+```
+
+- `--to-mailbox <value>` _(required)_ — Destination mailbox ID
+
+Examples:
+
+```bash
+hscli conv move 123 --to-mailbox 456
+```
+
+### `hscli conv note`
+
+Add a note to a conversation
+
+```
+hscli conv note <id> [flags]
+```
+
+- `--body <value>` — Note body (text, @file, or pipe stdin)
+
+Examples:
+
+```bash
+hscli conv note 123 --body "Internal note about this ticket"
+hscli conv note 123 --body @notes.txt
+```
+
+### `hscli conv reply`
+
+Reply to a conversation
+
+```
+hscli conv reply <id> [flags]
+```
+
+- `--body <value>` — Reply body (text, @file, or pipe stdin)
+- `--cc <value>` — Comma-separated CC recipients
+- `--bcc <value>` — Comma-separated BCC recipients
+- `--draft` — Save as draft
+
+Examples:
+
+```bash
+hscli conv reply 123 --body "Thanks for reaching out"
+hscli conv reply 123 --body @reply.txt --cc "manager@example.com"
+hscli conv reply 123 --body "Draft reply" --draft
+```
+
+### `hscli conv search`
+
+Search conversations
+
+```
+hscli conv search <query> [flags]
+```
+
+- `--mailbox <value>` — Filter by mailbox ID
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli conv search "billing issue"
+hscli conv search "refund" --mailbox 123
+hscli conv search "api" --limit 10
+```
+
+### `hscli conv status`
+
+Change conversation status
+
+```
+hscli conv status <id> [flags]
+```
+
+- `--set <active|pending|closed|spam>` _(required)_ — Status to set
+
+Examples:
+
+```bash
+hscli conv status 123 --set closed
+hscli conv status 123 --set active
+```
+
+### `hscli conv tag`
+
+Update tags on a conversation
+
+```
+hscli conv tag <id> [flags]
+```
+
+- `--add <value>` — Comma-separated tags to add
+- `--remove <value>` — Comma-separated tags to remove
+
+Examples:
+
+```bash
+hscli conv tag 123 --add billing,urgent
+hscli conv tag 123 --remove spam
+hscli conv tag 123 --add vip --remove low-priority
+```
+
+### `hscli conv threads`
+
+List threads of a conversation
+
+```
+hscli conv threads <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli conv threads 123
+```
+
+### `hscli conv watch`
+
+Live tail of conversations (poll-based)
+
+```
+hscli conv watch [flags]
+```
+
+- `--mailbox <value>` — Filter by mailbox ID
+- `--status <value>` — Filter by status
+- `--poll <value>` — Seconds between polls
+- `--limit <value>` — Max conversations per poll
+- `--once` — Exit after first poll
+- `--max-polls <value>` — Maximum number of polls before exiting
+
+Examples:
+
+```bash
+hscli conv watch
+hscli conv watch --mailbox 42 --poll 10
+hscli conv watch --status pending --limit 5
+```
+
+## hscli customer
+
+### `hscli customer conversations`
+
+List conversations for a customer
+
+```
+hscli customer conversations <id> [flags]
+```
+
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli customer conversations 123
+hscli customer conversations 123 --limit 10
+```
+
+### `hscli customer create`
+
+Create a new customer
+
+```
+hscli customer create [flags]
+```
+
+- `--email <value>` _(required)_ — Customer email address
+- `--first <value>` — First name
+- `--last <value>` — Last name
+- `--company <value>` — Company / organization name
+- `--phone <value>` — Phone number
+- `--job-title <value>` — Job title
+
+Examples:
+
+```bash
+hscli customer create --email user@example.com
+hscli customer create --email user@example.com --first Jane --last Doe --company Acme
+hscli customer create --email user@example.com --phone 555-1234 --job-title "Support Lead"
+```
+
+### `hscli customer get`
+
+Get a customer by ID
+
+```
+hscli customer get <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli customer get 123
+```
+
+### `hscli customer list`
+
+List customers
+
+```
+hscli customer list [flags]
+```
+
+- `--mailbox <value>` — Filter by mailbox ID
+- `--first <value>` — Filter by first name
+- `--last <value>` — Filter by last name
+- `--since <value>` — Modified since (ISO date or relative: 7d, 30d, 1h)
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli customer list
+hscli customer list --mailbox 42
+hscli customer list --since 7d
+```
+
+### `hscli customer search`
+
+Search customers
+
+```
+hscli customer search <query> [flags]
+```
+
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli customer search "john"
+hscli customer search "acme" --limit 10
+```
+
+### `hscli customer update`
+
+Update a customer
+
+```
+hscli customer update <id> [flags]
+```
+
+- `--email <value>` — Customer email address
+- `--first <value>` — First name
+- `--last <value>` — Last name
+- `--company <value>` — Company / organization name
+- `--phone <value>` — Phone number
+- `--job-title <value>` — Job title
+
+Examples:
+
+```bash
+hscli customer update 42 --first Jane --last Doe
+hscli customer update 42 --email new@example.com --company Acme
+hscli customer update 42 --job-title "VP of Engineering"
+```
+
+## hscli mailbox
+
+### `hscli mailbox fields`
+
+List custom fields for a mailbox
+
+```
+hscli mailbox fields <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli mailbox fields 123
+hscli mailbox fields 123 --output json
+```
+
+### `hscli mailbox folders`
+
+List folders for a mailbox
+
+```
+hscli mailbox folders <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli mailbox folders 123
+hscli mailbox folders 123 --output json
+```
+
+### `hscli mailbox get`
+
+Get a mailbox by ID
+
+```
+hscli mailbox get <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli mailbox get 123
+```
+
+### `hscli mailbox list`
+
+List mailboxes
+
+```
+hscli mailbox list [flags]
+```
+
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli mailbox list
+hscli mailbox list --limit 50
+```
+
+## hscli profile
+
+### `hscli profile current`
+
+Show the active profile
+
+```
+hscli profile current [flags]
+```
+
+Examples:
+
+```bash
+hscli profile current
+```
+
+### `hscli profile list`
+
+List all configured profiles
+
+```
+hscli profile list [flags]
+```
+
+Examples:
+
+```bash
+hscli profile list
+```
+
+### `hscli profile use`
+
+Switch the active profile
+
+```
+hscli profile use <name> [flags]
+```
+
+Examples:
+
+```bash
+hscli profile use work
+```
+
+## hscli report
 
 ### `hscli report beacon`
 
-Aggregate conversation counts by `source.type`/`source.via`. Useful as a Beacon-origin proxy since Help Scout does not expose Beacon analytics via API.
+Aggregate conversation counts by source.type and source.via (derived from Mailbox API; useful for Beacon-origin analysis)
 
 ```
-USAGE
-  hscli report beacon [--since 30d|2024-01-01T00:00:00Z] [--mailbox ID]
-
-EXAMPLES
-  hscli report beacon --since 7d
-  hscli report beacon --since 30d --mailbox 42 --output json
+hscli report beacon [flags]
 ```
 
-### `hscli conv list --source <type>` and `hscli conv export --source <type>`
+- `--since <value>` — Window start (ISO date or relative: 7d, 30d, 1h). Default: 30d
+- `--mailbox <value>` — Filter by mailbox ID
 
-Filter conversations by `source.type`. Client-side filter (Help Scout API does
-not support source as a query param). Valid values: `api`, `beacon`, `channel`,
-`chat`, `consumer`, `coreapi`, `customer`, `email`.
+Examples:
+
+```bash
+hscli report beacon
+hscli report beacon --since 30d
+hscli report beacon --since 30d --mailbox 42
+```
+
+### `hscli report company`
+
+Get company report
+
+```
+hscli report company [flags]
+```
+
+- `--start <value>` _(required)_ — Start date (ISO 8601)
+- `--end <value>` _(required)_ — End date (ISO 8601)
+- `--mailbox <value>` — Filter by mailbox ID
+- `--tag <value>` — Comma-separated tags
+
+Examples:
+
+```bash
+hscli report company --start 2024-01-01T00:00:00Z --end 2024-01-31T23:59:59Z
+hscli report company --start 2024-01-01T00:00:00Z --end 2024-01-31T23:59:59Z --mailbox 1
+```
+
+### `hscli report conversations`
+
+Get conversations report
+
+```
+hscli report conversations [flags]
+```
+
+- `--start <value>` _(required)_ — Start date (ISO 8601)
+- `--end <value>` _(required)_ — End date (ISO 8601)
+- `--mailbox <value>` — Filter by mailbox ID
+- `--tag <value>` — Comma-separated tags
+
+Examples:
+
+```bash
+hscli report conversations --start 2024-01-01T00:00:00Z --end 2024-01-31T23:59:59Z
+hscli report conversations --start 2024-01-01T00:00:00Z --end 2024-01-31T23:59:59Z --mailbox 1
+```
+
+### `hscli report user`
+
+Get user report
+
+```
+hscli report user [flags]
+```
+
+- `--start <value>` _(required)_ — Start date (ISO 8601)
+- `--end <value>` _(required)_ — End date (ISO 8601)
+- `--user <value>` _(required)_ — User ID
+
+Examples:
+
+```bash
+hscli report user --start 2024-01-01T00:00:00Z --end 2024-01-31T23:59:59Z --user 10
+```
+
+## hscli tag
+
+### `hscli tag get`
+
+Get a tag by ID
+
+```
+hscli tag get <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli tag get 123
+```
+
+### `hscli tag list`
+
+List tags
+
+```
+hscli tag list [flags]
+```
+
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli tag list
+hscli tag list --limit 50
+```
+
+### `hscli tag usage`
+
+Show conversation count for a tag
+
+```
+hscli tag usage <name> [flags]
+```
+
+Examples:
+
+```bash
+hscli tag usage billing
+hscli tag usage "feature request" --output json
+```
+
+## hscli user
+
+### `hscli user get`
+
+Get a user by ID
+
+```
+hscli user get <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli user get 123
+```
+
+### `hscli user list`
+
+List users
+
+```
+hscli user list [flags]
+```
+
+- `--mailbox <value>` — Filter by mailbox ID
+- `--email <value>` — Filter by email address
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli user list
+hscli user list --mailbox 42
+hscli user list --email jane@example.com
+```
+
+### `hscli user me`
+
+Get the authenticated user
+
+```
+hscli user me [flags]
+```
+
+Examples:
+
+```bash
+hscli user me
+```
+
+## hscli webhook
+
+### `hscli webhook create`
+
+Create a webhook
+
+```
+hscli webhook create [flags]
+```
+
+- `--url <value>` _(required)_ — Webhook URL
+- `--event <value>` _(required)_ — Comma-separated event names
+- `--secret <value>` _(required)_ — Webhook secret
+- `--label <value>` — Webhook label
+
+Examples:
+
+```bash
+hscli webhook create --url https://example.com/hook --event convo.created --secret s3cret
+hscli webhook create --url https://example.com/hook --event convo.created,convo.updated --secret s3cret --label "My Hook"
+```
+
+### `hscli webhook delete`
+
+Delete a webhook
+
+```
+hscli webhook delete <id> [flags]
+```
+
+- `-y, --yes` — Skip confirmation prompt
+
+Examples:
+
+```bash
+hscli webhook delete 1
+hscli webhook delete 1 --yes
+```
+
+### `hscli webhook get`
+
+Get a webhook by ID
+
+```
+hscli webhook get <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli webhook get 1
+```
+
+### `hscli webhook list`
+
+List webhooks
+
+```
+hscli webhook list [flags]
+```
+
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli webhook list
+hscli webhook list --output json
+```
+
+## hscli workflow
+
+### `hscli workflow list`
+
+List workflows
+
+```
+hscli workflow list [flags]
+```
+
+- `--mailbox <value>` — Filter by mailbox ID
+- `--type <manual|automatic>` — Filter by workflow type
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli workflow list
+hscli workflow list --mailbox 1 --type manual
+```
+
+### `hscli workflow run`
+
+Run a manual workflow on conversations
+
+```
+hscli workflow run <id> [flags]
+```
+
+- `--conv <value>` _(required)_ — Comma-separated conversation IDs
+
+Examples:
+
+```bash
+hscli workflow run 1 --conv 100,200,300
+```
+
