@@ -7,6 +7,7 @@ export default defineConfig({
     coverage: {
       include: ['src/**/*.js'],
       exclude: ['src/hooks/**'],
+      reporter: ['text', 'lcov'],
       thresholds: {
         statements: 90,
         branches: 90,

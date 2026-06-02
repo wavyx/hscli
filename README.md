@@ -1,10 +1,21 @@
 # hscli
 
+[![npm version](https://img.shields.io/npm/v/@wavyx/hscli)](https://www.npmjs.com/package/@wavyx/hscli)
+[![CI](https://github.com/wavyx/hscli/actions/workflows/ci.yml/badge.svg)](https://github.com/wavyx/hscli/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/wavyx/hscli/branch/main/graph/badge.svg)](https://codecov.io/gh/wavyx/hscli)
+[![npm downloads](https://img.shields.io/npm/dm/@wavyx/hscli)](https://www.npmjs.com/package/@wavyx/hscli)
+[![Node.js](https://img.shields.io/node/v/@wavyx/hscli)](https://nodejs.org)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Command-line interface for [Help Scout](https://www.helpscout.com/).
 
 Covers the **Mailbox API 2.0** (conversations, customers, mailboxes, users, tags,
 workflows, webhooks, reports) plus **Beacon** HMAC/snippet utilities and a full
 account **backup**. Docs API support is planned.
+
+JSON output, deterministic exit codes, and a raw `hscli api` escape hatch make it
+a clean way to drive Help Scout from CI pipelines and **AI agents** (Claude Code,
+Codex, and similar) — no SDK glue required.
 
 ## Install
 
