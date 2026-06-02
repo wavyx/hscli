@@ -4,12 +4,12 @@ hscli uses OAuth 2.0 to authenticate with the Help Scout API. Two grant types ar
 
 ## First-Run Setup
 
-Before using the CLI you need to create an OAuth application in Help Scout. The `hs auth setup` wizard walks you through this.
+Before using the CLI you need to create an OAuth application in Help Scout. The `hscli auth setup` wizard walks you through this.
 
 ### Interactive Setup
 
 ```bash
-hs auth setup
+hscli auth setup
 ```
 
 The wizard will:
@@ -25,7 +25,7 @@ The wizard will:
 Pass credentials directly via flags to skip the interactive prompts:
 
 ```bash
-hs auth setup --app-id <id> --app-secret <secret>
+hscli auth setup --app-id <id> --app-secret <secret>
 ```
 
 Both `--app-id` and `--app-secret` must be provided together.
@@ -41,7 +41,7 @@ Help Scout OAuth applications are **account-scoped** -- each user creates their 
    - **App Name:** anything you like (e.g. "hscli").
    - **Redirection URL:** `http://127.0.0.1:9999/callback`
 5. Click **Create Application**.
-6. Copy the **App ID** and **App Secret** -- you will need them for `hs auth setup` or `hs auth login`.
+6. Copy the **App ID** and **App Secret** -- you will need them for `hscli auth setup` or `hscli auth login`.
 
 ## Logging In
 
@@ -50,13 +50,13 @@ Help Scout OAuth applications are **account-scoped** -- each user creates their 
 Opens a browser window for interactive authentication. Best for personal use.
 
 ```bash
-hs auth login
+hscli auth login
 ```
 
 How it works:
 
 1. The CLI resolves OAuth credentials (from flags, env vars, or profile config).
-2. A local HTTP server starts on `127.0.0.1` with a random port.
+2. A local HTTP server starts on `127.0.0.1:9999` (the port registered as the app's Redirection URL).
 3. Your browser opens the Help Scout authorization page.
 4. You click **Allow** in the Help Scout UI.
 5. Help Scout redirects to the local server with an authorization code.
@@ -67,7 +67,7 @@ How it works:
 You can pass explicit credentials to override what is stored in your profile:
 
 ```bash
-hs auth login --app-id <id> --app-secret <secret>
+hscli auth login --app-id <id> --app-secret <secret>
 ```
 
 ### Client Credentials Flow
@@ -75,7 +75,7 @@ hs auth login --app-id <id> --app-secret <secret>
 Authenticates without a browser. Best for CI/CD pipelines and service accounts.
 
 ```bash
-hs auth login --client-credentials --app-id <id> --app-secret <secret>
+hscli auth login --client-credentials --app-id <id> --app-secret <secret>
 ```
 
 Or via environment variables:
@@ -83,7 +83,7 @@ Or via environment variables:
 ```bash
 export HSCLI_APP_ID=your-app-id
 export HSCLI_APP_SECRET=your-app-secret
-hs auth login --client-credentials
+hscli auth login --client-credentials
 ```
 
 This flow does not produce a refresh token. When the token expires (48 hours), the CLI automatically re-authenticates using the stored client credentials.
@@ -95,14 +95,14 @@ Profiles let you manage multiple Help Scout accounts or configurations without r
 ### Log in to a Named Profile
 
 ```bash
-hs auth login --profile work
-hs auth login --profile personal
+hscli auth login --profile work
+hscli auth login --profile personal
 ```
 
 ### Switch the Active Profile
 
 ```bash
-hs profile use work
+hscli profile use work
 ```
 
 All subsequent commands use the active profile unless overridden with `--profile <name>`.
@@ -110,7 +110,7 @@ All subsequent commands use the active profile unless overridden with `--profile
 ### List Profiles
 
 ```bash
-hs profile list
+hscli profile list
 ```
 
 Shows all configured profiles. The active profile is marked with `*`. Authenticated profiles show `(authenticated)`.
@@ -118,7 +118,7 @@ Shows all configured profiles. The active profile is marked with `*`. Authentica
 ### Show the Active Profile
 
 ```bash
-hs profile current
+hscli profile current
 ```
 
 ### Override Per-Command
@@ -126,7 +126,7 @@ hs profile current
 Any command accepts `--profile <name>` to use a different profile for that invocation:
 
 ```bash
-hs conv list --profile personal
+hscli conv list --profile personal
 ```
 
 You can also set the profile via the `HSCLI_PROFILE` environment variable.
@@ -152,8 +152,8 @@ env:
 
 steps:
   - run: npm install -g hscli
-  - run: hs auth login --client-credentials
-  - run: hs conv list --status active --output json
+  - run: hscli auth login --client-credentials
+  - run: hscli conv list --status active --output json
 ```
 
 ## Token Storage
@@ -165,51 +165,51 @@ Tokens are stored securely using a two-tier strategy:
 
 Tokens are stored under the key `hscli/<profile>/tokens` and include the access token, refresh token (if applicable), expiry timestamp, auth mode, and credential source.
 
-Run `hs auth status` to see which storage backend is in use.
+Run `hscli auth status` to see which storage backend is in use.
 
 ## Auth Commands
 
-### `hs auth setup`
+### `hscli auth setup`
 
 Configure your own Help Scout OAuth app. Validates credentials against the API before saving.
 
 ```bash
-hs auth setup                                     # Interactive wizard
-hs auth setup --app-id <id> --app-secret <secret>  # Non-interactive
+hscli auth setup                                     # Interactive wizard
+hscli auth setup --app-id <id> --app-secret <secret>  # Non-interactive
 ```
 
-### `hs auth login`
+### `hscli auth login`
 
 Authenticate with Help Scout.
 
 ```bash
-hs auth login                              # Authorization Code (opens browser)
-hs auth login --client-credentials          # Client Credentials (no browser)
-hs auth login --app-id <id> --app-secret <secret>  # Explicit credentials
-hs auth login --profile work               # Log in to a specific profile
+hscli auth login                              # Authorization Code (opens browser)
+hscli auth login --client-credentials          # Client Credentials (no browser)
+hscli auth login --app-id <id> --app-secret <secret>  # Explicit credentials
+hscli auth login --profile work               # Log in to a specific profile
 ```
 
-### `hs auth status`
+### `hscli auth status`
 
 Show the current authentication state: profile, keychain type, auth mode, token expiry, and authenticated user info.
 
 ```bash
-hs auth status
+hscli auth status
 ```
 
-### `hs auth refresh`
+### `hscli auth refresh`
 
-Force-refresh the stored access token. Only works with Authorization Code sessions that have a refresh token. Client Credentials sessions should use `hs auth login` to re-authenticate.
+Force-refresh the stored access token. Only works with Authorization Code sessions that have a refresh token. Client Credentials sessions should use `hscli auth login` to re-authenticate.
 
 ```bash
-hs auth refresh
+hscli auth refresh
 ```
 
-### `hs auth logout`
+### `hscli auth logout`
 
 Remove stored credentials for the active profile.
 
 ```bash
-hs auth logout
-hs auth logout --profile work
+hscli auth logout
+hscli auth logout --profile work
 ```

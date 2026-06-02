@@ -29,8 +29,8 @@ This means a flag always overrides an environment variable, which always overrid
 export HSCLI_APP_ID=your-app-id
 export HSCLI_APP_SECRET=your-app-secret
 export HSCLI_AUTH_MODE=client_credentials
-hs auth login --client-credentials
-hs conv list --status active --output json
+hscli auth login --client-credentials
+hscli conv list --status active --output json
 ```
 
 ## Profile Management
@@ -51,14 +51,14 @@ The **active profile** determines which credentials and config are used by defau
 Profiles are created implicitly when you log in with a profile name:
 
 ```bash
-hs auth login --profile work
-hs auth login --profile personal
+hscli auth login --profile work
+hscli auth login --profile personal
 ```
 
 ### Switching Profiles
 
 ```bash
-hs profile use work
+hscli profile use work
 ```
 
 All subsequent commands use the `work` profile unless overridden.
@@ -66,7 +66,7 @@ All subsequent commands use the `work` profile unless overridden.
 ### Listing Profiles
 
 ```bash
-hs profile list
+hscli profile list
 ```
 
 Output marks the active profile with `*` and shows authentication status.
@@ -76,13 +76,13 @@ Output marks the active profile with `*` and shows authentication status.
 Any command accepts `--profile <name>`:
 
 ```bash
-hs conv list --profile personal
+hscli conv list --profile personal
 ```
 
 Or use the environment variable:
 
 ```bash
-HSCLI_PROFILE=personal hs conv list
+HSCLI_PROFILE=personal hscli conv list
 ```
 
 ### Per-Profile Config
@@ -90,18 +90,18 @@ HSCLI_PROFILE=personal hs conv list
 Set config values that apply only to a specific profile:
 
 ```bash
-hs profile use work
-hs config set default_output json
-hs config set page_size 50
+hscli profile use work
+hscli config set default_output json
+hscli config set page_size 50
 
-hs profile use personal
-hs config set default_output table
-hs config set page_size 25
+hscli profile use personal
+hscli config set default_output table
+hscli config set page_size 25
 ```
 
 ## Config Keys
 
-These keys can be set with `hs config set <key> <value>` and read with `hs config get <key>`:
+These keys can be set with `hscli config set <key> <value>` and read with `hscli config get <key>`:
 
 | Key                | Description                                                               | Default                           |
 | ------------------ | ------------------------------------------------------------------------- | --------------------------------- |
@@ -116,10 +116,10 @@ These keys can be set with `hs config set <key> <value>` and read with `hs confi
 ### Examples
 
 ```bash
-hs config set default_output json
-hs config set page_size 50
-hs config set timeout_ms 60000
-hs config list
+hscli config set default_output json
+hscli config set page_size 50
+hscli config set timeout_ms 60000
+hscli config list
 ```
 
 ## Config File Locations
@@ -159,4 +159,4 @@ Tokens and secrets are **not** stored in the config file. They are stored separa
 - **OS Keychain** (preferred): macOS Keychain, Windows Credential Vault, or Linux libsecret via `@napi-rs/keyring`.
 - **Encrypted file fallback**: `credentials.json` in the same config directory, encrypted by the `conf` library.
 
-Run `hs auth status` to see which storage backend is active and `hs doctor` to verify the keychain is working.
+Run `hscli auth status` to see which storage backend is active and `hscli doctor` to verify the keychain is working.

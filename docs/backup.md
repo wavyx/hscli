@@ -1,6 +1,6 @@
 # Backup & Data Portability
 
-`hs backup` produces a GDPR-style snapshot of a Help Scout account on
+`hscli backup` produces a GDPR-style snapshot of a Help Scout account on
 disk. Subsequent runs sync only what changed. The output is a plain
 directory of JSON files you can browse, version, archive, or pipe into
 any other tool.
@@ -9,19 +9,19 @@ any other tool.
 
 ```bash
 # first run — full snapshot
-hs backup --out ~/hs-backup
+hscli backup --out ~/hs-backup
 
 # subsequent runs — incremental (auto-detected via manifest.json)
-hs backup --out ~/hs-backup
+hscli backup --out ~/hs-backup
 
 # weekly: also detect deletions (writes tombstones to _deleted.ndjson)
-hs backup --out ~/hs-backup --reconcile
+hscli backup --out ~/hs-backup --reconcile
 
 # include attachments + history log
-hs backup --out ~/hs-backup --attachments --keep-history
+hscli backup --out ~/hs-backup --attachments --keep-history
 
 # one-shot archive
-hs backup --out ~/hs-backup --full --attachments --compress
+hscli backup --out ~/hs-backup --full --attachments --compress
 ```
 
 ## Output Structure
@@ -175,10 +175,10 @@ hscli stays stateless — scheduling happens at the OS level.
 
 ```cron
 # Daily incremental at 02:00
-0 2 * * * /usr/local/bin/hs backup --out ~/hs-backup --profile prod >> ~/.hscli/backup.log 2>&1
+0 2 * * * /usr/local/bin/hscli backup --out ~/hs-backup --profile prod >> ~/.hscli/backup.log 2>&1
 
 # Weekly full reconcile on Sunday 03:00
-0 3 * * 0 /usr/local/bin/hs backup --out ~/hs-backup --profile prod --reconcile --keep-history >> ~/.hscli/backup.log 2>&1
+0 3 * * 0 /usr/local/bin/hscli backup --out ~/hs-backup --profile prod --reconcile --keep-history >> ~/.hscli/backup.log 2>&1
 ```
 
 ### launchd (macOS)
@@ -217,23 +217,23 @@ Register-ScheduledTask -TaskName 'hscli-backup' -Action $action -Trigger $trigge
 For one-off archival of a specific conversation:
 
 ```bash
-hs conv dump 3336043008 > conv-3336043008.json
-hs conv dump 3336043008 --out conv-3336043008.json
+hscli conv dump 3336043008 > conv-3336043008.json
+hscli conv dump 3336043008 --out conv-3336043008.json
 ```
 
 The dump bundles the conversation, all threads, all customers, all
 tags, and attachment metadata in one JSON file. No binaries are
-downloaded — use `hs backup --attachments` for that.
+downloaded — use `hscli backup --attachments` for that.
 
 ## Bulk Export with Embeds
 
-`hs conv export` lists conversations as bulk JSON/CSV/NDJSON. Pass
+`hscli conv export` lists conversations as bulk JSON/CSV/NDJSON. Pass
 `--embed threads` to include thread bodies inline (HAL-native, single
 request per page):
 
 ```bash
-hs conv export --embed threads --format ndjson > full.ndjson
-hs conv export --embed threads --status closed --format json
+hscli conv export --embed threads --format ndjson > full.ndjson
+hscli conv export --embed threads --status closed --format json
 ```
 
 `--embed` is incompatible with `--format csv` (the embedded structure
@@ -256,4 +256,4 @@ audit, migration analysis, and external indexing.
 | Slack export       | zip of JSON                     | ❌ full each time | ❌                   | ✅                     |
 | GitHub data export | tar.gz                          | ❌ full each time | ❌                   | ✅                     |
 | Google Takeout     | zip                             | ❌                | ❌                   | ✅                     |
-| **hs backup**      | dir of JSON (+ optional tar.gz) | ✅ via manifest   | ✅ via `--reconcile` | ✅ via `--attachments` |
+| **hscli backup**   | dir of JSON (+ optional tar.gz) | ✅ via manifest   | ✅ via `--reconcile` | ✅ via `--attachments` |

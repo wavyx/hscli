@@ -2,7 +2,9 @@
 
 Command-line interface for [Help Scout](https://www.helpscout.com/).
 
-Currently covers the **Mailbox API 2.0** (conversations, customers, mailboxes, users, tags, workflows, webhooks, reports). Aims to expand to **Docs**, **Beacon**, and **Help Desk** APIs over time.
+Covers the **Mailbox API 2.0** (conversations, customers, mailboxes, users, tags,
+workflows, webhooks, reports) plus **Beacon** HMAC/snippet utilities and a full
+account **backup**. Docs API support is planned.
 
 ## Install
 
@@ -10,55 +12,72 @@ Currently covers the **Mailbox API 2.0** (conversations, customers, mailboxes, u
 npm install -g hscli
 ```
 
-Requires Node.js 20+.
+Requires Node.js 20+. The binary is `hscli`.
 
-## Quick Start
+> **Credential storage:** hscli stores OAuth tokens only in your operating system
+> keychain (macOS Keychain, Windows Credential Manager, or libsecret on Linux).
+> It will not write credentials to disk in plaintext — if no keychain is
+> available, authentication fails by design.
+
+## Quick start
+
+You bring your own Help Scout OAuth app (Help Scout apps are account-scoped, so
+there is no shared app). The `hscli auth setup` wizard walks you through creating
+one.
 
 ```bash
-hs auth setup                          # Configure OAuth app (one-time)
-hs auth login                          # Authenticate
-hs conv list                           # List conversations
-hs conv reply 123 --body "Thanks"      # Reply to a conversation
-hs customer create --email user@example.com --first Jane
-hs backup --out ~/hs-backup            # Full account backup (incremental on re-run)
+hscli auth setup                          # Configure your OAuth app (one-time)
+hscli auth login                          # Authenticate (opens browser)
+hscli conv list                           # List conversations
+hscli conv reply 123 --body "Thanks"      # Reply to a conversation
+hscli customer create --email user@example.com --first Jane
+hscli backup --out ~/hs-backup            # Full account backup (incremental on re-run)
+```
+
+For CI/CD, use the non-interactive client-credentials flow:
+
+```bash
+HSCLI_APP_ID=... HSCLI_APP_SECRET=... hscli auth login --client-credentials
 ```
 
 ## Commands
 
-| Topic         | Commands                                                                                                                                                                                  |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hs auth`     | `setup`, `login`, `logout`, `status`, `refresh`                                                                                                                                           |
-| `hs conv`     | `list`, `get`, `create`, `reply`, `note`, `status`, `assign`, `tag`, `move`, `delete`, `threads`, `edit-note`, `dump`, `export`, `search`, `watch`, `count`, `attachments`, `bulk-status` |
-| `hs mailbox`  | `list`, `get`                                                                                                                                                                             |
-| `hs user`     | `me`, `list`, `get`                                                                                                                                                                       |
-| `hs customer` | `create`, `update`, `list`, `get`, `search`, `conversations`                                                                                                                              |
-| `hs tag`      | `list`, `get`                                                                                                                                                                             |
-| `hs workflow` | `list`, `run`                                                                                                                                                                             |
-| `hs webhook`  | `list`, `get`, `create`, `delete`                                                                                                                                                         |
-| `hs report`   | `company`, `user`, `conversations`, `beacon`                                                                                                                                              |
-| `hs beacon`   | `sign`, `verify`, `embed`, `identify-snippet` — HMAC + snippet utilities for Beacon Secure Mode                                                                                           |
-| `hs api`      | Raw API escape hatch: `hs api GET /v2/conversations`                                                                                                                                      |
-| `hs backup`   | Full account dump with incremental refresh, resume, deletion detection, attachments                                                                                                       |
-| `hs profile`  | `list`, `use`, `current`                                                                                                                                                                  |
-| `hs config`   | `get`, `set`, `list`                                                                                                                                                                      |
-| `hs doctor`   | Diagnostic checks                                                                                                                                                                         |
-| `hs version`  | Version info                                                                                                                                                                              |
+| Topic            | Commands                                                                                                                                                                                  |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hscli auth`     | `setup`, `login`, `logout`, `status`, `refresh`                                                                                                                                           |
+| `hscli conv`     | `list`, `get`, `create`, `reply`, `note`, `status`, `assign`, `tag`, `move`, `delete`, `threads`, `edit-note`, `dump`, `export`, `search`, `watch`, `count`, `attachments`, `bulk-status` |
+| `hscli mailbox`  | `list`, `get`, `folders`, `fields`                                                                                                                                                        |
+| `hscli customer` | `create`, `update`, `list`, `get`, `search`, `conversations`                                                                                                                              |
+| `hscli user`     | `me`, `list`, `get`                                                                                                                                                                       |
+| `hscli tag`      | `list`, `get`, `usage`                                                                                                                                                                    |
+| `hscli workflow` | `list`, `run`                                                                                                                                                                             |
+| `hscli webhook`  | `list`, `get`, `create`, `delete`                                                                                                                                                         |
+| `hscli report`   | `company`, `user`, `conversations`, `beacon`                                                                                                                                              |
+| `hscli beacon`   | `sign`, `verify`, `embed`, `identify-snippet` — HMAC + snippet utilities for Beacon Secure Mode                                                                                           |
+| `hscli profile`  | `list`, `use`, `current`                                                                                                                                                                  |
+| `hscli config`   | `get`, `set`, `list`, `validate`                                                                                                                                                          |
+| `hscli alias`    | `set`, `list`, `unset` — custom command shortcuts                                                                                                                                         |
+| `hscli backup`   | Full account dump with incremental refresh, resume, deletion detection, attachments                                                                                                       |
+| `hscli api`      | Raw API escape hatch: `hscli api GET /v2/conversations` (locked to `api.helpscout.net`)                                                                                                   |
+| `hscli doctor`   | Diagnostic checks                                                                                                                                                                         |
+| `hscli version`  | Version info                                                                                                                                                                              |
 
-Run `hs --help` or `hs <topic> --help` for details.
+Run `hscli --help` or `hscli <topic> --help` for details. Every list/get command
+supports `--output table|json|yaml|csv`, `--jq`, and `--fields`.
 
 ## Documentation
 
-- [Authentication](docs/authentication.md) -- setup, login, profiles, CI/CD
-- [Commands](docs/commands.md) -- full command reference
-- [Configuration](docs/configuration.md) -- env vars, profiles, settings
-- [API Reference](docs/api-reference.md) -- Help Scout endpoints used
-- [Backup & Data Portability](docs/backup.md) -- `hs backup`, `hs conv dump`, `hs conv export --embed`
-- [Beacon](docs/beacon.md) -- Beacon Secure Mode HMAC signing, embed/identify snippets, source-based reporting, limitations
+- [Authentication](docs/authentication.md) — setup, login, profiles, CI/CD
+- [Commands](docs/commands.md) — full command reference
+- [Configuration](docs/configuration.md) — env vars, profiles, settings
+- [API Reference](docs/api-reference.md) — Help Scout endpoints used
+- [Backup & Data Portability](docs/backup.md) — `hscli backup`, `hscli conv dump`, `hscli conv export --embed`
+- [Beacon](docs/beacon.md) — Beacon Secure Mode HMAC signing, embed/identify snippets, source-based reporting, limitations
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Security issues: see [SECURITY.md](SECURITY.md).
 
 ## License
 
-MIT
+[MIT](LICENSE) © Eric Rodriguez
