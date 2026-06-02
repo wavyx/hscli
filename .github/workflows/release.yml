@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write # create the GitHub Release
+  id-token: write # OIDC: npm trusted publishing + provenance (no NPM_TOKEN)
+
+jobs:
+  release:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+
+      # Trusted publishing requires a recent npm (>= 11.5.1).
+      - run: npm install -g npm@latest
+
+      - run: npm ci
+
+      # Gate the release on the same checks as CI.
+      - run: npm run lint
+      - run: npm run test:coverage
+
+      # Auth is via OIDC trusted publishing (configure the trusted publisher
+      # for this repo/workflow at npmjs.com first). Provenance is attached
+      # automatically; no NPM_TOKEN secret is needed.
+      - run: npm publish --provenance --access public
+
+      - name: Create GitHub Release from CHANGELOG
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          NOTES=$(awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { flag=1; next }
+            /^## \[/ { flag=0 }
+            flag { print }
+          ' CHANGELOG.md)
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes "${NOTES:-Release $GITHUB_REF_NAME}"
