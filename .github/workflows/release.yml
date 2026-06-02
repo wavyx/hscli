@@ -33,13 +33,25 @@ jobs:
 
       # Auth is via OIDC trusted publishing (configure the trusted publisher
       # for this repo/workflow at npmjs.com first). Provenance is attached
-      # automatically; no NPM_TOKEN secret is needed.
-      - run: npm publish --provenance --access public
+      # automatically; no NPM_TOKEN secret is needed. Skips when this version
+      # is already on npm (manual first publish, or a re-run of the tag).
+      - name: Publish to npm (skip if already published)
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "@wavyx/hscli@$VERSION" version >/dev/null 2>&1; then
+            echo "@wavyx/hscli@$VERSION already published — skipping"
+          else
+            npm publish --provenance
+          fi
 
-      - name: Create GitHub Release from CHANGELOG
+      - name: Create GitHub Release from CHANGELOG (skip if exists)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists — skipping"
+            exit 0
+          fi
           VERSION="${GITHUB_REF_NAME#v}"
           NOTES=$(awk -v ver="$VERSION" '
             $0 ~ "^## \\[" ver "\\]" { flag=1; next }
