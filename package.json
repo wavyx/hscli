@@ -1,6 +1,9 @@
 {
-  "name": "hscli",
+  "name": "@wavyx/hscli",
   "version": "0.8.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Command-line interface for Help Scout",
   "type": "module",
   "license": "MIT",

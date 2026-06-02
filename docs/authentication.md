@@ -151,7 +151,7 @@ env:
   HSCLI_AUTH_MODE: client_credentials
 
 steps:
-  - run: npm install -g hscli
+  - run: npm install -g @wavyx/hscli
   - run: hscli auth login --client-credentials
   - run: hscli conv list --status active --output json
 ```

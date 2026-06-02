@@ -9,7 +9,7 @@ account **backup**. Docs API support is planned.
 ## Install
 
 ```bash
-npm install -g hscli
+npm install -g @wavyx/hscli
 ```
 
 Requires Node.js 20+. The binary is `hscli`.
