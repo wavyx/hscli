@@ -28,6 +28,13 @@ export default [
     },
   },
   {
-    ignores: ['node_modules/', 'coverage/', 'oclif.manifest.json'],
+    // Build/codegen scripts run in Node and legitimately log progress.
+    files: ['scripts/**/*.{js,mjs}'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
+    ignores: ['node_modules/', 'coverage/', 'oclif.manifest.json', 'website/'],
   },
 ]

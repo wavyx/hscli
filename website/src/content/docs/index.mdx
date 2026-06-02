@@ -1,0 +1,60 @@
+---
+title: hscli
+description: A fast, scriptable Help Scout CLI for terminals, CI pipelines, and AI agents.
+template: splash
+hero:
+  tagline: A fast, scriptable CLI for Help Scout — built for terminals, CI pipelines, and AI agents like Claude Code and Codex.
+  actions:
+    - text: Get started
+      link: /hscli/authentication/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/wavyx/hscli
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Install
+
+```bash
+npm install -g @wavyx/hscli
+```
+
+Requires Node.js 20+. The command is `hscli`.
+
+<CardGrid>
+	<Card title="Agent & workflow ready" icon="rocket">
+		JSON output, deterministic exit codes, and a raw `hscli api` hatch let AI
+		agents (Claude Code, Codex) and CI pipelines drive Help Scout directly — no
+		SDK glue required.
+	</Card>
+	<Card title="Pipe-friendly" icon="bars">
+		Every command supports `--output table|json|yaml|csv`, plus `--jq` and
+		`--fields` for inline filtering and projection.
+	</Card>
+	<Card title="Secure by default" icon="approve-check">
+		OAuth tokens live only in your OS keychain — never written to disk in
+		plaintext, and `hscli api` is locked to the Help Scout host.
+	</Card>
+	<Card title="Full account backups" icon="cloud-download">
+		`hscli backup` dumps your whole account to JSON with incremental sync,
+		resume, deletion detection, and attachments.
+	</Card>
+</CardGrid>
+
+## Built for agents and automation
+
+Because every command speaks JSON and returns clean [exit codes](/hscli/commands/),
+an AI coding agent or a shell script can operate Help Scout end to end:
+
+```bash
+# Triage the active inbox, then close everything already tagged "resolved"
+hscli conv list --status active --output json \
+  --jq '.[] | select(.tags[]? == "resolved") | .id' \
+  | xargs -I {} hscli conv status {} --set closed
+```
+
+Point an agent at `hscli --help` (or this reference) and it has a complete,
+self-describing toolset for conversations, customers, reporting, and backups.
