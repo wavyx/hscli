@@ -1,0 +1,40 @@
+name: Bug report
+description: Report a problem with hscli
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. **Do not include OAuth tokens, app secrets, or
+        customer data** in this report — redact anything sensitive from command
+        output.
+  - type: input
+    id: version
+    attributes:
+      label: hscli version
+      description: Output of `hscli version`
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS and Node.js version
+      placeholder: 'macOS 14.5 / Node 22.3.0'
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: >
+        What did you run, what did you expect, and what happened instead?
+        Include the command and any output (add `--verbose` if helpful,
+        redacting secrets).
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
