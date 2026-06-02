@@ -60,8 +60,8 @@ const fixtureConv = {
   tags: [{ id: 1, color: '#abc', tag: 'billing' }],
   primaryCustomer: {
     id: 7001,
-    first: 'Eric',
-    last: 'R',
+    first: 'Test',
+    last: 'Customer',
     email: 'customer@example.com',
   },
   _embedded: {
