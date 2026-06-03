@@ -6,6 +6,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/@wavyx/hscli)](https://www.npmjs.com/package/@wavyx/hscli)
 [![Node.js](https://img.shields.io/node/v/@wavyx/hscli)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-wavyx.github.io%2Fhscli-1292EE)](https://wavyx.github.io/hscli/)
 
 Command-line interface for [Help Scout](https://www.helpscout.com/).
 
@@ -16,6 +17,8 @@ account **backup**. Docs API support is planned.
 JSON output, deterministic exit codes, and a raw `hscli api` escape hatch make it
 a clean way to drive Help Scout from CI pipelines and **AI agents** (Claude Code,
 Codex, and similar) — no SDK glue required.
+
+📖 **Documentation:** <https://wavyx.github.io/hscli/>
 
 ## Install
 
