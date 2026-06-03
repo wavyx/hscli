@@ -26,7 +26,10 @@ const argString = (c) =>
     .map(([name, a]) => (a.required ? ` <${name}>` : ` [${name}]`))
     .join('')
 
-const firstLine = (s) => String(s || '').split('\n')[0].trim()
+const firstLine = (s) =>
+  String(s || '')
+    .split('\n')[0]
+    .trim()
 // Escape MDX-significant chars for table cells: `|` breaks the table, and
 // bare `<`/`>` (e.g. "<script>" in a summary) are parsed as JSX tags.
 const tableCell = (s) =>
@@ -70,10 +73,7 @@ Reference for \`${bin}\` v${manifest.version} (${commands.length} commands). Eve
       const cmd = c.id.replaceAll(':', ' ')
       out += `### \`${bin} ${cmd}\`\n\n`
       if (c.description) out += `${c.description}\n\n`
-      out +=
-        '```\n' +
-        `${bin} ${cmd}${argString(c)} [flags]` +
-        '\n```\n\n'
+      out += '```\n' + `${bin} ${cmd}${argString(c)} [flags]` + '\n```\n\n'
       const flags = nonGlobalFlags(c)
       if (flags.length)
         out += flags.map(([n, f]) => flagLine(n, f)).join('\n') + '\n\n'
@@ -111,10 +111,13 @@ const TOPIC_BADGE = {
 
 const TOPIC_BLURB = {
   conv: 'List, read, and act on conversations — the workhorse of hscli. See the [Conversations guide](/guides/conversations/).',
-  customer: 'Search, read, create, and update the people behind your conversations. See the [Customers guide](/guides/customers/).',
-  report: 'Volume, company, and per-user metrics as JSON, CSV, or a table. See the [Reporting guide](/guides/reporting/).',
+  customer:
+    'Search, read, create, and update the people behind your conversations. See the [Customers guide](/guides/customers/).',
+  report:
+    'Volume, company, and per-user metrics as JSON, CSV, or a table. See the [Reporting guide](/guides/reporting/).',
   auth: 'Authenticate and manage credentials (stored in your OS keychain). See [Authentication](/guides/authentication/).',
-  config: 'Read and write per-profile configuration. See [Configuration](/guides/configuration/).',
+  config:
+    'Read and write per-profile configuration. See [Configuration](/guides/configuration/).',
   mailbox: 'Inspect mailboxes, folders, and custom fields.',
   tag: 'List tags and their usage.',
   user: 'Look up team members and the authenticated user.',
@@ -124,7 +127,8 @@ const TOPIC_BLURB = {
   profile: 'Switch between named auth profiles.',
   alias: 'Define shortcuts for commands you run often.',
   api: 'Reach any Help Scout endpoint directly — locked to the Help Scout host. See the [`hscli api` reference](/reference/api/).',
-  backup: 'Dump your whole account to JSON with incremental refresh, resume, deletion detection, and attachments. See the [Backups guide](/guides/backups/).',
+  backup:
+    'Dump your whole account to JSON with incremental refresh, resume, deletion detection, and attachments. See the [Backups guide](/guides/backups/).',
   doctor: 'Diagnose your environment, auth, and connectivity.',
 }
 
@@ -240,7 +244,10 @@ if (invokedDirectly) {
     renderGithubMarkdown(manifest),
   )
   writeFileSync(
-    new URL('../website/src/content/docs/reference/commands.mdx', import.meta.url),
+    new URL(
+      '../website/src/content/docs/reference/commands.mdx',
+      import.meta.url,
+    ),
     renderWebsiteMdx(manifest),
   )
   const count = groupByTopic(manifest).commands.length

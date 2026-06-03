@@ -1,11 +1,16 @@
 import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
-import { renderWebsiteMdx, renderGithubMarkdown } from '../scripts/gen-commands.mjs'
+import {
+  renderWebsiteMdx,
+  renderGithubMarkdown,
+} from '../scripts/gen-commands.mjs'
 
 const manifest = JSON.parse(
   readFileSync(new URL('../oclif.manifest.json', import.meta.url)),
 )
-const ids = Object.keys(manifest.commands).filter((id) => !manifest.commands[id].hidden)
+const ids = Object.keys(manifest.commands).filter(
+  (id) => !manifest.commands[id].hidden,
+)
 const mdx = renderWebsiteMdx(manifest, 'hscli')
 
 describe('website command reference generator', () => {
