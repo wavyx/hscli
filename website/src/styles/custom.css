@@ -355,3 +355,25 @@ h1#_top,
 @media (max-width: 50rem) {
   .hscli-header .nav-links { display: none; }
 }
+
+/* ============================================================
+   Wide-screen layout: cap + center the whole docs frame
+   (sidebar + content + TOC + header content) into one container,
+   instead of pinning the sidebar to the viewport edge while the
+   content floats. The header/sidebar are position:fixed, so we
+   offset them by a computed gutter. The header BACKGROUND stays
+   full-bleed — only its content insets. Below the cap the gutter
+   is 0 → identical to default. The home page has no .main-frame,
+   so it's unaffected.
+   ============================================================ */
+@media (min-width: 50rem) {
+  :root { --hscli-frame-pad: max(0px, calc((100vw - 1536px) / 2)); }
+  header.header {
+    padding-inline: calc(var(--hscli-frame-pad) + var(--sl-nav-pad-x, 1.5rem));
+  }
+  .sidebar-pane { inset-inline-start: var(--hscli-frame-pad); }
+  .main-frame {
+    padding-inline-start: calc(var(--hscli-frame-pad) + var(--sl-content-inline-start, 18.75rem));
+    padding-inline-end: var(--hscli-frame-pad);
+  }
+}
