@@ -1,0 +1,31 @@
+---
+/* hscli — custom Starlight Footer.
+   Keeps Starlight's default footer (edit link / last-updated / prev-next
+   pager) by rendering the built-in default, then appends the mockup's
+   brand site-footer beneath it on every docs page. */
+import Default from '@astrojs/starlight/components/Footer.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+---
+
+<Default><slot /></Default>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <span class="wordmark">
+        <span class="wordmark__chip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7l4 4-4 4"></path><line x1="11" y1="17" x2="18" y2="17"></line></svg>
+        </span>
+        <span class="wordmark__text">hs<b>cli</b></span>
+      </span>
+      <span class="muted">MIT licensed · not affiliated with Help Scout</span>
+    </div>
+    <nav class="site-footer__links" aria-label="Footer">
+      <a href={`${base}guides/overview/`}>Guide</a>
+      <a href={`${base}reference/commands/`}>Commands</a>
+      <a href="https://github.com/wavyx/hscli">GitHub</a>
+      <a href="https://www.npmjs.com/package/@wavyx/hscli">npm</a>
+    </nav>
+  </div>
+</footer>

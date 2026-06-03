@@ -1,0 +1,33 @@
+---
+title: Webhooks & workflows
+description: Manage Help Scout webhooks and run workflows from the command line.
+---
+
+## Webhooks
+
+Create, list, and delete webhooks so other systems can react to Help Scout events. See the
+[command reference](/reference/commands/#webhook).
+
+```bash frame="terminal" title="zsh — hscli"
+hscli webhook list
+hscli webhook create --url https://example.com/hooks/hs --event convo.created --label "New convos"
+hscli webhook get 88
+hscli webhook delete 88 --yes
+```
+
+Pass `--secret` to `webhook create` to have Help Scout sign each delivery.
+
+## Workflows
+
+List workflows and trigger a manual workflow against specific conversations. See the
+[command reference](/reference/commands/#workflow).
+
+```bash frame="terminal"
+hscli workflow list --mailbox 42
+hscli workflow run 1 --conv 100,200,300
+```
+
+:::tip
+`workflow run` takes a comma-separated list of conversation IDs via `--conv`, so you can
+pipe IDs from `conv list --jq` straight into it.
+:::

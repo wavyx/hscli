@@ -1,10 +1,10 @@
 ---
 title: Backups & restore
-description: Dump your whole Help Scout account to JSON with incremental sync and resume.
+description: Dump your whole Help Scout account to JSON with incremental refresh, resume, and deletion detection.
 ---
 
 `hscli backup` dumps your entire Help Scout account to JSON — conversations, customers,
-and attachments — with **incremental sync**, **resume**, and **deletion detection**. See
+and attachments — with **incremental refresh**, **resume**, and **deletion detection**. See
 the [command reference](/reference/commands/#backup) for all flags.
 
 ## Full backup
@@ -16,23 +16,27 @@ $ hscli backup --out ./hs-data --attachments
 
 The output directory is a plain tree of JSON files — diff it, grep it, or commit it.
 
-## Incremental sync
+## Incremental refresh
 
-After the first run, `--incremental` only fetches what changed since the last sync,
-including detecting deletions.
-
-```bash frame="terminal"
-hscli backup --out ./hs-data --incremental --attachments
-```
-
-## Status & resume
+Runs after the first are **incremental by default**: only what changed since the last sync
+is fetched. Add `--reconcile` to also detect deletions, or `--full` to force a complete
+re-pull.
 
 ```bash frame="terminal"
-hscli backup status --out ./hs-data     # show last sync + deltas
-hscli backup resume --out ./hs-data     # finish an interrupted run
+hscli backup --out ./hs-data --attachments --reconcile   # incremental + deletions
+hscli backup --out ./hs-data --full                       # force a full re-pull
 ```
+
+## Resume an interrupted run
+
+```bash frame="terminal"
+hscli backup --out ./hs-data --resume
+```
+
+Other useful flags: `--compress` (gzip output), `--include` / `--exclude` (limit
+resources), `--parallel` (tune concurrency), and `--dry-run` (preview without writing).
 
 :::tip[Automate it]
-Run an incremental backup nightly in [CI](/automation/ci/) so you always have an
-up-to-date, restorable snapshot.
+Run a backup nightly in [CI](/automation/ci/) so you always have an up-to-date,
+restorable snapshot.
 :::

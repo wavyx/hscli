@@ -1,0 +1,49 @@
+---
+/* hscli — custom Starlight Header.
+   Reproduces the mockup top nav (wordmark + Guide/Commands/Agents/Changelog)
+   while reusing Starlight's built-in Search, SocialIcons and ThemeSelect so
+   Pagefind search + theme persistence keep working. Rendered inside
+   Starlight's sticky <header class="header"> wrapper. */
+import config from 'virtual:starlight/user-config';
+import Search from 'virtual:starlight/components/Search';
+import SocialIcons from 'virtual:starlight/components/SocialIcons';
+import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/'); // ensure trailing slash
+const shouldRenderSearch =
+  config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
+
+const current = Astro.url.pathname;
+const nav = [
+  { label: 'Guide', href: `${base}guides/overview/`, match: 'guides/' },
+  { label: 'Commands', href: `${base}reference/commands/`, match: 'reference/' },
+  { label: 'Agents', href: `${base}automation/agents/`, match: 'automation/' },
+  { label: 'Changelog', href: 'https://github.com/wavyx/hscli/releases', match: null },
+];
+---
+
+<div class="hscli-header">
+  <a href={base} class="wordmark" aria-label="hscli home">
+    <span class="wordmark__chip">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7l4 4-4 4"></path><line x1="11" y1="17" x2="18" y2="17"></line></svg>
+    </span>
+    <span class="wordmark__text">hs<b>cli</b></span>
+  </a>
+
+  <nav class="nav-links" aria-label="Primary">
+    {nav.map((item) => (
+      <a
+        href={item.href}
+        class:list={[{ 'is-active': item.match && current.includes(item.match) }]}
+      >{item.label}</a>
+    ))}
+  </nav>
+
+  <div class="header-spacer"></div>
+
+  <div class="header-actions">
+    {shouldRenderSearch && <Search />}
+    <div class="sl-hidden md:sl-flex social-icons"><SocialIcons /></div>
+    <ThemeSelect />
+  </div>
+</div>

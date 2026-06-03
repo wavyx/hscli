@@ -17,37 +17,36 @@ libsecret on Linux).
 $ hscli auth login
 # → opens https://secure.helpscout.net/authentication/oauth ...
 ✓ Authenticated as jordan@acme.io (Acme Support)
-✓ Token stored in keychain · scope: convos, customers, reports
+✓ Token stored in keychain
 ```
 
-:::tip[Headless machine?]
-Pass `--device` to use the device-code flow — hscli prints a short code and URL you open
-on any other device.
-:::
+Bringing your own Help Scout OAuth app? Run `hscli auth setup` once (or set `HSCLI_APP_ID`
+and `HSCLI_APP_SECRET`) to register its credentials.
 
-## Non-interactive auth
+## Non-interactive auth (CI & servers)
 
-For CI and servers, skip the browser entirely. Provide a personal access token through an
-environment variable and hscli will use it for every command, never touching the keychain.
+For headless environments, use the **client-credentials** grant with your app's
+credentials. hscli reads them from the environment and authenticates with no browser:
 
 ```bash frame="terminal" title="ci.sh"
-export HSCLI_TOKEN="$HELPSCOUT_PAT"
+export HSCLI_APP_ID="$HELPSCOUT_APP_ID"
+export HSCLI_APP_SECRET="$HELPSCOUT_APP_SECRET"
+hscli auth login --client-credentials
 hscli conv list --status active --output json
-# no prompt, no keychain — reads the token from the env
 ```
 
 ### Environment variables
 
 | Variable | Description | Default |
 | --- | --- | --- |
-| `HSCLI_TOKEN` | Personal access token. Overrides the keychain when set. | — |
+| `HSCLI_APP_ID` | OAuth app client ID (for `--client-credentials` / setup). | — |
+| `HSCLI_APP_SECRET` | OAuth app client secret. | — |
 | `HSCLI_PROFILE` | Named profile to use for multi-account setups. | `default` |
-| `HSCLI_OUTPUT` | Default output format for every command. | `table` |
-| `HSCLI_NO_COLOR` | Disable ANSI colors in terminal output. | `false` |
+| `NO_COLOR` | Disable ANSI colors (standard convention). | — |
 
-:::caution[Never commit your token]
-Store `HSCLI_TOKEN` as a masked secret in your CI provider. hscli redacts it from all
-logs and error output.
+:::caution[Never commit your secrets]
+Store `HSCLI_APP_SECRET` as a masked secret in your CI provider. hscli redacts credentials
+from its own logs and error output.
 :::
 
 ## Multiple accounts
@@ -68,8 +67,8 @@ staging   bot@acme-test.io   ✓ valid
 Because hscli is fully self-describing, an AI agent can discover the entire surface from
 `hscli --help` and operate it safely. Three properties make this reliable:
 
-- **Deterministic exit codes** — `0` success, `1` usage error, `2` auth error, `4` not
-  found, `5` rate-limited. The agent always knows what happened.
+- **Deterministic [exit codes](/automation/exit-codes/)** — `0` success, `77` not
+  authenticated, `75` rate-limited, and so on. The agent always knows what happened.
 - **Structured output** — `--output json` gives the agent machine-readable data with no
   scraping.
 - **A locked escape hatch** — `hscli api` reaches any endpoint, but only on the Help Scout

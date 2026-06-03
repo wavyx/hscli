@@ -1,35 +1,66 @@
 /* ============================================================
-   hscli · Starlight theme override
-   Drop in as a customCss entry. Maps the hscli design system
-   (Help Scout Cobalt + Coral) onto Starlight's --sl-* tokens.
+   hscli · Starlight theme override + design tokens
+   Maps the hscli design system (Help Scout Cobalt + Coral) onto
+   Starlight's --sl-* tokens AND exposes the raw design tokens
+   (--accent, --surface, --r-*, …) used by the ported components
+   (header/footer overrides + the bespoke homepage).
    Dark is the default; light is fully supported.
    ============================================================ */
 
-/* ---------------- Fonts ----------------
-   Loaded here for convenience. For production, prefer Fontsource
-   (see README) so fonts are self-hosted and base-path safe. */
+/* ---------------- Fonts (self-hosted, base-path safe) ---------------- */
 @import '@fontsource-variable/hanken-grotesk';
 @import '@fontsource-variable/space-grotesk';
 @import '@fontsource-variable/jetbrains-mono';
 
+/* ---------------- Brand constants + shared scalars ---------------- */
 :root {
-  /* hscli brand constants */
-  --hs-cobalt: #1292EE;
-  --hs-coral:  #FF6B5C;
+  --hs-cobalt:      #1292EE;
+  --hs-cobalt-700:  #0A66C2;
+  --hs-cobalt-600:  #0B73D6;
+  --hs-cobalt-400:  #4FACF4;
+  --hs-cobalt-300:  #87C8F8;
+  --hs-mirage:      #1D2B36;
+  --hs-clay:        #F4EEE3;
+  --hs-zircon:      #F3F7FE;
+  --hs-coral:       #FF6B5C;
+  --hs-amber:       #F6A609;
+  --hs-lime:        #34C77B;
+  --hs-violet:      #8B7CF6;
 
-  /* Starlight type system */
-  --sl-font: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
-  --sl-font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* Type families (variable Fontsource families) */
+  --font-sans:    'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Starlight type system points at the same families */
+  --sl-font: var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+
+  --maxw: 1200px;
+  --header-h: 64px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --r-full: 999px;
+  --dur: 150ms;
+  --ease: cubic-bezier(.2, .7, .3, 1);
+
+  /* secondary accent (coral) for the recipes band + coral badges */
+  --accent-2: var(--hs-coral);
 }
 
 /* ===================== DARK (default) ===================== */
-:root {
-  /* accent ramp — Cobalt (matches mockup --accent #2A9DF4) */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Starlight accent ramp — Cobalt */
   --sl-color-accent-low:  #07314f;
   --sl-color-accent:      #2a9df4;
   --sl-color-accent-high: #9fd2f7;
 
-  /* gray ramp tuned to Help Scout "Mirage" navy */
+  /* Starlight gray ramp tuned to Help Scout "Mirage" navy */
   --sl-color-white:  #eaf1f6;
   --sl-color-gray-1: #dce6ec;
   --sl-color-gray-2: #9fb2bf;
@@ -44,15 +75,42 @@
   --sl-color-hairline: #213139;
   --sl-color-hairline-shade: #1a2932;
   --sl-color-text-accent: #4facf4;
+
+  /* Raw design tokens (consumed by ported components) */
+  --bg:           #0E1A22;
+  --bg-grid:      rgba(255,255,255,.025);
+  --surface:      #16242E;
+  --surface-2:    #1C2D38;
+  --surface-3:    #233643;
+  --border:       #2A3D49;
+  --border-soft:  #213139;
+  --border-strong:#3A5260;
+  --fg:           #EAF1F6;
+  --fg-muted:     #9FB2BF;
+  --fg-subtle:    #6E8492;
+  --accent:       #2A9DF4;
+  --accent-hover: #4FACF4;
+  --accent-soft:  rgba(42,157,244,.14);
+  --accent-line:  rgba(42,157,244,.35);
+  --on-accent:    #06121A;
+  --code-bg:      #0A141B;
+  --code-border:  #1E2E38;
+  --code-fg:      #D6E2EA;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-md: 0 8px 24px rgba(0,0,0,.45);
+  --shadow-lg: 0 24px 60px rgba(0,0,0,.55);
+  --shadow-glow: 0 0 0 1px var(--accent-line), 0 20px 60px -20px rgba(42,157,244,.5);
 }
 
 /* ===================== LIGHT ===================== */
 :root[data-theme='light'] {
+  color-scheme: light;
+
   --sl-color-accent-low:  #d6ebfb;
   --sl-color-accent:      #0b73d6;
   --sl-color-accent-high: #073257;
 
-  --sl-color-white:  #16242e;   /* darkest (text/headings) */
+  --sl-color-white:  #16242e;
   --sl-color-gray-1: #1f2d37;
   --sl-color-gray-2: #54616c;
   --sl-color-gray-3: #8493a0;
@@ -60,15 +118,42 @@
   --sl-color-gray-5: #e2e9f0;
   --sl-color-gray-6: #f5f8fc;
   --sl-color-gray-7: #fbfcfe;
-  --sl-color-black:  #ffffff;   /* page bg */
+  --sl-color-black:  #ffffff;
 
   --sl-color-bg-nav: color-mix(in srgb, #ffffff 82%, transparent);
   --sl-color-bg-sidebar: #ffffff;
   --sl-color-hairline: #e2e9f0;
   --sl-color-text-accent: #0b73d6;
+
+  --bg:           #FFFFFF;
+  --bg-grid:      rgba(29,43,54,.04);
+  --surface:      #FFFFFF;
+  --surface-2:    #F5F8FC;
+  --surface-3:    #ECF2F8;
+  --border:       #E2E9F0;
+  --border-soft:  #EDF1F6;
+  --border-strong:#CCD8E2;
+  --fg:           #16242E;
+  --fg-muted:     #54616C;
+  --fg-subtle:    #8493A0;
+  --accent:       #0B73D6;
+  --accent-hover: #0A66C2;
+  --accent-soft:  rgba(18,146,238,.10);
+  --accent-line:  rgba(18,146,238,.28);
+  --on-accent:    #FFFFFF;
+  /* code blocks stay dark in light mode — terminal personality */
+  --code-bg:      #0E1B24;
+  --code-border:  #1B2A34;
+  --code-fg:      #DDE7EE;
+  --shadow-sm: 0 1px 2px rgba(29,43,54,.06);
+  --shadow-md: 0 10px 28px rgba(29,43,54,.10);
+  --shadow-lg: 0 24px 60px rgba(29,43,54,.14);
+  --shadow-glow: 0 0 0 1px var(--accent-line), 0 18px 50px -22px rgba(18,146,238,.45);
 }
 
-/* ---------------- Chrome polish ---------------- */
+/* ============================================================
+   Starlight chrome polish
+   ============================================================ */
 
 /* Frosted, hairline header (matches mockup) */
 .header {
@@ -83,11 +168,11 @@
 h1#_top,
 .hero h1,
 .hero .tagline {
-  font-family: 'Space Grotesk Variable', 'Space Grotesk', var(--sl-font);
+  font-family: var(--font-display);
   letter-spacing: -0.02em;
 }
 
-/* Active sidebar item: cobalt pill + left rule */
+/* Active sidebar item: cobalt pill */
 .sidebar-content a[aria-current='page'],
 .sidebar-content a[aria-current='page']:hover {
   background: var(--sl-color-accent-low);
@@ -98,7 +183,7 @@ h1#_top,
 
 /* Eyebrow / mono small caps used in custom content */
 .eyebrow {
-  font-family: var(--sl-font-mono);
+  font-family: var(--font-mono);
   font-size: 0.75rem; font-weight: 600;
   letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--sl-color-text-accent);
@@ -111,24 +196,17 @@ h1#_top,
   border-radius: 5px;
 }
 
-/* Hero primary action = cobalt; minimal = ghost. Starlight handles
-   variants via --sl-color-accent automatically. */
-
 /* Table header: mono eyebrow style */
 .sl-markdown-content th {
-  font-family: var(--sl-font-mono);
+  font-family: var(--font-mono);
   font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;
   color: var(--sl-color-gray-3);
 }
 
-/* ---------------- Cobalt / Coral split ----------------
-   Coral is the *accent on energy* — used in custom badges and the
-   homepage "recipes" band. Cobalt stays the product/structure color. */
-
-/* Badges (used in the command reference) */
+/* ---------------- Badges (command reference chips) ---------------- */
 .badge {
   display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--sl-font-mono); font-size: 0.7rem; font-weight: 600;
+  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600;
   letter-spacing: 0.03em; padding: 2px 9px; border-radius: 999px;
   border: 1px solid var(--sl-color-gray-4); color: var(--sl-color-gray-2);
   white-space: nowrap; vertical-align: middle;
@@ -142,7 +220,7 @@ h1#_top,
   background: color-mix(in srgb, var(--hs-coral) 12%, transparent);
 }
 
-/* ---------------- Doc tables (match the mockup's bordered .doc-tbl) ---------------- */
+/* ---------------- Doc tables (bordered, rounded) ---------------- */
 .sl-markdown-content table {
   width: 100%;
   border: 1px solid var(--sl-color-hairline);
@@ -152,30 +230,128 @@ h1#_top,
   overflow: hidden;
   font-size: 0.9rem;
 }
-.sl-markdown-content thead th {
-  background: var(--sl-color-gray-6);
-}
+.sl-markdown-content thead th { background: var(--sl-color-gray-6); }
 .sl-markdown-content :is(th, td) {
   border: none;
   border-bottom: 1px solid var(--sl-color-hairline);
   padding: 0.7rem 1rem;
   vertical-align: top;
 }
-.sl-markdown-content tbody tr:last-child :is(th, td) {
-  border-bottom: none;
-}
-.sl-markdown-content tbody tr:hover td {
-  background: color-mix(in srgb, var(--sl-color-gray-6) 60%, transparent);
-}
-.sl-markdown-content td code {
-  white-space: nowrap;
-}
+.sl-markdown-content tbody tr:last-child :is(th, td) { border-bottom: none; }
+.sl-markdown-content tbody tr:hover td { background: color-mix(in srgb, var(--sl-color-gray-6) 60%, transparent); }
+.sl-markdown-content td code { white-space: nowrap; }
 
-/* ---------------- Asides: cobalt "tip" to match the mockup's callouts ---------------- */
+/* ---------------- Asides: cobalt "tip" ---------------- */
 .starlight-aside--tip {
   border-inline-start-color: var(--sl-color-accent);
   background-color: var(--sl-color-accent-low);
 }
-.starlight-aside--tip .starlight-aside__title {
-  color: var(--sl-color-text-accent);
+.starlight-aside--tip .starlight-aside__title { color: var(--sl-color-text-accent); }
+
+/* ============================================================
+   Shared components (mockup) — used by the header/footer
+   overrides AND the bespoke homepage.
+   ============================================================ */
+
+/* ---- Wordmark ---- */
+.wordmark { display: inline-flex; align-items: center; gap: 9px; color: var(--fg); }
+.wordmark__chip {
+  width: 30px; height: 30px; border-radius: 8px; flex: none;
+  display: grid; place-items: center;
+  background: linear-gradient(150deg, var(--accent), var(--hs-cobalt-700));
+  box-shadow: 0 4px 14px -4px var(--accent-line), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.wordmark__chip svg { display: block; }
+.wordmark__text {
+  font-family: var(--font-mono); font-weight: 700; font-size: 18px;
+  letter-spacing: -.02em; color: var(--fg);
+}
+.wordmark__text b { color: var(--accent); font-weight: 700; }
+
+/* ---- Top nav links ---- */
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-links a {
+  color: var(--fg-muted); font-size: 14.5px; font-weight: 500;
+  padding: 7px 11px; border-radius: var(--r-sm); text-decoration: none;
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.nav-links a:hover { color: var(--fg); background: var(--surface-2); }
+.nav-links a.is-active { color: var(--accent); }
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-sans); font-weight: 600; font-size: 14.5px;
+  padding: 0 18px; height: 42px; border-radius: var(--r-md);
+  cursor: pointer; border: 1px solid transparent; text-decoration: none;
+  transition: all var(--dur) var(--ease); white-space: nowrap;
+}
+.btn--primary { background: var(--accent); color: var(--on-accent); box-shadow: 0 8px 22px -10px var(--accent-line); }
+.btn--primary:hover { background: var(--accent-hover); color: var(--on-accent); transform: translateY(-1px); }
+.btn--ghost { background: var(--surface); color: var(--fg); border-color: var(--border-strong); }
+.btn--ghost:hover { background: var(--surface-2); border-color: var(--fg-subtle); color: var(--fg); }
+
+/* ---- Icon buttons + search pill + kbd ---- */
+.icon-btn {
+  width: 36px; height: 36px; flex: none; display: grid; place-items: center;
+  background: transparent; border: 1px solid transparent; border-radius: var(--r-md);
+  color: var(--fg-muted); cursor: pointer; text-decoration: none;
+  transition: all var(--dur) var(--ease);
+}
+.icon-btn:hover { color: var(--fg); background: var(--surface-2); border-color: var(--border); }
+.search-trigger {
+  display: flex; align-items: center; gap: 10px;
+  height: 36px; padding: 0 10px 0 12px; min-width: 210px;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);
+  color: var(--fg-subtle); font-size: 13.5px; cursor: pointer;
+  font-family: var(--font-sans);
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.search-trigger:hover { border-color: var(--border-strong); }
+.search-trigger .kbd { margin-left: auto; display: flex; gap: 3px; }
+.kbd kbd, .kbd > span {
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-3); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 5px; color: var(--fg-muted);
+}
+
+/* ---- Site footer (mockup) ---- */
+.site-footer { border-top: 1px solid var(--border); margin-top: 60px; }
+.site-footer__inner {
+  max-width: var(--maxw); margin: 0 auto; padding: 44px 24px;
+  display: flex; flex-wrap: wrap; gap: 28px; align-items: center; justify-content: space-between;
+}
+.site-footer .muted { color: var(--fg-subtle); font-size: 13.5px; }
+.site-footer__links { display: flex; gap: 22px; flex-wrap: wrap; }
+.site-footer__links a { color: var(--fg-muted); font-size: 13.5px; text-decoration: none; }
+.site-footer__links a:hover { color: var(--accent); }
+
+/* ============================================================
+   Docs Header override layout (.hscli-header lives inside
+   Starlight's sticky <header class="header">)
+   ============================================================ */
+.hscli-header {
+  display: flex; align-items: center; gap: 22px; height: 100%;
+}
+.hscli-header .header-spacer { flex: 1; }
+.hscli-header .header-actions { display: flex; align-items: center; gap: 8px; }
+
+/* Re-skin Starlight's built-in search button into the mockup pill */
+.hscli-header :global(site-search) { display: flex; }
+.hscli-header :global(button[data-open-modal]) {
+  display: flex; align-items: center; gap: 10px;
+  height: 36px; padding: 0 10px 0 12px; min-width: 210px;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);
+  color: var(--fg-subtle); font-size: 13.5px; font-weight: 500;
+}
+.hscli-header :global(button[data-open-modal]:hover) { border-color: var(--border-strong); }
+.hscli-header :global(button[data-open-modal] > kbd) { margin-left: auto; }
+.hscli-header :global(button[data-open-modal] kbd) {
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-3); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 5px; color: var(--fg-muted);
+}
+
+@media (max-width: 50rem) {
+  .hscli-header .nav-links { display: none; }
 }

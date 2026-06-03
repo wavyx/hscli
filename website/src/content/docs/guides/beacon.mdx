@@ -1,0 +1,31 @@
+---
+title: Beacon
+description: Generate Beacon embed snippets and sign Secure Mode identity payloads.
+---
+
+The `beacon` group helps you embed a Help Scout Beacon and wire up **Secure Mode**
+identity verification. See the [command reference](/reference/commands/#beacon).
+
+## Embed a Beacon
+
+```bash frame="terminal" title="zsh — hscli"
+hscli beacon embed BEACON_ID --color "#1292EE" --position right
+```
+
+This prints the `<script>` block to drop into your site.
+
+## Secure Mode identity
+
+Generate the front-end identify snippet, and sign or verify a customer payload with your
+Beacon secret:
+
+```bash frame="terminal"
+hscli beacon identify-snippet --beacon-id BEACON_ID --secret "$HSCLI_BEACON_SECRET"
+hscli beacon sign --email customer@acme.io --secret "$HSCLI_BEACON_SECRET"
+hscli beacon verify --email customer@acme.io --signature <sig> --secret "$HSCLI_BEACON_SECRET"
+```
+
+:::caution
+Keep your Beacon secret server-side. Set it via `HSCLI_BEACON_SECRET` rather than passing
+it inline, where it could land in shell history.
+:::

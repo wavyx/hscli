@@ -9,8 +9,9 @@ export default defineConfig({
   site: 'https://wavyx.github.io',
   base: '/hscli',
 
-  // GFM tables/strikethrough in .mdx (not applied to MDX by default here).
-  markdown: { remarkPlugins: [remarkGfm] },
+  // GFM tables/strikethrough in .mdx, and disable smartypants so code
+  // examples keep literal `--flags` and straight quotes (no em-dash/curly).
+  markdown: { smartypants: false, remarkPlugins: [remarkGfm] },
 
   integrations: [
     starlight({
@@ -20,6 +21,13 @@ export default defineConfig({
       // Custom cobalt/coral wordmark mark (see src/assets/hscli-mark.svg).
       // replacesTitle:false keeps the "hscli" wordmark next to the mark.
       logo: { src: './src/assets/hscli-mark.svg', replacesTitle: false },
+
+      // Custom chrome: mockup top-nav header + brand footer (reuse Starlight
+      // Search/SocialIcons/ThemeSelect/Pagination internally).
+      components: {
+        Header: './src/components/Header.astro',
+        Footer: './src/components/Footer.astro',
+      },
 
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/wavyx/hscli' },
@@ -67,6 +75,9 @@ export default defineConfig({
             { label: 'Customers', slug: 'guides/customers' },
             { label: 'Reporting', slug: 'guides/reporting' },
             { label: 'Backups & restore', slug: 'guides/backups' },
+            { label: 'Mailboxes', slug: 'guides/mailboxes' },
+            { label: 'Tags & team', slug: 'guides/tags-and-team' },
+            { label: 'Beacon', slug: 'guides/beacon' },
           ],
         },
         {
@@ -76,6 +87,7 @@ export default defineConfig({
             { label: 'Exit codes', slug: 'automation/exit-codes' },
             { label: 'Using with agents', slug: 'automation/agents' },
             { label: 'CI pipelines', slug: 'automation/ci' },
+            { label: 'Webhooks & workflows', slug: 'automation/webhooks' },
           ],
         },
         {

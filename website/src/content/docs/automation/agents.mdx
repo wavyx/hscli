@@ -13,7 +13,7 @@ customers, reporting, and backups — **no SDK glue required**.
   and flag, so the agent can discover the surface at runtime.
 - **Structured output** — `--output json` returns machine-readable data with no scraping.
 - **Deterministic [exit codes](/automation/exit-codes/)** — the agent always knows whether
-  a step succeeded, needs re-auth, or was rate-limited.
+  a step succeeded (`0`), needs re-auth (`77`), or was rate-limited (`75`).
 - **A locked escape hatch** — `hscli api` can reach any endpoint, but only on the Help
   Scout host, so a hallucinated URL can't exfiltrate the token.
 
@@ -29,14 +29,18 @@ hscli conv --help       # one group in detail
 
 ## A real loop
 
+Ask the model what to do, then act on its answer with real commands:
+
 ```bash frame="terminal" title="triage the active queue"
 hscli conv list --status active --output json --fields id,subject \
-  | claude -p "for each, suggest one tag and an assignee; return JSON" \
-  | hscli conv tag --stdin
+  | claude -p 'return JSON: [{"id":<id>,"tag":<tag>}] for each conversation' \
+  | jq -r '.[] | "\(.id) \(.tag)"' \
+  | xargs -n2 sh -c 'hscli conv tag "$0" --add "$1"'
 ```
 
 :::caution
-For unattended agents, authenticate non-interactively with `HSCLI_TOKEN` (see
-[Authentication](/guides/authentication/#non-interactive-auth)) and scope the token to
-only what the agent needs.
+For unattended agents, authenticate non-interactively with the client-credentials grant
+(`HSCLI_APP_ID` / `HSCLI_APP_SECRET`, see
+[Authentication](/guides/authentication/#non-interactive-auth-ci--servers)) and scope the
+OAuth app to only what the agent needs.
 :::

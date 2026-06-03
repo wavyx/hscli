@@ -1,72 +1,242 @@
 ---
 title: Command reference
-description: Every hscli command, flag, and exit code in one place.
+description: Every hscli command, flag, and exit code — generated from the CLI manifest.
 ---
 
-Every command is built from the same grammar:
+{/* AUTO-GENERATED from the oclif manifest by scripts/gen-commands.mjs — do not edit by hand. */}
+
+Every command follows the same grammar:
 
 ```text
 hscli <group> <action> [target] [flags]
 ```
 
-Run `hscli <group> --help` for the live, self-describing version of any group.
+Run `hscli <group> --help` for the live, self-describing version of any command.
+This page lists all 68 commands in `hscli` v0.8.0.
 
-## conv <span class="badge badge--accent badge--dot">conversations</span>
+## alias
 
-List, read, and act on conversations — the workhorse of hscli.
-See the [Conversations guide](/guides/conversations/) for worked examples.
+<span class="badge badge--dot">shortcuts</span>
 
-| Command | Description | Key flags |
-| --- | --- | --- |
-| `conv list` | List conversations in an inbox. | `--status` `--tag` `--assigned` |
-| `conv get <id>` | Fetch a single conversation with threads. | `--threads` |
-| `conv reply <id>` | Post a reply or note. | `--note` `--body` |
-| `conv status <id>` | Change status (`active` · `pending` · `closed`). | `--set` |
-| `conv tag <id>` | Add or remove tags. | `--add` `--remove` |
-| `conv snooze <id>` | Snooze until a time. | `--until` `--stdin` |
-
-## customer <span class="badge badge--dot">people</span>
+Define shortcuts for commands you run often.
 
 | Command | Description | Key flags |
 | --- | --- | --- |
-| `customer list` | Search and list customers. | `--query` `--email` |
-| `customer get <id>` | Fetch one customer profile. | — |
-| `customer create` | Create a customer record. | `--email` `--name` |
-| `customer merge <id>` | Merge duplicate records. | `--into` |
+| `alias list` | List all configured aliases | — |
+| `alias set <name> <command>` | Create or update an alias | — |
+| `alias unset <name>` | Remove an alias | — |
 
-## report <span class="badge badge--dot">metrics</span>
+## auth
 
-| Command | Description | Key flags |
-| --- | --- | --- |
-| `report` | Volume, replies, and resolution metrics. | `--from` `--to` `--inbox` |
-| `report happiness` | CSAT / satisfaction ratings. | `--from` `--to` |
-| `report productivity` | Per-agent response & resolution times. | `--user` |
+<span class="badge badge--dot">credentials</span>
 
-## backup <span class="badge badge--dot">archive</span>
+Authenticate and manage credentials (stored in your OS keychain). See [Authentication](/guides/authentication/).
 
 | Command | Description | Key flags |
 | --- | --- | --- |
-| `backup` | Dump the whole account to JSON. | `--out` `--incremental` `--attachments` |
-| `backup status` | Show last sync state and deltas. | `--out` |
-| `backup resume` | Resume an interrupted backup. | `--out` |
+| `auth login` | Authenticate with Help Scout | `--client-credentials` `--app-id` `--app-secret` |
+| `auth logout` | Log out and remove stored credentials | — |
+| `auth refresh` | Force-refresh the stored access token | — |
+| `auth setup` | Configure your own Help Scout OAuth app | `--app-id` `--app-secret` |
+| `auth status` | Show current authentication status | — |
 
-## auth <span class="badge badge--dot">credentials</span>
+## beacon
+
+<span class="badge badge--coral badge--dot">beacon</span>
+
+Generate Beacon embeds and sign/verify identity payloads.
 
 | Command | Description | Key flags |
 | --- | --- | --- |
-| `auth login` | OAuth login; stores token in keychain. | `--device` `--profile` |
-| `auth status` | Show authenticated profiles. | — |
-| `auth logout` | Remove a token from the keychain. | `--profile` |
+| `beacon embed <beaconId>` | Generate the &lt;script&gt; embed block to add a Beacon to your website | `--color` `--position` `--style` `--text` `--icon-image` |
+| `beacon identify-snippet` | Generate server-side identify snippet with HMAC signing for node, rails, php, django, python | `--beacon-id` `--secret` `--stack` |
+| `beacon sign` | Generate Beacon Secure Mode HMAC-SHA256 signature for an email | `--email` `--secret` |
+| `beacon verify` | Verify a Beacon Secure Mode HMAC signature (exit 0 on match, exit 1 on mismatch) | `--email` `--secret` `--signature` |
 
-## api <span class="badge badge--coral badge--dot">escape hatch</span>
+## config
 
-Reach any Help Scout endpoint directly — locked to the Help Scout host. See the
-[`hscli api` reference](/reference/api/).
+<span class="badge badge--dot">settings</span>
+
+Read and write per-profile configuration. See [Configuration](/guides/configuration/).
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `config get <key>` | Get a config value for the active profile | — |
+| `config list` | List all config for the active profile | — |
+| `config set <key> <value>` | Set a config value for the active profile | — |
+| `config validate` | Validate CLI configuration | — |
+
+## conv
+
+<span class="badge badge--accent badge--dot">conversations</span>
+
+List, read, and act on conversations — the workhorse of hscli. See the [Conversations guide](/guides/conversations/).
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `conv assign <id>` | Assign a conversation to a user | `--user` |
+| `conv attachments <id>` | List attachments for a conversation | — |
+| `conv bulk-status` | Batch change status on multiple conversations | `--mailbox` `--status` `--tag` `--set` `--limit` `--yes` |
+| `conv count` | Count conversations | `--status` `--mailbox` `--tag` |
+| `conv create` | Create a new conversation | `--mailbox` `--customer` `--subject` `--body` `--type` `--tag` `--assign-to` |
+| `conv delete <id>` | Delete a conversation | `--yes` |
+| `conv dump <id>` | Dump a single conversation with threads, customers, tags, and attachment metadata | `--out` |
+| `conv edit-note <id> <threadId>` | Edit a note or thread body | `--body` |
+| `conv export` | Bulk export conversations | `--mailbox` `--status` `--since` `--format` `--tag` `--embed` `--source` |
+| `conv get <id>` | Get a conversation by ID | — |
+| `conv list` | List conversations | `--mailbox` `--status` `--tag` `--assigned-to` `--query` `--since` `--limit` `--source` |
+| `conv move <id>` | Move a conversation to another mailbox | `--to-mailbox` |
+| `conv note <id>` | Add a note to a conversation | `--body` |
+| `conv reply <id>` | Reply to a conversation | `--body` `--cc` `--bcc` `--draft` |
+| `conv search <query>` | Search conversations | `--mailbox` `--limit` |
+| `conv status <id>` | Change conversation status | `--set` |
+| `conv tag <id>` | Update tags on a conversation | `--add` `--remove` |
+| `conv threads <id>` | List threads of a conversation | — |
+| `conv watch` | Live tail of conversations (poll-based) | `--mailbox` `--status` `--poll` `--limit` `--once` `--max-polls` |
+
+## customer
+
+<span class="badge badge--dot">people</span>
+
+Search, read, create, and update the people behind your conversations. See the [Customers guide](/guides/customers/).
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `customer conversations <id>` | List conversations for a customer | `--limit` |
+| `customer create` | Create a new customer | `--email` `--first` `--last` `--company` `--phone` `--job-title` |
+| `customer get <id>` | Get a customer by ID | — |
+| `customer list` | List customers | `--mailbox` `--first` `--last` `--since` `--limit` |
+| `customer search <query>` | Search customers | `--limit` |
+| `customer update <id>` | Update a customer | `--email` `--first` `--last` `--company` `--phone` `--job-title` |
+
+## mailbox
+
+<span class="badge badge--dot">inboxes</span>
+
+Inspect mailboxes, folders, and custom fields.
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `mailbox fields <id>` | List custom fields for a mailbox | — |
+| `mailbox folders <id>` | List folders for a mailbox | — |
+| `mailbox get <id>` | Get a mailbox by ID | — |
+| `mailbox list` | List mailboxes | `--limit` |
+
+## profile
+
+<span class="badge badge--dot">profiles</span>
+
+Switch between named auth profiles.
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `profile current` | Show the active profile | — |
+| `profile list` | List all configured profiles | — |
+| `profile use <name>` | Switch the active profile | — |
+
+## report
+
+<span class="badge badge--dot">metrics</span>
+
+Volume, company, and per-user metrics as JSON, CSV, or a table. See the [Reporting guide](/guides/reporting/).
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `report beacon` | Aggregate conversation counts by source.type and source.via (derived from Mailbox API; useful for Beacon-origin analysis) | `--since` `--mailbox` |
+| `report company` | Get company report | `--start` `--end` `--mailbox` `--tag` |
+| `report conversations` | Get conversations report | `--start` `--end` `--mailbox` `--tag` |
+| `report user` | Get user report | `--start` `--end` `--user` |
+
+## tag
+
+<span class="badge badge--dot">tags</span>
+
+List tags and their usage.
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `tag get <id>` | Get a tag by ID | — |
+| `tag list` | List tags | `--limit` |
+| `tag usage <name>` | Show conversation count for a tag | — |
+
+## user
+
+<span class="badge badge--dot">team</span>
+
+Look up team members and the authenticated user.
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `user get <id>` | Get a user by ID | — |
+| `user list` | List users | `--mailbox` `--email` `--limit` |
+| `user me` | Get the authenticated user | — |
+
+## webhook
+
+<span class="badge badge--dot">events</span>
+
+Create, list, and delete webhooks.
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `webhook create` | Create a webhook | `--url` `--event` `--secret` `--label` |
+| `webhook delete <id>` | Delete a webhook | `--yes` |
+| `webhook get <id>` | Get a webhook by ID | — |
+| `webhook list` | List webhooks | `--limit` |
+
+## workflow
+
+<span class="badge badge--dot">automation</span>
+
+List and manually run workflows.
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `workflow list` | List workflows | `--mailbox` `--type` `--limit` |
+| `workflow run <id>` | Run a manual workflow on conversations | `--conv` |
+
+## api
+
+<span class="badge badge--coral badge--dot">escape hatch</span>
+
+Reach any Help Scout endpoint directly — locked to the Help Scout host. See the [`hscli api` reference](/reference/api/).
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `api <method> <path>` | Make a raw API request | `--body` `--content-type` |
 
 ```bash frame="terminal"
 hscli api GET /v2/mailboxes --jq '.[] | .name'
-hscli api POST /v2/conversations/4831/tags --data '{"tags":["vip"]}'
+hscli api POST /v2/conversations/4831/tags --body '{"tags":["vip"]}'
 ```
+
+## backup
+
+<span class="badge badge--dot">archive</span>
+
+Dump your whole account to JSON with incremental refresh, resume, deletion detection, and attachments. See the [Backups guide](/guides/backups/).
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `backup` | Full account backup with incremental refresh, resume, deletion detection, attachment downloads, and optional compression | `--out` `--full` `--resume` `--reconcile` `--keep-history` `--since` `--include` `--exclude` `--attachments` `--compress` `--parallel` `--dry-run` |
+
+## doctor
+
+<span class="badge badge--dot">diagnostics</span>
+
+Diagnose your environment, auth, and connectivity.
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `doctor` | Run diagnostic checks on the CLI environment | — |
+
+## version
+
+<span class="badge badge--dot">command</span>
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `version` | Show CLI version and environment info | — |
 
 ## Global flags
 
@@ -78,8 +248,10 @@ These work on every command.
 | `--jq` | Apply a jq expression to JSON output. | — |
 | `--fields` | Project a comma-separated subset of fields. | all |
 | `--profile` | Use a named auth profile. | `default` |
-| `--quiet` | Suppress non-data output. | `false` |
-| `--help` | Self-describing help for any command. | — |
+| `--no-color` | Disable ANSI colors. | `false` |
+| `--verbose` | Verbose logging to stderr. | `false` |
+| `--no-retry` | Disable automatic retry on rate limits. | `false` |
+| `--timeout` | Per-request timeout in ms. | — |
 
 See [Output & filtering](/automation/output/) for details.
 
@@ -90,10 +262,12 @@ Deterministic, so scripts and agents can branch on the result.
 | Code | Meaning |
 | --- | --- |
 | `0` | <span class="badge badge--lime badge--dot">success</span> |
-| `1` | Usage / argument error |
-| `2` | Authentication error |
-| `4` | Resource not found |
-| `5` | Rate limited — retry with backoff |
-| `6` | Help Scout API error (5xx) |
+| `1` | Usage / generic error |
+| `65` | Validation error (HTTP 422) |
+| `69` | Help Scout API unavailable (5xx) |
+| `70` | Unexpected internal error |
+| `75` | Rate limited — retry with backoff |
+| `77` | Not authenticated / forbidden (401, 403) |
+| `78` | Configuration error |
 
 Full guide: [Exit codes](/automation/exit-codes/).

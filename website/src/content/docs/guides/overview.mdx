@@ -15,8 +15,8 @@ repeatable, scriptable, unattended work. Three properties make that reliable.
 
 - **Structured output** — every command supports `--output table|json|yaml|csv`, so the
   result is machine-readable with no scraping.
-- **Deterministic exit codes** — `0` success, `2` auth error, `5` rate-limited, and so
-  on. A script or agent always knows what happened. See [Exit codes](/automation/exit-codes/).
+- **Deterministic exit codes** — `0` success, `77` not authenticated, `75` rate-limited,
+  and so on. A script or agent always knows what happened. See [Exit codes](/automation/exit-codes/).
 - **Secure by default** — OAuth tokens live only in your OS keychain, never in plaintext
   on disk, and the `hscli api` escape hatch is locked to the Help Scout host.
 

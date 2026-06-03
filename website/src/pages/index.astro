@@ -1,0 +1,374 @@
+---
+/* hscli — bespoke landing page (pixel-faithful to design/reference/index.html,
+   Hero A only). Lives outside the Starlight docs collection and owns "/".
+   Shares tokens + components with the docs via custom.css + home.css, and
+   reuses Starlight's theme key (`starlight-theme`) + Pagefind index so the
+   home and docs stay in sync. */
+import '../styles/custom.css';
+import '../styles/home.css';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/'); // normalize to end with "/"
+const repo = 'https://github.com/wavyx/hscli';
+const npm = 'https://www.npmjs.com/package/@wavyx/hscli';
+const title = 'hscli — Help Scout from your terminal';
+const description =
+  'A fast, scriptable CLI for Help Scout — built for terminals, CI pipelines, and AI agents.';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <meta property="og:title" content="hscli" />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://wavyx.github.io/hscli/" />
+    <!-- Set theme before paint (reuses Starlight's localStorage key) -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('starlight-theme');
+          var d =
+            t === 'light' || t === 'dark'
+              ? t
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.dataset.theme = d;
+        } catch (e) {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
+    <style is:global>
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { margin: 0; font-family: var(--font-sans); background: var(--bg); color: var(--fg); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+      body a { color: var(--accent); text-decoration: none; }
+      body a:hover { color: var(--accent-hover); }
+      ::selection { background: var(--accent-soft); color: var(--fg); }
+    </style>
+  </head>
+
+  <body>
+    <!-- ============ HEADER ============ -->
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a href={base} class="wordmark" aria-label="hscli home">
+          <span class="wordmark__chip">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7l4 4-4 4"></path><line x1="11" y1="17" x2="18" y2="17"></line></svg>
+          </span>
+          <span class="wordmark__text">hs<b>cli</b></span>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href={`${base}guides/overview/`}>Guide</a>
+          <a href={`${base}reference/commands/`}>Commands</a>
+          <a href={`${base}automation/agents/`}>Agents</a>
+          <a href={`${repo}/releases`}>Changelog</a>
+        </nav>
+        <div class="header-spacer"></div>
+        <div class="header-actions">
+          <button class="search-trigger" aria-label="Search docs">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span class="label-text">Search docs</span>
+            <span class="kbd"><span>⌘</span><span>K</span></span>
+          </button>
+          <button class="icon-btn" data-toggle-theme aria-label="Toggle theme" title="Toggle theme">
+            <svg class="ico-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 2v2.5M12 19.5V22M4.5 4.5l1.8 1.8M17.7 17.7l1.8 1.8M2 12h2.5M19.5 12H22M4.5 19.5l1.8-1.8M17.7 6.3l1.8-1.8"></path></svg>
+          </button>
+          <a class="icon-btn" href={repo} aria-label="GitHub">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5A10.5 10.5 0 0 0 1.5 12c0 4.64 3 8.57 7.18 9.96.53.1.72-.23.72-.5v-1.9c-2.92.63-3.54-1.25-3.54-1.25-.48-1.21-1.17-1.53-1.17-1.53-.95-.65.07-.64.07-.64 1.06.07 1.62 1.08 1.62 1.08.94 1.6 2.46 1.14 3.06.87.1-.68.37-1.14.67-1.4-2.33-.27-4.78-1.16-4.78-5.18 0-1.15.41-2.08 1.08-2.82-.11-.27-.47-1.34.1-2.78 0 0 .88-.28 2.88 1.07a10 10 0 0 1 5.24 0c2-1.35 2.88-1.07 2.88-1.07.57 1.44.21 2.51.1 2.78.67.74 1.07 1.67 1.07 2.82 0 4.03-2.45 4.91-4.79 5.17.38.32.71.95.71 1.92v2.85c0 .28.19.61.72.5A10.5 10.5 0 0 0 22.5 12 10.5 10.5 0 0 0 12 1.5Z"></path></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ============ HERO A ============ -->
+      <section class="hero hero--a">
+        <div class="section hero-grid">
+          <div class="hero-copy">
+            <span class="hero-eyebrow">Open source · Help Scout CLI</span>
+            <h1 class="hero-h1">Help Scout,<br />from your <span class="accent">terminal</span>.</h1>
+            <p class="hero-sub">A fast, scriptable CLI for Help Scout — built for terminals, CI pipelines, and AI agents like Claude Code and Codex. Every command speaks JSON and returns clean exit codes.</p>
+            <div class="hero-cta">
+              <a href={`${base}guides/authentication/`} class="btn btn--primary">Get started
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+              <a href={repo} class="btn btn--ghost">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5A10.5 10.5 0 0 0 1.5 12c0 4.64 3 8.57 7.18 9.96.53.1.72-.23.72-.5v-1.9c-2.92.63-3.54-1.25-3.54-1.25-.48-1.21-1.17-1.53-1.17-1.53-.95-.65.07-.64.07-.64 1.06.07 1.62 1.08 1.62 1.08.94 1.6 2.46 1.14 3.06.87.1-.68.37-1.14.67-1.4-2.33-.27-4.78-1.16-4.78-5.18 0-1.15.41-2.08 1.08-2.82-.11-.27-.47-1.34.1-2.78 0 0 .88-.28 2.88 1.07a10 10 0 0 1 5.24 0c2-1.35 2.88-1.07 2.88-1.07.57 1.44.21 2.51.1 2.78.67.74 1.07 1.67 1.07 2.82 0 4.03-2.45 4.91-4.79 5.17.38.32.71.95.71 1.92v2.85c0 .28.19.61.72.5A10.5 10.5 0 0 0 22.5 12 10.5 10.5 0 0 0 12 1.5Z"></path></svg>
+                Star on GitHub
+              </a>
+            </div>
+            <div class="install-line">
+              <span class="dollar">$</span><span>npm i -g <span class="pkg">@wavyx/hscli</span></span>
+              <button class="install-copy" data-copy="npm i -g @wavyx/hscli" aria-label="Copy install command">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+              </button>
+            </div>
+          </div>
+          <div class="hero-term">
+            <div class="term">
+              <div class="term__bar"><span class="term__dots"><i></i><i></i><i></i></span><span class="term__title">zsh — hscli</span></div>
+              <div class="term__body">
+<div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">conv list</span> <span class="t-flag">--status</span> active <span class="t-flag">--output</span> table</div>
+<div class="row out term__hd">ID     SUBJECT                      CUSTOMER          STATUS</div>
+<div class="row out">4831   Refund for order #2207       amir@acme.io      <span class="t-str">active</span></div>
+<div class="row out">4830   Can't reset my password      lou@hey.com       <span class="t-str">active</span></div>
+<div class="row out">4827   Invoice question             kai@studio.co     <span class="t-str">active</span></div>
+<div class="row">&nbsp;</div>
+<div class="row"><span class="t-prompt">$</span> <span class="t-comment"># close everything tagged "resolved"</span></div>
+<div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">conv bulk-status</span> <span class="t-flag">--status</span> active <span class="t-flag">--tag</span> resolved \</div>
+<div class="row">&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-flag">--set</span> closed <span class="t-flag">--yes</span></div>
+<div class="row out"><span class="t-str">✓</span> 12 conversations closed <span class="t-dim">· exit 0</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FEATURES ============ -->
+      <section class="features-band">
+        <div class="section">
+          <div class="sec-head">
+            <p class="sec-eyebrow">Why hscli</p>
+            <h2 class="sec-title">Built for automation, not clicking.</h2>
+            <p class="sec-desc">Four design decisions that make hscli safe to hand to a script — or an agent.</p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg></div>
+              <h3>Agent &amp; workflow ready</h3>
+              <p>JSON output, deterministic exit codes, and a raw <code>hscli api</code> hatch let agents and pipelines drive Help Scout directly.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h7l2-3 3 6 2-3h4"></path></svg></div>
+              <h3>Pipe-friendly output</h3>
+              <p>Every command supports <code>--output table|json|yaml|csv</code>, plus <code>--jq</code> and <code>--fields</code> for inline filtering and projection.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"></path><path d="M9 12l2 2 4-4"></path></svg></div>
+              <h3>Secure by default</h3>
+              <p>OAuth tokens live only in your OS keychain — never written to disk in plaintext. <code>hscli api</code> is locked to the Help Scout host.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path></svg></div>
+              <h3>Full account backups</h3>
+              <p><code>hscli backup</code> dumps your whole account to JSON with incremental refresh, resume, deletion detection, and attachments.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RECIPES ============ -->
+      <section class="recipes-band">
+        <div class="section">
+          <div class="sec-head center">
+            <p class="sec-eyebrow">What you can actually do</p>
+            <h2 class="sec-title">Real work, one line at a time.</h2>
+            <p class="sec-desc">hscli composes with the tools you already use — <code>jq</code>, <code>xargs</code>, cron, and your CI runner.</p>
+          </div>
+          <div class="recipe-grid">
+            <article class="recipe">
+              <div class="recipe__head">
+                <span class="recipe__tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3a4 4 0 0 1 4 4c1.5.5 3 2 3 4.5S17 16 15 16H8a4 4 0 0 1-1-7.9A4 4 0 0 1 12 3Z"></path></svg>Triage</span>
+                <h3>Let an agent clear the queue</h3>
+                <p>Pipe active conversations into your model and act on its decisions — no integration code.</p>
+              </div>
+              <div class="recipe__code">
+<div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">conv list</span> <span class="t-flag">--status</span> active \</div>
+<div class="row">&nbsp;&nbsp;<span class="t-flag">--output</span> json <span class="t-flag">--fields</span> id,subject \</div>
+<div class="row">&nbsp;&nbsp;| <span class="t-cmd">claude</span> <span class="t-flag">-p</span> <span class="t-str">"tag &amp; assign each"</span></div>
+              </div>
+            </article>
+            <article class="recipe">
+              <div class="recipe__head">
+                <span class="recipe__tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"></path><polyline points="21 4 21 9 16 9"></polyline></svg>Backup</span>
+                <h3>Nightly account snapshot in CI</h3>
+                <p>Incremental by default, resumable, and deletion-aware. Drop it in a cron job or a GitHub Action.</p>
+              </div>
+              <div class="recipe__code">
+<div class="row"><span class="t-comment"># .github/workflows/backup.yml</span></div>
+<div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">backup</span> <span class="t-flag">--out</span> ./hs-data \</div>
+<div class="row">&nbsp;&nbsp;<span class="t-flag">--attachments</span> <span class="t-flag">--compress</span></div>
+<div class="row out"><span class="t-str">✓</span> 4,210 convs · 38 MB <span class="t-dim">· exit 0</span></div>
+              </div>
+            </article>
+            <article class="recipe">
+              <div class="recipe__head">
+                <span class="recipe__tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="13"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="18" y1="20" x2="18" y2="10"></line></svg>Report</span>
+                <h3>Pull metrics into a spreadsheet</h3>
+                <p>Stream any report as CSV and pipe it straight into your BI tool or a Google Sheet.</p>
+              </div>
+              <div class="recipe__code">
+<div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">report conversations</span> \</div>
+<div class="row">&nbsp;&nbsp;<span class="t-flag">--start</span> 2026-05-01 <span class="t-flag">--end</span> 2026-05-31 \</div>
+<div class="row">&nbsp;&nbsp;<span class="t-flag">--output</span> csv &gt; may.csv</div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CTA ============ -->
+      <section class="cta-band">
+        <div class="cta-card section">
+          <h2>Drive Help Scout from anywhere.</h2>
+          <p>Install once. Script everything. Hand the rest to an agent.</p>
+          <div class="hero-cta">
+            <a href={`${base}guides/overview/`} class="btn btn--primary">Read the guide
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+            <a href={`${base}reference/commands/`} class="btn btn--ghost">Command reference</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span class="wordmark">
+            <span class="wordmark__chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7l4 4-4 4"></path><line x1="11" y1="17" x2="18" y2="17"></line></svg></span>
+            <span class="wordmark__text">hs<b>cli</b></span>
+          </span>
+          <span class="muted">MIT licensed · not affiliated with Help Scout</span>
+        </div>
+        <nav class="site-footer__links" aria-label="Footer">
+          <a href={`${base}guides/overview/`}>Guide</a>
+          <a href={`${base}reference/commands/`}>Commands</a>
+          <a href={repo}>GitHub</a>
+          <a href={npm}>npm</a>
+        </nav>
+      </div>
+    </footer>
+
+    <!-- ============ SEARCH MODAL (Pagefind) ============ -->
+    <div class="search-modal" aria-hidden="true">
+      <div class="search-modal__box" role="dialog" aria-label="Search the docs">
+        <div class="search-modal__input">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" placeholder="Search the docs…" aria-label="Search the docs" />
+          <span class="kbd"><span>Esc</span></span>
+        </div>
+        <div class="search-modal__results">
+          <p class="search-modal__hint">Try <code class="inline">conv list</code>, <code class="inline">backup</code>, or <code class="inline">authentication</code></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const root = document.documentElement;
+      const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+
+      // ---- theme toggle (shares Starlight's localStorage key) ----
+      function setTheme(t) {
+        root.dataset.theme = t;
+        try { localStorage.setItem('starlight-theme', t); } catch (e) {}
+      }
+      document.querySelector('[data-toggle-theme]')?.addEventListener('click', () => {
+        setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+      });
+
+      // ---- copy-on-click ([data-copy]) ----
+      document.querySelectorAll('[data-copy]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          navigator.clipboard?.writeText(btn.getAttribute('data-copy') || '');
+          const old = btn.innerHTML;
+          btn.innerHTML =
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+          setTimeout(() => (btn.innerHTML = old), 1300);
+        });
+      });
+
+      // ---- search modal + Pagefind ----
+      const modal = document.querySelector('.search-modal');
+      const input = modal?.querySelector('input');
+      const results = modal?.querySelector('.search-modal__results');
+      const hint =
+        '<p class="search-modal__hint">Try <code class="inline">conv list</code>, <code class="inline">backup</code>, or <code class="inline">authentication</code></p>';
+      let pf = null;
+      let pfFailed = false;
+
+      async function ensurePagefind() {
+        if (pf || pfFailed) return pf;
+        try {
+          pf = await import(/* @vite-ignore */ `${base}pagefind/pagefind.js`);
+          await pf.init();
+        } catch (e) {
+          pfFailed = true;
+          pf = null;
+        }
+        return pf;
+      }
+
+      function openSearch() {
+        if (!modal) return;
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        input?.focus();
+        ensurePagefind();
+      }
+      function closeSearch() {
+        modal?.classList.remove('open');
+        modal?.setAttribute('aria-hidden', 'true');
+      }
+
+      document.querySelector('.search-trigger')?.addEventListener('click', openSearch);
+      document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          openSearch();
+        }
+        if (e.key === 'Escape') closeSearch();
+      });
+      modal?.addEventListener('click', (e) => {
+        if (e.target === modal) closeSearch();
+      });
+
+      let timer;
+      input?.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(async () => {
+          const q = input.value.trim();
+          if (!results) return;
+          if (!q) {
+            results.innerHTML = hint;
+            return;
+          }
+          const engine = await ensurePagefind();
+          if (!engine) {
+            results.innerHTML =
+              '<p class="search-modal__hint">Full-text search runs on the deployed site. <a href="' +
+              base +
+              'guides/overview/">Browse the docs →</a></p>';
+            return;
+          }
+          const search = await engine.search(q);
+          const items = await Promise.all(search.results.slice(0, 6).map((r) => r.data()));
+          if (!items.length) {
+            results.innerHTML = '<p class="search-modal__hint">No results for “' + q + '”.</p>';
+            return;
+          }
+          results.innerHTML = items
+            .map(
+              (it) =>
+                '<a class="search-result" href="' +
+                it.url +
+                '"><b>' +
+                (it.meta?.title || 'Untitled') +
+                '</b><span>' +
+                (it.excerpt || '') +
+                '</span></a>'
+            )
+            .join('');
+        }, 140);
+      });
+    </script>
+  </body>
+</html>

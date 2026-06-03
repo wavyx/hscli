@@ -1,24 +1,30 @@
 ---
 title: Configuration
-description: Configure hscli with environment variables, profiles, and defaults.
+description: Configure hscli with environment variables, profiles, and the config command.
 ---
 
 hscli works with zero configuration after [login](/guides/authentication/). When you do
-want to change defaults, you have two layers: **environment variables** (great for CI)
-and **named profiles** (great for multiple accounts).
+want to change things, you have three layers: **flags**, **environment variables**, and
+**per-profile config** managed by the `config` command.
 
 ## Environment variables
 
 | Variable | Description | Default |
 | --- | --- | --- |
-| `HSCLI_TOKEN` | Personal access token. Overrides the keychain when set. | — |
 | `HSCLI_PROFILE` | Named profile to use. | `default` |
-| `HSCLI_OUTPUT` | Default output format (`table`, `json`, `yaml`, `csv`). | `table` |
-| `HSCLI_NO_COLOR` | Disable ANSI colors. | `false` |
+| `HSCLI_APP_ID` | OAuth app client ID (headless auth). | — |
+| `HSCLI_APP_SECRET` | OAuth app client secret. | — |
+| `NO_COLOR` | Disable ANSI colors (standard convention). | — |
 
-```bash frame="terminal" title="~/.zshrc"
-# make JSON the default everywhere
-export HSCLI_OUTPUT=json
+## The `config` command
+
+Read and write per-profile settings:
+
+```bash frame="terminal"
+hscli config list                 # show the active profile's config
+hscli config get apiBase
+hscli config set output json      # default output format for this profile
+hscli config validate             # check the config is well-formed
 ```
 
 ## Profiles
@@ -29,14 +35,11 @@ Each profile stores its own credentials in the keychain. Create one by logging i
 ```bash frame="terminal"
 hscli auth login --profile staging
 hscli conv list --profile staging
-HSCLI_PROFILE=staging hscli report --from 2026-05-01
+HSCLI_PROFILE=staging hscli report conversations --start 2026-05-01 --end 2026-05-31
 ```
 
-```bash frame="terminal" title="auth status"
-$ hscli auth status
-default   jordan@acme.io     ✓ valid
-staging   bot@acme-test.io   ✓ valid
-```
+Switch profiles with the `profile` commands too: `hscli profile list`,
+`hscli profile use staging`, and `hscli profile current`.
 
 ## Precedence
 
@@ -44,7 +47,8 @@ When the same setting is provided more than one way, hscli resolves it in this o
 (highest first):
 
 1. An explicit flag (`--output json`)
-2. An environment variable (`HSCLI_OUTPUT`)
-3. The built-in default
+2. An environment variable (`HSCLI_PROFILE`, …)
+3. The profile's stored config (`hscli config set …`)
+4. The built-in default
 
 See [Output & filtering](/automation/output/) for everything you can do with output.

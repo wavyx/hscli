@@ -3,15 +3,18 @@ title: CI pipelines
 description: Run hscli unattended in CI for backups, reports, and scheduled cleanup.
 ---
 
-hscli is well-suited to CI: authenticate with a token secret, branch on
+hscli is well-suited to CI: authenticate with your OAuth app credentials, branch on
 [exit codes](/automation/exit-codes/), and let scheduled jobs do the repetitive work.
 
 ## Authenticate without a browser
 
-Store a personal access token as a masked secret and expose it as `HSCLI_TOKEN`:
+Store your Help Scout OAuth app credentials as masked secrets and use the
+client-credentials grant:
 
 ```bash frame="terminal" title="ci.sh"
-export HSCLI_TOKEN="$HELPSCOUT_PAT"
+export HSCLI_APP_ID="$HELPSCOUT_APP_ID"
+export HSCLI_APP_SECRET="$HELPSCOUT_APP_SECRET"
+hscli auth login --client-credentials
 hscli auth status   # ✓ valid
 ```
 
@@ -26,14 +29,16 @@ on:
 jobs:
   backup:
     runs-on: ubuntu-latest
+    env:
+      HSCLI_APP_ID: ${{ secrets.HELPSCOUT_APP_ID }}
+      HSCLI_APP_SECRET: ${{ secrets.HELPSCOUT_APP_SECRET }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: "20" }
       - run: npm install -g @wavyx/hscli
-      - run: hscli backup --out ./hs-data --incremental --attachments
-        env:
-          HSCLI_TOKEN: ${{ secrets.HELPSCOUT_PAT }}
+      - run: hscli auth login --client-credentials
+      - run: hscli backup --out ./hs-data --attachments --reconcile
       - uses: actions/upload-artifact@v4
         with: { name: hs-backup, path: ./hs-data }
 ```
@@ -41,12 +46,10 @@ jobs:
 ## Scheduled cleanup
 
 ```bash frame="terminal" title="close stale resolved threads"
-hscli conv list --status active \
-  --jq '.[] | select(.tags[]? == "resolved") | .id' \
-  | xargs -I{} hscli conv status {} --set closed
+hscli conv bulk-status --status active --tag resolved --set closed --yes
 ```
 
 :::caution
-Never echo `HSCLI_TOKEN` in logs. hscli redacts it from its own output, but your own
-`echo`/`set -x` lines will not be redacted.
+Never echo your credentials in logs. hscli redacts them from its own output, but your own
+`echo` / `set -x` lines will not be redacted.
 :::

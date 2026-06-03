@@ -15,37 +15,48 @@ ID     SUBJECT                      CUSTOMER          STATUS
 4830   Can't reset my password      lou@hey.com       active
 ```
 
-Filter by `--status`, `--tag`, `--assigned`, or a mailbox with `--inbox`.
+Filter by `--status`, `--tag`, `--assigned-to`, `--query`, or `--mailbox`. Free-text
+search lives in `conv search "<query>"`.
 
 ## Read one conversation
 
 ```bash frame="terminal"
-hscli conv get 4831 --threads
+hscli conv get 4831              # the conversation
+hscli conv threads 4831          # its message threads
 ```
 
 ## Reply or add a note
+
+A reply goes to the customer; a note is internal — they're separate commands.
 
 ```bash frame="terminal"
 # customer-facing reply
 hscli conv reply 4831 --body "Your refund is on the way — sorry for the trouble!"
 
 # internal note (not sent to the customer)
-hscli conv reply 4831 --note --body "Refunded via Stripe, ref #ch_123"
+hscli conv note 4831 --body "Refunded via Stripe, ref #ch_123"
 ```
 
-## Change status, tag, and snooze
+## Status, tags, assignment
 
 ```bash frame="terminal"
 hscli conv status 4831 --set closed
 hscli conv tag 4831 --add vip --remove waiting
-hscli conv snooze 4831 --until "next monday 9am"
+hscli conv assign 4831 --user me
+hscli conv move 4831 --to-mailbox 42
 ```
 
-## Bulk actions with pipes
+## Bulk actions
 
-Because every command speaks JSON, you can compose them with `jq` and `xargs`:
+Change status across a whole filter in a single call with `conv bulk-status`:
 
 ```bash frame="terminal" title="close everything tagged resolved"
+hscli conv bulk-status --status active --tag resolved --set closed --yes
+```
+
+Or compose with `jq` and `xargs` when you need finer control:
+
+```bash frame="terminal"
 hscli conv list --status active \
   --jq '.[] | select(.tags[]? == "resolved") | .id' \
   | xargs -I{} hscli conv status {} --set closed

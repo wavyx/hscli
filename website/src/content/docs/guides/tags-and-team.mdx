@@ -1,0 +1,30 @@
+---
+title: Tags & team
+description: List tags and their usage, and look up teammates.
+---
+
+## Tags
+
+The `tag` group lists tags and reports how often each is used. See the
+[command reference](/reference/commands/#tag).
+
+```bash frame="terminal" title="zsh — hscli"
+hscli tag list                 # all tags
+hscli tag get 123              # one tag by id
+hscli tag usage billing        # how many conversations carry the "billing" tag
+```
+
+## Team
+
+The `user` group looks up teammates and the authenticated user. See the
+[command reference](/reference/commands/#user).
+
+```bash frame="terminal"
+hscli user me                  # the authenticated user
+hscli user list --mailbox 42   # users with access to a mailbox
+hscli user get 10              # one teammate
+```
+
+:::tip
+`user me` is the quickest way to confirm which account a profile is authenticated as.
+:::

@@ -1,42 +1,38 @@
 ---
 title: Reporting
-description: Pull volume, happiness, and productivity metrics as JSON or CSV.
+description: Pull conversation, company, and per-user metrics as JSON, CSV, or a table.
 ---
 
-The `report` group turns Help Scout's reporting into data you can pipe anywhere. See the
+The `report` group turns Help Scout's reporting into data you can pipe anywhere. It's a
+set of focused reports, each scoped by a date range with `--start` / `--end`. See the
 [command reference](/reference/commands/#report) for all flags.
 
-## Volume & resolution
+## Conversation volume & resolution
 
 ```bash frame="terminal" title="zsh — hscli"
-$ hscli report --from 2026-05-01 --output json --fields inbox,replies,resolved
+$ hscli report conversations --start 2026-05-01 --end 2026-05-31 --output json
 [
-  { "inbox": "Support", "replies": 1284, "resolved": 1102 },
-  { "inbox": "Billing", "replies": 331,  "resolved": 318  }
+  { "mailbox": "Support", "conversations": 1284, "resolved": 1102 },
+  { "mailbox": "Billing", "conversations": 331,  "resolved": 318  }
 ]
 ```
 
-## Happiness (CSAT)
+## Company-wide rollup
 
 ```bash frame="terminal"
-hscli report happiness --from 2026-05-01 --to 2026-05-31
+hscli report company --start 2026-05-01 --end 2026-05-31
 ```
 
 ## Per-agent productivity
 
 ```bash frame="terminal"
-hscli report productivity --user jordan@acme.io
+hscli report user --start 2026-05-01 --end 2026-05-31 --user 10
 ```
 
 ## Straight into a spreadsheet
 
 ```bash frame="terminal" title="export to CSV"
-hscli report --from 2026-05-01 --output csv > may.csv
-```
-
-```text title="may.csv"
-inbox,replies,resolved,sat
-Support,1284,1102,94%
+hscli report conversations --start 2026-05-01 --end 2026-05-31 --output csv > may.csv
 ```
 
 :::tip

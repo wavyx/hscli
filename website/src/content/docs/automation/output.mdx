@@ -8,18 +8,19 @@ command you know it for all of them.
 
 ## Formats
 
-Set with `--output` (or the `HSCLI_OUTPUT` env var).
+Set with `--output`. It defaults to a **table** in an interactive terminal and **JSON**
+when the output is piped, so scripts get machine-readable data automatically.
 
 | Value | Use it for |
 | --- | --- |
-| `table` | Human-readable terminal output (default). |
-| `json` | Agents, `jq`, and scripting. |
+| `table` | Human-readable terminal output (default in a TTY). |
+| `json` | Agents, `jq`, and scripting (default when piped). |
 | `yaml` | Config files and diffs. |
 | `csv` | Spreadsheets and BI tools. |
 
 ```bash frame="terminal"
 hscli conv list --output json
-hscli report --output csv > report.csv
+hscli report conversations --start 2026-05-01 --end 2026-05-31 --output csv > report.csv
 ```
 
 ## Filter with `--jq`

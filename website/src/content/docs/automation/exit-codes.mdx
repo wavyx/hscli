@@ -3,31 +3,35 @@ title: Exit codes
 description: hscli returns deterministic exit codes so scripts and agents can branch on the result.
 ---
 
-hscli returns **deterministic exit codes**. Scripts and [agents](/automation/agents/) can
-branch on the result without parsing output.
+hscli returns **deterministic, sysexits-style exit codes**. Scripts and
+[agents](/automation/agents/) can branch on the result without parsing output.
 
 | Code | Meaning |
 | --- | --- |
 | `0` | Success |
-| `1` | Usage / argument error |
-| `2` | Authentication error |
-| `4` | Resource not found |
-| `5` | Rate limited — retry with backoff |
-| `6` | Help Scout API error (5xx) |
+| `1` | Usage / generic error |
+| `65` | Validation error (HTTP 422) |
+| `69` | Help Scout API unavailable (5xx) |
+| `70` | Unexpected internal error |
+| `75` | Rate limited — retry with backoff |
+| `77` | Not authenticated or forbidden (401 / 403) |
+| `78` | Configuration error |
 
 ## Branching on the result
 
-```bash frame="terminal" title="retry on rate limit"
+```bash frame="terminal" title="handle the common cases"
 hscli conv list --status active --output json
 case $? in
-  0) echo "ok" ;;
-  2) echo "re-authenticate: hscli auth login" ; exit 2 ;;
-  5) echo "rate limited — sleeping" ; sleep 30 ;;
-  *) echo "unexpected error" ; exit 1 ;;
+  0)  echo "ok" ;;
+  77) echo "re-authenticate: hscli auth login" ; exit 77 ;;
+  75) echo "rate limited — backing off" ; sleep 30 ;;
+  69) echo "Help Scout unavailable — retry later" ; exit 69 ;;
+  *)  echo "unexpected error" ; exit 1 ;;
 esac
 ```
 
 :::tip
-Combine with `--quiet` to suppress non-data output when you only care about the exit
-code and the JSON payload.
+With `--output json`, errors are also written to stderr as a JSON object
+(`{ "error", "message", "exitCode" }`) — so an agent can read the reason as well as the
+code. Add `--verbose` to include the API request path and response body.
 :::

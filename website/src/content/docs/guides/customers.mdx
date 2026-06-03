@@ -1,6 +1,6 @@
 ---
 title: Customers
-description: Search, create, and manage Help Scout customer records.
+description: Search, read, create, and update Help Scout customer records.
 ---
 
 The `customer` group works with the people behind your conversations. See the
@@ -9,9 +9,12 @@ The `customer` group works with the people behind your conversations. See the
 ## Search and list
 
 ```bash frame="terminal" title="zsh — hscli"
-hscli customer list --query "acme"
-hscli customer list --email lou@hey.com --output json
+hscli customer search "acme"
+hscli customer list --mailbox 42 --output json
 ```
+
+`customer list` filters by `--mailbox`, `--first`, `--last`, or `--since`; use
+`customer search "<query>"` for free-text lookup.
 
 ## Read a profile
 
@@ -19,20 +22,23 @@ hscli customer list --email lou@hey.com --output json
 hscli customer get 99120 --output yaml
 ```
 
-## Create a record
+## Create and update
 
 ```bash frame="terminal"
-hscli customer create --email kai@studio.co --name "Kai Okafor"
+# create
+hscli customer create --email kai@studio.co --first Kai --last Okafor --company "Studio Co"
+
+# update an existing record
+hscli customer update 99120 --company "Studio Collective" --job-title "Founder"
 ```
 
-## Merge duplicates
+## A customer's conversations
 
 ```bash frame="terminal"
-# fold the duplicate (id 99121) into the canonical record (id 99120)
-hscli customer merge 99121 --into 99120
+hscli customer conversations 99120 --limit 10
 ```
 
-:::caution
-`customer merge` is irreversible. Run a [backup](/guides/backups/) first if you're merging
-in bulk.
+:::tip
+Pipe `customer search` into `--jq` to pull just the IDs, then feed them to
+`customer conversations` or `conv` commands.
 :::

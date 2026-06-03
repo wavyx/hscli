@@ -1,0 +1,29 @@
+---
+title: Mailboxes
+description: Inspect Help Scout mailboxes, their folders, and custom fields.
+---
+
+The `mailbox` group lists your inboxes and inspects their structure — handy for finding
+the mailbox IDs other commands need. See the [command reference](/reference/commands/#mailbox).
+
+## List mailboxes
+
+```bash frame="terminal" title="zsh — hscli"
+$ hscli mailbox list --output table
+ID    NAME       EMAIL
+42    Support    support@acme.io
+57    Billing    billing@acme.io
+```
+
+## Inspect one mailbox
+
+```bash frame="terminal"
+hscli mailbox get 42           # mailbox details
+hscli mailbox folders 42       # its folders
+hscli mailbox fields 42        # custom fields defined on it
+```
+
+:::tip
+Most `conv`, `report`, and `user` commands take a `--mailbox <id>`. Grab the id from
+`mailbox list` once and reuse it.
+:::
