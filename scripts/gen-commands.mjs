@@ -141,7 +141,7 @@ const renderTopicTable = (list) => {
   return t + '\n'
 }
 
-const GLOBAL_AND_EXIT = (bin) => `## Global flags
+const GLOBAL_AND_EXIT = () => `## Global flags
 
 These work on every command.
 
@@ -221,7 +221,7 @@ This page lists all ${commands.length} commands in \`${bin}\` v${manifest.versio
     }
   }
 
-  out += GLOBAL_AND_EXIT(bin)
+  out += GLOBAL_AND_EXIT()
   return out
 }
 
