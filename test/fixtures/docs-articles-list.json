@@ -1,0 +1,37 @@
+{
+  "articles": {
+    "page": 1,
+    "pages": 1,
+    "count": 2,
+    "items": [
+      {
+        "id": "5215163545667acd25394b5c",
+        "number": 121,
+        "collectionId": "5214c77c45667acd25394b51",
+        "status": "published",
+        "hasDraft": false,
+        "name": "Getting started",
+        "publicUrl": "https://example.helpscoutdocs.com/article/121-getting-started",
+        "popularity": 4.3,
+        "viewCount": 237,
+        "lastPublishedAt": "2024-05-01T00:00:00Z",
+        "createdAt": "2024-01-01T00:00:00Z",
+        "updatedAt": "2024-05-01T00:00:00Z"
+      },
+      {
+        "id": "5215163545667acd25394b5d",
+        "number": 122,
+        "collectionId": "5214c77c45667acd25394b51",
+        "status": "notpublished",
+        "hasDraft": true,
+        "name": "Resetting your password",
+        "publicUrl": "https://example.helpscoutdocs.com/article/122-reset",
+        "popularity": 1.1,
+        "viewCount": 12,
+        "lastPublishedAt": null,
+        "createdAt": "2024-02-01T00:00:00Z",
+        "updatedAt": "2024-04-01T00:00:00Z"
+      }
+    ]
+  }
+}

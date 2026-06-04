@@ -1,0 +1,16 @@
+{
+  "article": {
+    "id": "5215163545667acd25394b5c",
+    "number": 121,
+    "collectionId": "5214c77c45667acd25394b51",
+    "status": "published",
+    "hasDraft": false,
+    "name": "Getting started",
+    "text": "<p>Welcome to the docs.</p>",
+    "publicUrl": "https://example.helpscoutdocs.com/article/121-getting-started",
+    "popularity": 4.3,
+    "viewCount": 237,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-05-01T00:00:00Z"
+  }
+}

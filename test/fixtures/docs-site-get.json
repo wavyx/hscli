@@ -1,0 +1,12 @@
+{
+  "site": {
+    "id": "566807879033603f7da26a9d",
+    "companyName": "Acme",
+    "title": "Acme Docs",
+    "subDomain": "acme",
+    "hasPublicSite": true,
+    "hasContactForm": false,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-06-01T00:00:00Z"
+  }
+}

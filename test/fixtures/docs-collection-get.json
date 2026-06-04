@@ -1,0 +1,17 @@
+{
+  "collection": {
+    "id": "5214c83d45667acd25394b53",
+    "siteId": "52404efc4566740003092640",
+    "number": 33,
+    "slug": "general",
+    "visibility": "public",
+    "order": 1,
+    "name": "General",
+    "description": "General help articles",
+    "publicUrl": "https://example.helpscoutdocs.com/collection/33-general",
+    "articleCount": 12,
+    "publishedArticleCount": 10,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-06-01T00:00:00Z"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "articles": {
+    "page": 1,
+    "pages": 1,
+    "count": 2,
+    "items": [
+      {
+        "id": "5215163545667acd25394b5c",
+        "siteId": "52404efc4566740003092640",
+        "collectionId": "5214c77c45667acd25394b51",
+        "categoryIds": ["5214c77d45667acd25394b52"],
+        "slug": "getting-started",
+        "name": "Getting started",
+        "status": "published",
+        "visibility": "public"
+      },
+      {
+        "id": "5215163545667acd25394b5e",
+        "siteId": "52404efc4566740003092640",
+        "collectionId": "5214c77c45667acd25394b51",
+        "categoryIds": [],
+        "slug": "billing-faq",
+        "name": "Billing FAQ",
+        "status": "published",
+        "visibility": "public"
+      }
+    ]
+  }
+}
