@@ -12,7 +12,7 @@ hscli <group> <action> [target] [flags]
 ```
 
 Run `hscli <group> --help` for the live, self-describing version of any command.
-This page lists all 80 commands in `hscli` v0.8.1.
+This page lists all 88 commands in `hscli` v0.8.1.
 
 ## alias
 
@@ -119,14 +119,22 @@ Manage your Help Scout Docs knowledge base — sites, collections, categories, a
 | --- | --- | --- |
 | `docs article create` | Create a Docs article | `--collection` `--name` `--text` `--status` `--slug` `--categories` `--keywords` |
 | `docs article delete <id>` | Delete a Docs article | `--yes` |
+| `docs article delete-draft <id>` | Discard the draft of a Docs article (published text is kept) | `--yes` |
 | `docs article get <id>` | Get a Docs article by id or number | — |
 | `docs article list` | List articles in a Docs collection or category | `--collection` `--category` `--status` `--limit` |
+| `docs article save-draft <id>` | Save a draft for a Docs article (does not publish) | `--text` |
 | `docs article search <query>` | Search Docs articles by keyword | `--collection` `--site` `--status` `--visibility` `--limit` |
 | `docs article update <id>` | Update a Docs article | `--name` `--text` `--status` `--slug` |
 | `docs auth` | Store your Help Scout Docs API key in the OS keychain (separate from Mailbox auth) | `--api-key` |
+| `docs category create` | Create a Docs category within a collection | `--collection` `--name` `--visibility` `--order` |
+| `docs category delete <id>` | Delete a Docs category | `--yes` |
 | `docs category list <collectionId>` | List categories within a Docs collection | `--limit` |
+| `docs category update <id>` | Update a Docs category | `--name` `--visibility` `--order` |
+| `docs collection create` | Create a Docs collection | `--site` `--name` `--visibility` `--order` |
+| `docs collection delete <id>` | Delete a Docs collection | `--yes` |
 | `docs collection get <id>` | Get a Docs collection by id or number | — |
 | `docs collection list` | List Docs collections | `--limit` `--site` `--visibility` |
+| `docs collection update <id>` | Update a Docs collection | `--name` `--visibility` `--order` `--site` |
 | `docs site get <id>` | Get a Docs site by id | — |
 | `docs site list` | List Docs sites | `--limit` |
 

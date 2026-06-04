@@ -57,10 +57,36 @@ hscli docs article delete <id> --yes
 New articles default to `notpublished`, so nothing goes public by accident. `--text` takes
 inline HTML or `@file`, and `delete` prompts for confirmation unless you pass `--yes`.
 
+### Drafts
+
+Stage changes without touching the published article — useful for reviewing before going live:
+
+```bash frame="terminal"
+hscli docs article save-draft <id> --text @draft.html   # stage a draft
+hscli docs article delete-draft <id> --yes              # discard it; published text is kept
+```
+
+## Manage collections & categories
+
+```bash frame="terminal"
+hscli docs collection create --site <siteId> --name "Guides" --visibility public
+hscli docs collection update <id> --name "Renamed"
+hscli docs collection delete <id> --yes
+
+hscli docs category create --collection <id> --name "Billing"
+hscli docs category update <id> --name "Renamed" --order 2
+hscli docs category delete <id> --yes
+```
+
+The Docs API requires `--name` on every collection/category update, even when you only mean
+to change `--visibility` or `--order`. Deletes prompt for confirmation unless you pass `--yes`.
+
+:::caution
+Deleting a collection removes every article inside it. There is no undo.
+:::
+
 :::note
-Article writes (create / update / delete) are supported. Collection & category writes and
-article drafts are on the roadmap. The Docs API is rate-limited per 10-minute window; large
-pulls back off automatically on `429`.
+The Docs API is rate-limited per 10-minute window; large pulls back off automatically on `429`.
 :::
 
 See the [command reference](/reference/commands/#docs) for every command and flag.
