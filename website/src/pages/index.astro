@@ -210,6 +210,22 @@ const description =
 <div class="row">&nbsp;&nbsp;<span class="t-flag">--output</span> csv &gt; may.csv</div>
               </div>
             </article>
+            <article class="recipe recipe--wide">
+              <div class="recipe__head">
+                <span class="recipe__tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>Docs</span>
+                <h3>Let an agent keep your help center current</h3>
+                <p>Point a model at last week's inbox, let it spot the most-asked question, and publish the answer straight to your Docs knowledge base — version-controlled and shipped from CI.</p>
+                <a class="recipe__link" href={`${base}guides/docs/`}>Docs knowledge base →</a>
+              </div>
+              <div class="recipe__code">
+<div class="row"><span class="t-comment"># nightly — turn last week's repeat questions into a Docs article</span></div>
+<div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">conv list</span> <span class="t-flag">--tag</span> question <span class="t-flag">--since</span> 7d <span class="t-flag">--output</span> json \</div>
+<div class="row">&nbsp;&nbsp;| <span class="t-cmd">claude</span> <span class="t-flag">-p</span> <span class="t-str">"draft a KB article for the top question"</span> &gt; article.html</div>
+<div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">docs article create</span> <span class="t-flag">--collection</span> <span class="t-str">"$KB"</span> \</div>
+<div class="row">&nbsp;&nbsp;<span class="t-flag">--name</span> <span class="t-str">"Resetting your password"</span> <span class="t-flag">--text</span> @article.html <span class="t-flag">--status</span> published</div>
+<div class="row out"><span class="t-str">✓</span> article published <span class="t-dim">· exit 0</span></div>
+              </div>
+            </article>
           </div>
         </div>
       </section>
