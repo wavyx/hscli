@@ -1,0 +1,55 @@
+---
+title: Docs (knowledge base)
+description: Manage your Help Scout Docs knowledge base — sites, collections, categories, and articles — from the terminal.
+---
+
+The `docs` group talks to the **Help Scout Docs API**, a separate product with its own
+per-user API key, independent of your Mailbox/Inbox login.
+
+## Authenticate
+
+Find your Docs API key in the web app under your profile → **Authentication → API Keys**
+(you need the _"Docs: Create new, edit settings & Collections"_ permission), then store it
+once in your OS keychain:
+
+```bash frame="terminal" title="zsh — hscli"
+$ hscli docs auth
+✓ Docs API key stored for profile "default"
+```
+
+For CI, pass it through the environment instead — no keychain needed:
+
+```bash frame="terminal"
+HSCLI_DOCS_API_KEY="$HELPSCOUT_DOCS_KEY" hscli docs site list
+```
+
+## Sites & collections
+
+```bash frame="terminal"
+hscli docs site list
+hscli docs site get <siteId>
+hscli docs collection list --site <siteId> --visibility public
+hscli docs collection get <id>
+hscli docs category list <collectionId>
+```
+
+## Articles
+
+```bash frame="terminal"
+# list articles in a collection (or a category)
+hscli docs article list --collection <id> --status published
+
+# fetch one article — the body HTML lives in the `text` field
+hscli docs article get <id> --output json --jq '.[].text'
+
+# full-text search across the knowledge base
+hscli docs article search "password reset" --collection <id>
+```
+
+:::note
+`hscli docs` is read-focused today — `list`, `get`, and `search`. Article and collection
+writes (create, update, drafts) are on the roadmap. The Docs API is rate-limited per
+10-minute window; large pulls back off automatically on `429`.
+:::
+
+See the [command reference](/reference/commands/#docs) for every command and flag.

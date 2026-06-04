@@ -5,7 +5,7 @@ description: Full command reference for the hscli command-line interface.
 
 <!-- AUTO-GENERATED from the oclif manifest by scripts/gen-commands.mjs — do not edit by hand. -->
 
-Reference for `hscli` v0.8.0 (68 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
+Reference for `hscli` v0.8.1 (77 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
 
 ## Top-level
 
@@ -833,6 +833,161 @@ Examples:
 hscli customer update 42 --first Jane --last Doe
 hscli customer update 42 --email new@example.com --company Acme
 hscli customer update 42 --job-title "VP of Engineering"
+```
+
+## hscli docs
+
+### `hscli docs article get`
+
+Get a Docs article by id or number
+
+```
+hscli docs article get <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli docs article get <id>
+hscli docs article get <id> --output json
+```
+
+### `hscli docs article list`
+
+List articles in a Docs collection or category
+
+```
+hscli docs article list [flags]
+```
+
+- `--collection <value>` — Collection id
+- `--category <value>` — Category id
+- `--status <all|published|notpublished>` — Filter by status
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli docs article list --collection <id>
+hscli docs article list --category <id> --status published
+```
+
+### `hscli docs article search`
+
+Search Docs articles by keyword
+
+```
+hscli docs article search <query> [flags]
+```
+
+- `--collection <value>` — Filter by collection id
+- `--site <value>` — Filter by site id
+- `--status <all|published|notpublished>` — Filter by status
+- `--visibility <all|public|private>` — Filter by visibility
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli docs article search "password reset"
+hscli docs article search refund --collection <id>
+```
+
+### `hscli docs auth`
+
+Store your Help Scout Docs API key in the OS keychain (separate from Mailbox auth)
+
+```
+hscli docs auth [flags]
+```
+
+- `--api-key <value>` — Docs API key (skips the interactive prompt)
+
+Examples:
+
+```bash
+hscli docs auth
+hscli docs auth --api-key <key>
+```
+
+### `hscli docs category list`
+
+List categories within a Docs collection
+
+```
+hscli docs category list <collectionId> [flags]
+```
+
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli docs category list <collectionId>
+```
+
+### `hscli docs collection get`
+
+Get a Docs collection by id or number
+
+```
+hscli docs collection get <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli docs collection get <id>
+```
+
+### `hscli docs collection list`
+
+List Docs collections
+
+```
+hscli docs collection list [flags]
+```
+
+- `--limit <value>` — Max results to return
+- `--site <value>` — Filter by Site id
+- `--visibility <all|public|private>` — Filter by visibility
+
+Examples:
+
+```bash
+hscli docs collection list
+hscli docs collection list --site <siteId>
+hscli docs collection list --visibility public --output json
+```
+
+### `hscli docs site get`
+
+Get a Docs site by id
+
+```
+hscli docs site get <id> [flags]
+```
+
+Examples:
+
+```bash
+hscli docs site get <id>
+```
+
+### `hscli docs site list`
+
+List Docs sites
+
+```
+hscli docs site list [flags]
+```
+
+- `--limit <value>` — Max results to return
+
+Examples:
+
+```bash
+hscli docs site list
 ```
 
 ## hscli mailbox

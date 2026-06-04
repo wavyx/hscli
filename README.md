@@ -11,8 +11,9 @@
 Command-line interface for [Help Scout](https://www.helpscout.com/).
 
 Covers the **Mailbox API 2.0** (conversations, customers, mailboxes, users, tags,
-workflows, webhooks, reports) plus **Beacon** HMAC/snippet utilities and a full
-account **backup**. Docs API support is planned.
+workflows, webhooks, reports) and the **Docs API** (knowledge base: sites, collections,
+categories, articles, search), plus **Beacon** HMAC/snippet utilities and a full
+account **backup**.
 
 JSON output, deterministic exit codes, and a raw `hscli api` escape hatch make it
 a clean way to drive Help Scout from CI pipelines and **AI agents** (Claude Code,
@@ -46,6 +47,10 @@ hscli conv list                           # List conversations
 hscli conv reply 123 --body "Thanks"      # Reply to a conversation
 hscli customer create --email user@example.com --first Jane
 hscli backup --out ~/hs-backup            # Full account backup (incremental on re-run)
+
+# Docs knowledge base (separate per-user API key: `hscli docs auth` or HSCLI_DOCS_API_KEY)
+hscli docs auth                           # Store your Docs API key in the keychain
+hscli docs article search "refund"        # Search the knowledge base
 ```
 
 For CI/CD, use the non-interactive client-credentials flow:
@@ -68,6 +73,7 @@ HSCLI_APP_ID=... HSCLI_APP_SECRET=... hscli auth login --client-credentials
 | `hscli webhook`  | `list`, `get`, `create`, `delete`                                                                                                                                                         |
 | `hscli report`   | `company`, `user`, `conversations`, `beacon`                                                                                                                                              |
 | `hscli beacon`   | `sign`, `verify`, `embed`, `identify-snippet` — HMAC + snippet utilities for Beacon Secure Mode                                                                                           |
+| `hscli docs`     | `auth`, `site`, `collection`, `category`, `article` — read/search the Docs knowledge base (separate per-user API key)                                                                     |
 | `hscli profile`  | `list`, `use`, `current`                                                                                                                                                                  |
 | `hscli config`   | `get`, `set`, `list`, `validate`                                                                                                                                                          |
 | `hscli alias`    | `set`, `list`, `unset` — custom command shortcuts                                                                                                                                         |

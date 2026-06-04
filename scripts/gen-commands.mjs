@@ -107,6 +107,7 @@ const TOPIC_BADGE = {
   api: ['escape hatch', 'badge--coral badge--dot'],
   backup: ['archive', 'badge--dot'],
   doctor: ['diagnostics', 'badge--dot'],
+  docs: ['knowledge base', 'badge--dot'],
 }
 
 const TOPIC_BLURB = {
@@ -130,6 +131,7 @@ const TOPIC_BLURB = {
   backup:
     'Dump your whole account to JSON with incremental refresh, resume, deletion detection, and attachments. See the [Backups guide](/guides/backups/).',
   doctor: 'Diagnose your environment, auth, and connectivity.',
+  docs: 'Manage your Help Scout Docs knowledge base — sites, collections, categories, and articles. Uses a separate Docs API key (`hscli docs auth`). See the [Docs guide](/guides/docs/).',
 }
 
 const renderTopicTable = (list) => {

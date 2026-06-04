@@ -81,6 +81,7 @@ export default defineConfig({
             { label: 'Mailboxes', slug: 'guides/mailboxes' },
             { label: 'Tags & team', slug: 'guides/tags-and-team' },
             { label: 'Beacon', slug: 'guides/beacon' },
+            { label: 'Docs (knowledge base)', slug: 'guides/docs' },
           ],
         },
         {
