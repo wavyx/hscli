@@ -79,6 +79,12 @@
       },
       "beacon": {
         "description": "Beacon widget utilities (HMAC signing, snippet generators)"
+      },
+      "docs": {
+        "description": "Help Scout Docs — knowledge base sites, collections, categories, articles"
+      },
+      "docs:collection": {
+        "description": "Docs collections"
       }
     },
     "hooks": {

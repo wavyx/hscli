@@ -7,8 +7,15 @@ vi.mock('@napi-rs/keyring', () => {
   throw new Error('Native module not available')
 })
 
-const { getTokens, setTokens, deleteTokens, isKeychainAvailable } =
-  await import('../../src/lib/keychain.js')
+const {
+  getTokens,
+  setTokens,
+  deleteTokens,
+  isKeychainAvailable,
+  getDocsKey,
+  setDocsKey,
+  deleteDocsKey,
+} = await import('../../src/lib/keychain.js')
 
 const testProfile = `hscli-nokeychain-${Date.now()}`
 
@@ -37,5 +44,17 @@ describe('keychain when OS keychain is unavailable', () => {
 
   it('deleteTokens is a no-op that does not throw', async () => {
     await expect(deleteTokens(testProfile)).resolves.toBeUndefined()
+  })
+
+  it('getDocsKey returns null instead of crashing', async () => {
+    await expect(getDocsKey(testProfile)).resolves.toBeNull()
+  })
+
+  it('setDocsKey throws a clear keychain-unavailable error', async () => {
+    await expect(setDocsKey(testProfile, 'k')).rejects.toThrow(/keychain/i)
+  })
+
+  it('deleteDocsKey is a no-op that does not throw', async () => {
+    await expect(deleteDocsKey(testProfile)).resolves.toBeUndefined()
   })
 })

@@ -4,6 +4,9 @@ import {
   setTokens,
   deleteTokens,
   isKeychainAvailable,
+  getDocsKey,
+  setDocsKey,
+  deleteDocsKey,
 } from '../../src/lib/keychain.js'
 
 const testProfile = `hscli-test-${Date.now()}`
@@ -108,6 +111,24 @@ describe('keychain', () => {
 
       // Deleting again should not throw
       await expect(deleteTokens(lifecycleProfile)).resolves.toBeUndefined()
+    })
+  })
+
+  describe('Docs API key (setDocsKey/getDocsKey/deleteDocsKey)', () => {
+    it('round-trips and deletes the Docs key', async () => {
+      const profile = `docs-key-test-${Date.now()}`
+      await setDocsKey(profile, 'docs-secret')
+      expect(await getDocsKey(profile)).toBe('docs-secret')
+
+      await deleteDocsKey(profile)
+      expect(await getDocsKey(profile)).toBeNull()
+
+      // Deleting again should not throw
+      await expect(deleteDocsKey(profile)).resolves.toBeUndefined()
+    })
+
+    it('returns null for a profile with no Docs key', async () => {
+      expect(await getDocsKey(`no-docs-${Date.now()}`)).toBeNull()
     })
   })
 })

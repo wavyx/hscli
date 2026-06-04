@@ -70,6 +70,36 @@ export async function deleteTokens(profile) {
   getEntry(account).deletePassword()
 }
 
+/**
+ * Help Scout Docs API key (separate product, separate per-user key).
+ * @param {string} profile
+ * @returns {Promise<string | null>}
+ */
+export async function getDocsKey(profile) {
+  if (!Entry) return null
+  try {
+    return getEntry(`${profile}/docs-key`).getPassword() || null
+  } catch (err) {
+    debug('getDocsKey error: %s', err.message)
+    return null
+  }
+}
+
+/**
+ * @param {string} profile
+ * @param {string} apiKey
+ */
+export async function setDocsKey(profile, apiKey) {
+  if (!Entry) keychainRequired()
+  getEntry(`${profile}/docs-key`).setPassword(apiKey)
+}
+
+/** @param {string} profile */
+export async function deleteDocsKey(profile) {
+  if (!Entry) return
+  getEntry(`${profile}/docs-key`).deletePassword()
+}
+
 export function isKeychainAvailable() {
   return Entry !== null
 }
