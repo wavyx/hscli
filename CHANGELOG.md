@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- CI, release, and docs workflows now run on `actions/checkout@v5` and `actions/setup-node@v5` (Node 24 runtime), ahead of GitHub forcing Node 24 on hosted runners. The GitHub Pages actions (`upload-pages-artifact@v3`, `deploy-pages@v4`) stay pinned until they ship Node-24 majors.
+- CI, release, and docs workflows now run on Node-24 action majors — `actions/checkout@v6`, `actions/setup-node@v6`, `codecov/codecov-action@v6`, `actions/upload-pages-artifact@v5`, `actions/deploy-pages@v5` — clearing the Node-20 GitHub Actions runner deprecation.
 - Docs site migrated off the deprecated top-level `markdown.smartypants` / `markdown.remarkPlugins` options to the Astro 6.4 `markdown.processor: unified({ … })` API (the old options are removed in Astro 8.0). No output change — code samples keep literal `--flags` and straight quotes.
+- Routine minor/patch dependency bumps (Dependabot): `@inquirer/prompts`, `@oclif/plugin-help`, `@oclif/plugin-plugins`, `js-yaml`, `tar`, `eslint`, `oclif`, `vitest`, `@vitest/coverage-v8`.
 
 ## [0.8.0] - 2026-06-02
 
