@@ -41,6 +41,7 @@ hscli conv list --status active --output json
 | --- | --- | --- |
 | `HSCLI_APP_ID` | OAuth app client ID (for `--client-credentials` / setup). | — |
 | `HSCLI_APP_SECRET` | OAuth app client secret. | — |
+| `HSCLI_DOCS_API_KEY` | Help Scout **Docs API** key (separate product — see below). | — |
 | `HSCLI_PROFILE` | Named profile to use for multi-account setups. | `default` |
 | `NO_COLOR` | Disable ANSI colors (standard convention). | — |
 
@@ -61,6 +62,27 @@ $ hscli auth status
 default   jordan@acme.io     ✓ valid
 staging   bot@acme-test.io   ✓ valid
 ```
+
+## Docs API key (separate product)
+
+Help Scout **Docs** (the knowledge base) is a different product from the Mailbox/Inbox, and
+it authenticates with its own **per-user API key** — not your OAuth login. The `hscli docs *`
+commands use that key exclusively; everything else uses OAuth.
+
+Store it once in your keychain, or pass it through the environment for CI:
+
+```bash frame="terminal" title="zsh — hscli"
+$ hscli docs auth                         # prompts for the key, validates, stores it
+✓ Docs API key stored for profile "default"
+
+# CI — no keychain needed
+HSCLI_DOCS_API_KEY="$HELPSCOUT_DOCS_KEY" hscli docs site list
+```
+
+Find the key in the Docs web app under your profile → **Authentication → API Keys** (you
+need the _"Docs: Create new, edit settings & Collections"_ permission). The key is stored
+per profile, so multi-account setups keep their Docs keys separate too. See the
+[Docs guide](/guides/docs/) for the full command surface.
 
 ## Using with agents
 
