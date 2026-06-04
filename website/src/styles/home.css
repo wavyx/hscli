@@ -144,7 +144,18 @@
 .recipe__code { margin-top: auto; background: var(--code-bg); border-top: 1px solid var(--code-border); padding: 14px 16px; font-family: var(--font-mono); font-size: 12px; line-height: 1.7; overflow-x: auto; color: var(--code-fg); }
 .recipe__code .row { white-space: pre; }
 
+/* Featured recipe — spans the full grid, copy left / terminal right */
+.recipe--wide { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1.2fr; gap: 0; align-items: stretch; }
+.recipe--wide .recipe__head { padding: 24px; display: flex; flex-direction: column; justify-content: center; }
+.recipe--wide .recipe__code { margin: 0; border-top: 0; border-left: 1px solid var(--code-border); }
+.recipe__link { align-self: flex-start; margin-top: 14px; font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; }
+.recipe__link:hover { color: var(--accent-hover); }
+
 @media (max-width: 900px) { .recipe-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .recipe--wide { grid-template-columns: 1fr; }
+  .recipe--wide .recipe__code { border-left: 0; border-top: 1px solid var(--code-border); }
+}
 
 /* ============================================================
    CTA strip
