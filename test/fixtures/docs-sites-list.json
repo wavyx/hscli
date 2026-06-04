@@ -1,0 +1,27 @@
+{
+  "sites": {
+    "page": 1,
+    "pages": 1,
+    "count": 2,
+    "items": [
+      {
+        "id": "566807879033603f7da26a9d",
+        "companyName": "Acme",
+        "title": "Acme Docs",
+        "subDomain": "acme",
+        "hasPublicSite": true,
+        "createdAt": "2024-01-01T00:00:00Z",
+        "updatedAt": "2024-06-01T00:00:00Z"
+      },
+      {
+        "id": "5683fae09033603f7da2c63d",
+        "companyName": "Acme",
+        "title": "Acme FR",
+        "subDomain": "acme-fr",
+        "hasPublicSite": true,
+        "createdAt": "2024-02-01T00:00:00Z",
+        "updatedAt": "2024-06-02T00:00:00Z"
+      }
+    ]
+  }
+}

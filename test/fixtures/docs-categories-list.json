@@ -1,0 +1,33 @@
+{
+  "categories": {
+    "page": 1,
+    "pages": 1,
+    "count": 2,
+    "items": [
+      {
+        "id": "5214c77d45667acd25394b52",
+        "collectionId": "5214c83d45667acd25394b53",
+        "number": 7,
+        "slug": "getting-started",
+        "name": "Getting Started",
+        "order": 1,
+        "articleCount": 4,
+        "publicUrl": "https://example.helpscoutdocs.com/category/7-getting-started",
+        "createdAt": "2024-01-01T00:00:00Z",
+        "updatedAt": "2024-06-01T00:00:00Z"
+      },
+      {
+        "id": "5214c77d45667acd25394b99",
+        "collectionId": "5214c83d45667acd25394b53",
+        "number": 8,
+        "slug": "billing",
+        "name": "Billing",
+        "order": 2,
+        "articleCount": 3,
+        "publicUrl": "https://example.helpscoutdocs.com/category/8-billing",
+        "createdAt": "2024-01-05T00:00:00Z",
+        "updatedAt": "2024-06-05T00:00:00Z"
+      }
+    ]
+  }
+}

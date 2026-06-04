@@ -85,6 +85,15 @@
       },
       "docs:collection": {
         "description": "Docs collections"
+      },
+      "docs:category": {
+        "description": "Docs categories"
+      },
+      "docs:article": {
+        "description": "Docs articles"
+      },
+      "docs:site": {
+        "description": "Docs sites"
       }
     },
     "hooks": {
