@@ -12,7 +12,7 @@ hscli <group> <action> [target] [flags]
 ```
 
 Run `hscli <group> --help` for the live, self-describing version of any command.
-This page lists all 68 commands in `hscli` v0.8.0.
+This page lists all 77 commands in `hscli` v0.8.1.
 
 ## alias
 
@@ -108,6 +108,24 @@ Search, read, create, and update the people behind your conversations. See the [
 | `customer list` | List customers | `--mailbox` `--first` `--last` `--since` `--limit` |
 | `customer search <query>` | Search customers | `--limit` |
 | `customer update <id>` | Update a customer | `--email` `--first` `--last` `--company` `--phone` `--job-title` |
+
+## docs
+
+<span class="badge badge--dot">knowledge base</span>
+
+Manage your Help Scout Docs knowledge base — sites, collections, categories, and articles. Uses a separate Docs API key (`hscli docs auth`). See the [Docs guide](/guides/docs/).
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `docs article get <id>` | Get a Docs article by id or number | — |
+| `docs article list` | List articles in a Docs collection or category | `--collection` `--category` `--status` `--limit` |
+| `docs article search <query>` | Search Docs articles by keyword | `--collection` `--site` `--status` `--visibility` `--limit` |
+| `docs auth` | Store your Help Scout Docs API key in the OS keychain (separate from Mailbox auth) | `--api-key` |
+| `docs category list <collectionId>` | List categories within a Docs collection | `--limit` |
+| `docs collection get <id>` | Get a Docs collection by id or number | — |
+| `docs collection list` | List Docs collections | `--limit` `--site` `--visibility` |
+| `docs site get <id>` | Get a Docs site by id | — |
+| `docs site list` | List Docs sites | `--limit` |
 
 ## mailbox
 
