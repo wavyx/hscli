@@ -73,7 +73,7 @@ HSCLI_APP_ID=... HSCLI_APP_SECRET=... hscli auth login --client-credentials
 | `hscli webhook`  | `list`, `get`, `create`, `delete`                                                                                                                                                         |
 | `hscli report`   | `company`, `user`, `conversations`, `beacon`                                                                                                                                              |
 | `hscli beacon`   | `sign`, `verify`, `embed`, `identify-snippet` — HMAC + snippet utilities for Beacon Secure Mode                                                                                           |
-| `hscli docs`     | `auth`, `site`, `collection`, `category`, `article` — read/search the Docs knowledge base (separate per-user API key)                                                                     |
+| `hscli docs`     | `auth`, `site`, `collection`, `category`, `article` — read/search the Docs knowledge base + `article create`/`update`/`delete` (separate per-user API key)                                |
 | `hscli profile`  | `list`, `use`, `current`                                                                                                                                                                  |
 | `hscli config`   | `get`, `set`, `list`, `validate`                                                                                                                                                          |
 | `hscli alias`    | `set`, `list`, `unset` — custom command shortcuts                                                                                                                                         |

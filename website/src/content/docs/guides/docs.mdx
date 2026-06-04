@@ -46,10 +46,21 @@ hscli docs article get <id> --output json --jq '.[].text'
 hscli docs article search "password reset" --collection <id>
 ```
 
+## Create, update & delete articles
+
+```bash frame="terminal"
+hscli docs article create --collection <id> --name "Title" --text @article.html --status notpublished
+hscli docs article update <id> --status published
+hscli docs article delete <id> --yes
+```
+
+New articles default to `notpublished`, so nothing goes public by accident. `--text` takes
+inline HTML or `@file`, and `delete` prompts for confirmation unless you pass `--yes`.
+
 :::note
-`hscli docs` is read-focused today — `list`, `get`, and `search`. Article and collection
-writes (create, update, drafts) are on the roadmap. The Docs API is rate-limited per
-10-minute window; large pulls back off automatically on `429`.
+Article writes (create / update / delete) are supported. Collection & category writes and
+article drafts are on the roadmap. The Docs API is rate-limited per 10-minute window; large
+pulls back off automatically on `429`.
 :::
 
 See the [command reference](/reference/commands/#docs) for every command and flag.

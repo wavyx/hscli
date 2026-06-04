@@ -12,7 +12,7 @@ hscli <group> <action> [target] [flags]
 ```
 
 Run `hscli <group> --help` for the live, self-describing version of any command.
-This page lists all 77 commands in `hscli` v0.8.1.
+This page lists all 80 commands in `hscli` v0.8.1.
 
 ## alias
 
@@ -117,9 +117,12 @@ Manage your Help Scout Docs knowledge base — sites, collections, categories, a
 
 | Command | Description | Key flags |
 | --- | --- | --- |
+| `docs article create` | Create a Docs article | `--collection` `--name` `--text` `--status` `--slug` `--categories` `--keywords` |
+| `docs article delete <id>` | Delete a Docs article | `--yes` |
 | `docs article get <id>` | Get a Docs article by id or number | — |
 | `docs article list` | List articles in a Docs collection or category | `--collection` `--category` `--status` `--limit` |
 | `docs article search <query>` | Search Docs articles by keyword | `--collection` `--site` `--status` `--visibility` `--limit` |
+| `docs article update <id>` | Update a Docs article | `--name` `--text` `--status` `--slug` |
 | `docs auth` | Store your Help Scout Docs API key in the OS keychain (separate from Mailbox auth) | `--api-key` |
 | `docs category list <collectionId>` | List categories within a Docs collection | `--limit` |
 | `docs collection get <id>` | Get a Docs collection by id or number | — |

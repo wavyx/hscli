@@ -1,0 +1,14 @@
+{
+  "article": {
+    "id": "5215163545667acd25394bff",
+    "number": 201,
+    "collectionId": "5214c77c45667acd25394b51",
+    "status": "notpublished",
+    "hasDraft": false,
+    "name": "Test article",
+    "text": "<p>Body</p>",
+    "publicUrl": "https://example.helpscoutdocs.com/article/201-test-article",
+    "createdAt": "2024-06-04T00:00:00Z",
+    "updatedAt": "2024-06-04T00:00:00Z"
+  }
+}
