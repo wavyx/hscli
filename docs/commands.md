@@ -5,7 +5,7 @@ description: Full command reference for the hscli command-line interface.
 
 <!-- AUTO-GENERATED from the oclif manifest by scripts/gen-commands.mjs — do not edit by hand. -->
 
-Reference for `hscli` v0.8.1 (80 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
+Reference for `hscli` v0.8.1 (88 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
 
 ## Top-level
 
@@ -877,6 +877,23 @@ hscli docs article delete <id>
 hscli docs article delete <id> --yes
 ```
 
+### `hscli docs article delete-draft`
+
+Discard the draft of a Docs article (published text is kept)
+
+```
+hscli docs article delete-draft <id> [flags]
+```
+
+- `-y, --yes` — Skip confirmation prompt
+
+Examples:
+
+```bash
+hscli docs article delete-draft <id>
+hscli docs article delete-draft <id> --yes
+```
+
 ### `hscli docs article get`
 
 Get a Docs article by id or number
@@ -910,6 +927,23 @@ Examples:
 ```bash
 hscli docs article list --collection <id>
 hscli docs article list --category <id> --status published
+```
+
+### `hscli docs article save-draft`
+
+Save a draft for a Docs article (does not publish)
+
+```
+hscli docs article save-draft <id> [flags]
+```
+
+- `--text <value>` _(required)_ — Draft body — text/HTML, or @file
+
+Examples:
+
+```bash
+hscli docs article save-draft <id> --text "<p>Work in progress</p>"
+hscli docs article save-draft <id> --text @draft.html
 ```
 
 ### `hscli docs article search`
@@ -970,6 +1004,42 @@ hscli docs auth
 hscli docs auth --api-key <key>
 ```
 
+### `hscli docs category create`
+
+Create a Docs category within a collection
+
+```
+hscli docs category create [flags]
+```
+
+- `--collection <value>` _(required)_ — Collection id
+- `--name <value>` _(required)_ — Category name (unique within the collection)
+- `--visibility <public|private>` — Visibility
+- `--order <value>` — Display order
+
+Examples:
+
+```bash
+hscli docs category create --collection <id> --name "Billing"
+```
+
+### `hscli docs category delete`
+
+Delete a Docs category
+
+```
+hscli docs category delete <id> [flags]
+```
+
+- `-y, --yes` — Skip confirmation prompt
+
+Examples:
+
+```bash
+hscli docs category delete <id>
+hscli docs category delete <id> --yes
+```
+
 ### `hscli docs category list`
 
 List categories within a Docs collection
@@ -984,6 +1054,61 @@ Examples:
 
 ```bash
 hscli docs category list <collectionId>
+```
+
+### `hscli docs category update`
+
+Update a Docs category
+
+```
+hscli docs category update <id> [flags]
+```
+
+- `--name <value>` _(required)_ — Category name (required by the Docs API on update)
+- `--visibility <public|private>` — Visibility
+- `--order <value>` — Display order
+
+Examples:
+
+```bash
+hscli docs category update <id> --name "Renamed"
+hscli docs category update <id> --name "Billing" --order 2
+```
+
+### `hscli docs collection create`
+
+Create a Docs collection
+
+```
+hscli docs collection create [flags]
+```
+
+- `--site <value>` _(required)_ — Site id
+- `--name <value>` _(required)_ — Collection name (unique per account)
+- `--visibility <public|private>` — Visibility
+- `--order <value>` — Display order
+
+Examples:
+
+```bash
+hscli docs collection create --site <siteId> --name "Guides"
+```
+
+### `hscli docs collection delete`
+
+Delete a Docs collection
+
+```
+hscli docs collection delete <id> [flags]
+```
+
+- `-y, --yes` — Skip confirmation prompt
+
+Examples:
+
+```bash
+hscli docs collection delete <id>
+hscli docs collection delete <id> --yes
 ```
 
 ### `hscli docs collection get`
@@ -1018,6 +1143,26 @@ Examples:
 hscli docs collection list
 hscli docs collection list --site <siteId>
 hscli docs collection list --visibility public --output json
+```
+
+### `hscli docs collection update`
+
+Update a Docs collection
+
+```
+hscli docs collection update <id> [flags]
+```
+
+- `--name <value>` _(required)_ — Collection name (required by the Docs API on update)
+- `--visibility <public|private>` — Visibility
+- `--order <value>` — Display order
+- `--site <value>` — Move the collection to this site id
+
+Examples:
+
+```bash
+hscli docs collection update <id> --name "Renamed"
+hscli docs collection update <id> --name "Guides" --visibility private
 ```
 
 ### `hscli docs site get`

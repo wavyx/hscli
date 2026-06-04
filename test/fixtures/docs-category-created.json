@@ -1,0 +1,14 @@
+{
+  "category": {
+    "id": "5214c77d45667acd25394bff",
+    "collectionId": "5214c83d45667acd25394b53",
+    "number": 9,
+    "slug": "billing",
+    "name": "Billing",
+    "order": 1,
+    "articleCount": 0,
+    "publicUrl": "https://example.helpscoutdocs.com/category/9-billing",
+    "createdAt": "2024-06-01T00:00:00Z",
+    "updatedAt": "2024-06-01T00:00:00Z"
+  }
+}
