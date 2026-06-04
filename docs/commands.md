@@ -5,7 +5,7 @@ description: Full command reference for the hscli command-line interface.
 
 <!-- AUTO-GENERATED from the oclif manifest by scripts/gen-commands.mjs — do not edit by hand. -->
 
-Reference for `hscli` v0.8.1 (77 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
+Reference for `hscli` v0.8.1 (80 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
 
 ## Top-level
 
@@ -837,6 +837,46 @@ hscli customer update 42 --job-title "VP of Engineering"
 
 ## hscli docs
 
+### `hscli docs article create`
+
+Create a Docs article
+
+```
+hscli docs article create [flags]
+```
+
+- `--collection <value>` _(required)_ — Collection id
+- `--name <value>` _(required)_ — Article name (unique within the collection)
+- `--text <value>` _(required)_ — Article body — text/HTML, or @file
+- `--status <published|notpublished>` — Article status
+- `--slug <value>` — SEO slug (auto-generated if omitted)
+- `--categories <value>` — Comma-separated category ids
+- `--keywords <value>` — Comma-separated keywords
+
+Examples:
+
+```bash
+hscli docs article create --collection <id> --name "Title" --text "<p>Body</p>"
+hscli docs article create --collection <id> --name "Title" --text @article.html --status published
+```
+
+### `hscli docs article delete`
+
+Delete a Docs article
+
+```
+hscli docs article delete <id> [flags]
+```
+
+- `-y, --yes` — Skip confirmation prompt
+
+Examples:
+
+```bash
+hscli docs article delete <id>
+hscli docs article delete <id> --yes
+```
+
 ### `hscli docs article get`
 
 Get a Docs article by id or number
@@ -891,6 +931,26 @@ Examples:
 ```bash
 hscli docs article search "password reset"
 hscli docs article search refund --collection <id>
+```
+
+### `hscli docs article update`
+
+Update a Docs article
+
+```
+hscli docs article update <id> [flags]
+```
+
+- `--name <value>` — New article name
+- `--text <value>` — New body — text/HTML, or @file
+- `--status <published|notpublished>` — Article status
+- `--slug <value>` — SEO slug
+
+Examples:
+
+```bash
+hscli docs article update <id> --name "New title"
+hscli docs article update <id> --text @article.html --status published
 ```
 
 ### `hscli docs auth`
