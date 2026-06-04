@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-06-04
+
+### Added
+
+- **Help Scout Docs API support** — a new `hscli docs` command group for the knowledge base. Docs is a separate product and authenticates with its own per-user API key, independent of the Mailbox OAuth login:
+  - `docs auth` — validate and store the Docs API key in the OS keychain (or pass `HSCLI_DOCS_API_KEY` for CI).
+  - **Read & search:** `docs site list|get`, `docs collection list|get`, `docs category list`, `docs article list|get|search`.
+  - **Articles:** `docs article create|update|delete`, plus `docs article save-draft|delete-draft`.
+  - **Collections & categories:** `docs collection create|update|delete`, `docs category create|update|delete`.
+  - The Docs client is host-locked to `docsapi.helpscout.net` and shares hscli's retry/backoff, rate-limit handling, structured `--output table|json|yaml|csv`, and deterministic exit codes.
+- Documentation: a new **Docs (knowledge base)** guide, separate-API-key coverage in the authentication guide, and a home-page recipe showing an agent turning inbox patterns into published articles. The generated command reference now spans all 88 commands.
+
 ## [0.8.1] - 2026-06-04
 
 ### Changed

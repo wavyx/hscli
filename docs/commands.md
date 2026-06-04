@@ -5,7 +5,7 @@ description: Full command reference for the hscli command-line interface.
 
 <!-- AUTO-GENERATED from the oclif manifest by scripts/gen-commands.mjs — do not edit by hand. -->
 
-Reference for `hscli` v0.8.1 (88 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
+Reference for `hscli` v0.9.0 (88 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
 
 ## Top-level
 
