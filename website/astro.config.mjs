@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import remarkGfm from 'remark-gfm';
+import { unified } from '@astrojs/markdown-remark';
 
 // hscli — Astro + Starlight config for GitHub Pages (project site)
 // Live URL: https://wavyx.github.io/hscli  ->  site + base below.
@@ -11,7 +12,9 @@ export default defineConfig({
 
   // GFM tables/strikethrough in .mdx, and disable smartypants so code
   // examples keep literal `--flags` and straight quotes (no em-dash/curly).
-  markdown: { smartypants: false, remarkPlugins: [remarkGfm] },
+  // Astro 6.4 moved these onto markdown.processor: unified({...}); the old
+  // top-level markdown.{smartypants,remarkPlugins} are deprecated (removed in 8.0).
+  markdown: { processor: unified({ smartypants: false, remarkPlugins: [remarkGfm] }) },
 
   integrations: [
     starlight({

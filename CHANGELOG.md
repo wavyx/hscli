@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2026-06-04
+
+### Changed
+
+- CI, release, and docs workflows now run on `actions/checkout@v5` and `actions/setup-node@v5` (Node 24 runtime), ahead of GitHub forcing Node 24 on hosted runners. The GitHub Pages actions (`upload-pages-artifact@v3`, `deploy-pages@v4`) stay pinned until they ship Node-24 majors.
+- Docs site migrated off the deprecated top-level `markdown.smartypants` / `markdown.remarkPlugins` options to the Astro 6.4 `markdown.processor: unified({ … })` API (the old options are removed in Astro 8.0). No output change — code samples keep literal `--flags` and straight quotes.
+
 ## [0.8.0] - 2026-06-02
 
 ### Changed
