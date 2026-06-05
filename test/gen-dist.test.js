@@ -18,6 +18,8 @@ describe('renderHomebrewFormula', () => {
     )
     expect(formula).toContain('sha256 "deadbeef"')
     expect(formula).toContain('depends_on "node"')
+    expect(formula).toContain('depends_on "jq"')
+    expect(formula).toContain('JQ_PATH')
     expect(formula).toContain('hscli version')
   })
 })

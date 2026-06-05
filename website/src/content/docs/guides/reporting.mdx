@@ -29,12 +29,19 @@ hscli report company --start 2026-05-01 --end 2026-05-31
 hscli report user --start 2026-05-01 --end 2026-05-31 --user 10
 ```
 
-## Straight into a spreadsheet
+## Pull metrics into your stack
 
-```bash frame="terminal" title="export to CSV"
-hscli report conversations --start 2026-05-01 --end 2026-05-31 --output csv > may.csv
+Reports return nested JSON — stream them into a notebook, a BI tool, or a `jq` pipeline:
+
+```bash frame="terminal"
+hscli report conversations --start 2026-05-01 --end 2026-05-31 --output json > may.json
 ```
 
+:::note
+Reports are nested, so `--output csv`/`table` aren't supported here — use `json` or
+`yaml`, and reshape with `--jq` when you need a flat CSV.
+:::
+
 :::tip
-Schedule this in [CI](/automation/ci/) to keep a dashboard or Google Sheet fresh.
+Schedule this in [CI](/automation/ci/) to keep a dashboard fresh.
 :::
