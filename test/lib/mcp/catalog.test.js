@@ -42,15 +42,22 @@ describe('buildCatalog', () => {
     { id: 'conv:delete', description: 'Delete', flags: {}, args: {} },
     { id: 'api', summary: 'escape hatch', flags: {}, args: {} },
     { id: 'conv:watch', summary: 'watch', flags: {}, args: {} },
+    { id: 'doctor', summary: 'diagnostics', flags: {}, args: {} },
+    { id: 'mcp:serve', summary: 'serve', flags: {}, args: {} },
     { id: 'secret', summary: 'hidden one', hidden: true, flags: {}, args: {} },
-    { id: 'doctor' }, // bare: no summary/description/flags/args
+    { id: 'version' }, // bare: no summary/description/flags/args
   ]
 
-  it('excludes hidden + escape-hatch + streaming commands, sorts by id', () => {
+  it('excludes hidden, escape-hatch, streaming, diagnostic, and self commands', () => {
     const cat = buildCatalog(commands)
-    expect(cat.map((t) => t.id)).toEqual(['conv:delete', 'conv:list', 'doctor'])
-    expect(EXCLUDED.has('api')).toBe(true)
-    expect(EXCLUDED.has('conv:watch')).toBe(true)
+    expect(cat.map((t) => t.id)).toEqual([
+      'conv:delete',
+      'conv:list',
+      'version',
+    ])
+    for (const id of ['api', 'conv:watch', 'doctor', 'mcp:serve']) {
+      expect(EXCLUDED.has(id)).toBe(true)
+    }
   })
 
   it('maps id, toolName, summary and kind', () => {
@@ -67,9 +74,9 @@ describe('buildCatalog', () => {
   })
 
   it('falls back to the id for summary and defaults flags/args when absent', () => {
-    const doctor = buildCatalog(commands).find((t) => t.id === 'doctor')
-    expect(doctor.summary).toBe('doctor')
-    expect(doctor.flags).toEqual({})
-    expect(doctor.args).toEqual({})
+    const v = buildCatalog(commands).find((t) => t.id === 'version')
+    expect(v.summary).toBe('version')
+    expect(v.flags).toEqual({})
+    expect(v.args).toEqual({})
   })
 })
