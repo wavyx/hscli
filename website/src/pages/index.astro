@@ -212,6 +212,21 @@ const description =
             </article>
             <article class="recipe recipe--wide">
               <div class="recipe__head">
+                <span class="recipe__tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="6" width="14" height="12" rx="2"></rect><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h3M2 14h3M19 9h3M19 14h3"></path></svg>MCP</span>
+                <h3>Plug hscli into any agent</h3>
+                <p>Run hscli as a Model Context Protocol server and Claude — Desktop, Code, or any MCP client — gets one typed tool per command. Reads by default; <code>--allow-writes</code> lets the agent act.</p>
+                <a class="recipe__link" href={`${base}automation/mcp/`}>MCP server guide →</a>
+              </div>
+              <div class="recipe__code">
+<div class="row"><span class="t-comment"># one line — Claude Code now has hscli as native tools</span></div>
+<div class="row"><span class="t-prompt">$</span> <span class="t-cmd">claude</span> <span class="t-sub">mcp add</span> hscli <span class="t-punct">--</span> <span class="t-cmd">hscli</span> <span class="t-sub">mcp serve</span></div>
+<div class="row out"><span class="t-str">✓</span> hscli connected <span class="t-dim">· 47 read-only tools</span></div>
+<div class="row"><span class="t-prompt">$</span> <span class="t-cmd">claude</span> <span class="t-flag">-p</span> <span class="t-str">"triage today's billing tickets"</span></div>
+<div class="row out"><span class="t-dim">→</span> conv_list <span class="t-dim">·</span> conv_get <span class="t-dim">·</span> structured JSON <span class="t-dim">· exit 0</span></div>
+              </div>
+            </article>
+            <article class="recipe recipe--wide">
+              <div class="recipe__head">
                 <span class="recipe__tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>Docs</span>
                 <h3>Let an agent keep your help center current</h3>
                 <p>Point a model at last week's inbox, let it spot the most-asked question, and publish the answer straight to your Docs knowledge base — version-controlled and shipped from CI.</p>
