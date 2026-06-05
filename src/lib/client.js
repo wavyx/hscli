@@ -76,7 +76,9 @@ export function createClient({
       debug('%s %s → %d', method, path, res.status)
 
       if (res.status === 429) {
-        const wait = Number(res.headers.get('x-ratelimit-retry-after') || 10)
+        const raw = res.headers.get('x-ratelimit-retry-after')
+        const parsed = raw == null ? NaN : Number(raw)
+        const wait = Number.isFinite(parsed) && parsed >= 0 ? parsed : 10
         if (!retry) throw new RateLimitError(wait)
         debug('rate limited, waiting %ds', wait)
         await sleep(wait * 1000)
@@ -124,7 +126,10 @@ export function createClient({
         query: { ...query, page },
       })
       const items = data?._embedded?.[resourceKey] ?? []
-      const totalPages = data?.page?.totalPages ?? 1
+      // Guard against a non-numeric/missing total so we never loop forever.
+      const rawPages = Number(data?.page?.totalPages)
+      const totalPages =
+        Number.isFinite(rawPages) && rawPages >= 1 ? rawPages : page
       if (opts.onProgress) opts.onProgress({ page, totalPages })
       yield* items
       if (page >= totalPages) break
