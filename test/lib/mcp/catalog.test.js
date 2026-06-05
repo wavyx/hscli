@@ -12,6 +12,7 @@ describe('classifyKind', () => {
     ['docs:article:delete-draft', 'destructive'],
     ['webhook:delete', 'destructive'],
     ['conv:bulk-status', 'destructive'], // bulk ops hit many records — flag for confirm
+    ['workflow:run', 'destructive'], // triggers a workflow that can mass-mutate
     ['conv:status', 'write'], // can mutate via --set, so gated
     ['conv:reply', 'write'],
     ['backup', 'write'],
@@ -55,7 +56,15 @@ describe('buildCatalog', () => {
       'conv:list',
       'version',
     ])
-    for (const id of ['api', 'conv:watch', 'doctor', 'mcp:serve']) {
+    for (const id of [
+      'api',
+      'conv:watch',
+      'doctor',
+      'mcp:serve',
+      'auth:login',
+      'auth:setup',
+      'docs:auth',
+    ]) {
       expect(EXCLUDED.has(id)).toBe(true)
     }
   })

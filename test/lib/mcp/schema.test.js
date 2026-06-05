@@ -13,29 +13,30 @@ const entry = {
       description: 'St',
     },
     tag: { type: 'option', description: 'Tag', required: true },
-    yes: { type: 'boolean', description: 'Skip prompt' },
+    hidden: { type: 'boolean', description: 'Hide' },
     embed: { type: 'option', multiple: true, description: 'Embed' },
     // noise — must be dropped:
     output: { type: 'option', options: ['json', 'table'] },
     fields: { type: 'option' },
     'no-color': { type: 'boolean' },
     profile: { type: 'option' },
+    yes: { type: 'boolean' },
   },
 }
 
 describe('buildInputSchema', () => {
   const shape = buildInputSchema(entry)
 
-  it('drops global/noise flags', () => {
-    for (const n of ['output', 'fields', 'no-color', 'profile']) {
+  it('drops global/noise flags (including yes)', () => {
+    for (const n of ['output', 'fields', 'no-color', 'profile', 'yes']) {
       expect(Object.keys(shape)).not.toContain(n)
     }
-    expect(NOISE_FLAGS.has('output')).toBe(true)
+    expect(NOISE_FLAGS.has('yes')).toBe(true)
   })
 
   it('includes args and meaningful flags', () => {
     expect(Object.keys(shape).sort()).toEqual(
-      ['embed', 'id', 'note', 'status', 'tag', 'yes'].sort(),
+      ['embed', 'hidden', 'id', 'note', 'status', 'tag'].sort(),
     )
   })
 
@@ -43,6 +44,11 @@ describe('buildInputSchema', () => {
     expect(shape.id.safeParse(undefined).success).toBe(false)
     expect(shape.note.safeParse(undefined).success).toBe(true)
     expect(shape.id.safeParse('5abc').success).toBe(true)
+  })
+
+  it('accepts a number for an id/option (LLMs send {id: 123})', () => {
+    expect(shape.id.safeParse(123).success).toBe(true)
+    expect(shape.tag.safeParse(7).success).toBe(true)
   })
 
   it('maps an options flag to an enum', () => {
@@ -56,9 +62,9 @@ describe('buildInputSchema', () => {
   })
 
   it('maps a boolean flag (always optional)', () => {
-    expect(shape.yes.safeParse(true).success).toBe(true)
-    expect(shape.yes.safeParse('x').success).toBe(false)
-    expect(shape.yes.safeParse(undefined).success).toBe(true)
+    expect(shape.hidden.safeParse(true).success).toBe(true)
+    expect(shape.hidden.safeParse('x').success).toBe(false)
+    expect(shape.hidden.safeParse(undefined).success).toBe(true)
   })
 
   it('maps a multiple option flag to a string array', () => {

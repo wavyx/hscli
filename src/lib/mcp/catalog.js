@@ -8,7 +8,23 @@
 // - `conv:watch` is a long-running stream that doesn't fit request/response.
 // - `doctor` is a local-environment diagnostic (live network probe), not useful to an agent.
 // - `mcp:serve` is this server itself — exposing it would let a tool spawn another server.
-export const EXCLUDED = new Set(['api', 'conv:watch', 'doctor', 'mcp:serve'])
+// - `auth:*` / `docs:auth` manage the operator's LOCAL credentials (login opens a
+//   browser + binds a port on the host); they make no sense as agent tools.
+export const EXCLUDED = new Set([
+  'api',
+  'conv:watch',
+  'doctor',
+  'mcp:serve',
+  'auth:login',
+  'auth:logout',
+  'auth:refresh',
+  'auth:setup',
+  'docs:auth',
+])
+
+// Commands that mutate broadly and must carry the destructive hint even though
+// their leaf verb isn't delete/remove/bulk.
+const DESTRUCTIVE_IDS = new Set(['workflow:run'])
 
 // Topics whose every command is read-only.
 const READ_TOPICS = new Set(['report', 'beacon'])
@@ -45,7 +61,11 @@ export function classifyKind(id) {
   const leaf = id.split(':').pop()
   // delete/remove and bulk operations hit data destructively — flag them so MCP
   // clients prompt before running them.
-  if (/^(delete|remove)(-|$)/.test(leaf) || leaf.startsWith('bulk')) {
+  if (
+    DESTRUCTIVE_IDS.has(id) ||
+    /^(delete|remove)(-|$)/.test(leaf) ||
+    leaf.startsWith('bulk')
+  ) {
     return 'destructive'
   }
   if (WRITE_OVERRIDE.has(id)) return 'write'
