@@ -201,13 +201,13 @@ const description =
             <article class="recipe">
               <div class="recipe__head">
                 <span class="recipe__tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="13"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="18" y1="20" x2="18" y2="10"></line></svg>Report</span>
-                <h3>Pull metrics into a spreadsheet</h3>
-                <p>Stream any report as CSV and pipe it straight into your BI tool or a Google Sheet.</p>
+                <h3>Pull metrics into your stack</h3>
+                <p>Stream any report as JSON straight into a notebook, your BI tool, or a jq pipeline.</p>
               </div>
               <div class="recipe__code">
 <div class="row"><span class="t-prompt">$</span> <span class="t-cmd">hscli</span> <span class="t-sub">report conversations</span> \</div>
 <div class="row">&nbsp;&nbsp;<span class="t-flag">--start</span> 2026-05-01 <span class="t-flag">--end</span> 2026-05-31 \</div>
-<div class="row">&nbsp;&nbsp;<span class="t-flag">--output</span> csv &gt; may.csv</div>
+<div class="row">&nbsp;&nbsp;<span class="t-flag">--output</span> json &gt; may.json</div>
               </div>
             </article>
             <article class="recipe recipe--wide">

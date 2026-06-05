@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs'
+import { CliError } from './errors.js'
 
 /**
  * Resolve article text: a leading `@` reads the rest as a file path; otherwise
@@ -8,7 +9,14 @@ import { readFileSync } from 'node:fs'
  */
 export function readText(value) {
   if (value && value.startsWith('@')) {
-    return readFileSync(value.slice(1), 'utf8')
+    const path = value.slice(1)
+    try {
+      return readFileSync(path, 'utf8')
+    } catch (err) {
+      throw new CliError(`Cannot read --text file '${path}': ${err.message}`, {
+        exitCode: 66,
+      })
+    }
   }
   return value
 }

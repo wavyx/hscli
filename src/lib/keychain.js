@@ -60,7 +60,13 @@ export async function getTokens(profile) {
 export async function setTokens(profile, tokens) {
   if (!Entry) keychainRequired()
   const account = `${profile}/tokens`
-  getEntry(account).setPassword(JSON.stringify(tokens))
+  try {
+    getEntry(account).setPassword(JSON.stringify(tokens))
+  } catch (err) {
+    // e.g. PermissionDenied in a container with no Secret Service.
+    debug('setTokens error: %s', err.message)
+    keychainRequired()
+  }
 }
 
 /** @param {string} profile */
@@ -91,7 +97,12 @@ export async function getDocsKey(profile) {
  */
 export async function setDocsKey(profile, apiKey) {
   if (!Entry) keychainRequired()
-  getEntry(`${profile}/docs-key`).setPassword(apiKey)
+  try {
+    getEntry(`${profile}/docs-key`).setPassword(apiKey)
+  } catch (err) {
+    debug('setDocsKey error: %s', err.message)
+    keychainRequired()
+  }
 }
 
 /** @param {string} profile */

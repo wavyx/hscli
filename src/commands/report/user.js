@@ -1,5 +1,6 @@
 import { Flags } from '@oclif/core'
 import BaseCommand from '../../base-command.js'
+import { assertReportFormat } from '../../lib/report-format.js'
 
 export default class ReportUserCommand extends BaseCommand {
   static description = 'Get user report'
@@ -21,6 +22,7 @@ export default class ReportUserCommand extends BaseCommand {
   async run() {
     const { flags } = await this.parse(ReportUserCommand)
     this.flags.output = this.flags.output || 'json'
+    assertReportFormat(this.flags.output)
 
     const query = {
       start: flags.start,

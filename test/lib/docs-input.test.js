@@ -19,6 +19,12 @@ describe('docs-input', () => {
     expect(readText(undefined)).toBeUndefined()
   })
 
+  it('readText throws a clear CliError when the @file is missing', () => {
+    expect(() => readText('@/no/such/hscli-file.html')).toThrow(
+      /Cannot read --text file/,
+    )
+  })
+
   it('csvList splits and trims', () => {
     expect(csvList('a, b ,c')).toEqual(['a', 'b', 'c'])
   })
