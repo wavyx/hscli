@@ -12,7 +12,7 @@ hscli <group> <action> [target] [flags]
 ```
 
 Run `hscli <group> --help` for the live, self-describing version of any command.
-This page lists all 88 commands in `hscli` v0.9.0.
+This page lists all 89 commands in `hscli` v0.9.0.
 
 ## alias
 
@@ -150,6 +150,16 @@ Inspect mailboxes, folders, and custom fields.
 | `mailbox folders <id>` | List folders for a mailbox | — |
 | `mailbox get <id>` | Get a mailbox by ID | — |
 | `mailbox list` | List mailboxes | `--limit` |
+
+## mcp
+
+<span class="badge badge--accent badge--dot">AI agents</span>
+
+Run hscli as a Model Context Protocol server so AI agents can call it as native tools. Reads by default; pass `--allow-writes` to expose mutating tools. See the [MCP guide](/automation/mcp/).
+
+| Command | Description | Key flags |
+| --- | --- | --- |
+| `mcp serve` | Run hscli as a Model Context Protocol (MCP) server over stdio | `--allow-writes` |
 
 ## profile
 

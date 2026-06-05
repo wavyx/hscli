@@ -1,0 +1,80 @@
+---
+title: MCP server
+description: Run hscli as a Model Context Protocol server so AI agents can drive Help Scout through native tools.
+---
+
+`hscli mcp serve` turns the whole CLI into a [Model Context Protocol](https://modelcontextprotocol.io)
+server. Point Claude (Desktop, Code, or any MCP client) at it and the agent gets one
+tool per command — `conv_list`, `docs_article_create`, `report_conversations` — with typed
+inputs and structured JSON results. No glue code, no wrapper API.
+
+## Connect it
+
+The server speaks MCP over **stdio**: the client launches `hscli mcp serve` as a subprocess.
+
+**Claude Code:**
+
+```bash frame="terminal"
+claude mcp add hscli -- hscli mcp serve
+```
+
+**Claude Desktop** — add to `claude_desktop_config.json`:
+
+```json title="claude_desktop_config.json"
+{
+  "mcpServers": {
+    "hscli": { "command": "hscli", "args": ["mcp", "serve"] }
+  }
+}
+```
+
+The server runs as **you** — it reuses the OAuth token and Docs API key already in your OS
+keychain. Run `hscli auth login` (and `hscli docs auth` for knowledge-base tools) first.
+
+## Reads by default, writes on request
+
+By default only **read-only** tools are exposed (`list`, `get`, `search`, `report`, …) — an
+agent can observe your help desk but not change it. To enable mutating tools
+(`create`/`update`/`delete`/`bulk`), start the server with `--allow-writes`:
+
+```bash frame="terminal"
+claude mcp add hscli -- hscli mcp serve --allow-writes
+```
+
+```json title="claude_desktop_config.json"
+{
+  "mcpServers": {
+    "hscli": { "command": "hscli", "args": ["mcp", "serve", "--allow-writes"] }
+  }
+}
+```
+
+`--allow-writes` is a one-time setup choice — the agent never passes it. When enabled, every
+tool is available; when not, write tools simply aren't listed.
+
+:::note[Two layers of safety]
+Write tools are gated by `--allow-writes`, **and** each carries an MCP `destructiveHint` so
+the client (e.g. Claude Desktop) prompts you to approve a `delete` or `bulk` call before it
+runs. Reads are marked `readOnlyHint` and run without prompting.
+:::
+
+## How it maps
+
+- **One tool per command.** `conv:bulk-status` → `conv_bulk_status`. The escape-hatch `api`
+  command and the streaming `conv watch` are not exposed.
+- **Flags become typed inputs.** Required flags/args are required; `--status active|closed`
+  becomes an enum; repeatable flags become arrays. Output-shaping flags (`--output`, `--jq`,
+  `--fields`) are dropped — the server always requests JSON.
+- **Structured results.** A command's JSON is returned as `structuredContent` (arrays are
+  wrapped under `results`); plain-text confirmations (“Deleted article 5”) come back as text.
+
+## Try it
+
+Once connected, ask the agent things like:
+
+> “List the active conversations tagged _billing_ and summarize the top themes.”
+
+With `--allow-writes` on, the full loop from the [home page](/) works — the agent reads the
+inbox, drafts an article, and publishes it with `docs_article_create`.
+
+See the [command reference](/reference/commands/#mcp) for the `mcp serve` flags.

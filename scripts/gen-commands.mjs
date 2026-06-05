@@ -108,6 +108,7 @@ const TOPIC_BADGE = {
   backup: ['archive', 'badge--dot'],
   doctor: ['diagnostics', 'badge--dot'],
   docs: ['knowledge base', 'badge--dot'],
+  mcp: ['AI agents', 'badge--accent badge--dot'],
 }
 
 const TOPIC_BLURB = {
@@ -132,6 +133,7 @@ const TOPIC_BLURB = {
     'Dump your whole account to JSON with incremental refresh, resume, deletion detection, and attachments. See the [Backups guide](/guides/backups/).',
   doctor: 'Diagnose your environment, auth, and connectivity.',
   docs: 'Manage your Help Scout Docs knowledge base — sites, collections, categories, and articles. Uses a separate Docs API key (`hscli docs auth`). See the [Docs guide](/guides/docs/).',
+  mcp: 'Run hscli as a Model Context Protocol server so AI agents can call it as native tools. Reads by default; pass `--allow-writes` to expose mutating tools. See the [MCP guide](/automation/mcp/).',
 }
 
 const renderTopicTable = (list) => {

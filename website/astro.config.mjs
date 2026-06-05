@@ -90,6 +90,7 @@ export default defineConfig({
             { label: 'Output & filtering', slug: 'automation/output' },
             { label: 'Exit codes', slug: 'automation/exit-codes' },
             { label: 'Using with agents', slug: 'automation/agents' },
+            { label: 'MCP server', slug: 'automation/mcp' },
             { label: 'CI pipelines', slug: 'automation/ci' },
             { label: 'Webhooks & workflows', slug: 'automation/webhooks' },
           ],

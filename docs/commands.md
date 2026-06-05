@@ -5,7 +5,7 @@ description: Full command reference for the hscli command-line interface.
 
 <!-- AUTO-GENERATED from the oclif manifest by scripts/gen-commands.mjs — do not edit by hand. -->
 
-Reference for `hscli` v0.9.0 (88 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
+Reference for `hscli` v0.9.0 (89 commands). Every command also accepts the global flags `--output table|json|yaml|csv`, `--jq`, `--fields`, `--profile`, `--no-color`, `--verbose`, `--no-retry`, and `--timeout`.
 
 ## Top-level
 
@@ -1256,6 +1256,25 @@ Examples:
 ```bash
 hscli mailbox list
 hscli mailbox list --limit 50
+```
+
+## hscli mcp
+
+### `hscli mcp serve`
+
+Run hscli as a Model Context Protocol (MCP) server over stdio
+
+```
+hscli mcp serve [flags]
+```
+
+- `--allow-writes` — Expose mutating tools (create/update/delete/bulk). Off by default — read-only.
+
+Examples:
+
+```bash
+hscli mcp serve
+hscli mcp serve --allow-writes
 ```
 
 ## hscli profile
