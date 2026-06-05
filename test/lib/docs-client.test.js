@@ -89,6 +89,20 @@ describe('docs-client', () => {
     expect(out).toEqual(['a', 'b'])
   })
 
+  it('terminates when pages is non-numeric (no infinite loop)', async () => {
+    nock(BASE)
+      .get('/v1/collections')
+      .query({ page: 1 })
+      .reply(200, {
+        collections: { page: 1, pages: 'unknown', items: [{ id: 'a' }] },
+      })
+    const out = []
+    for await (const c of client().paginate('collections', {}, 'collections')) {
+      out.push(c.id)
+    }
+    expect(out).toEqual(['a'])
+  })
+
   it('reports pagination progress via onProgress', async () => {
     nock(BASE)
       .get('/v1/collections')
@@ -143,6 +157,13 @@ describe('docs-client', () => {
     })
     nock(BASE).get('/v1/b').reply(429, '')
     await expect(client({ retry: false }).get('b')).rejects.toMatchObject({
+      retryAfter: 10,
+    })
+  })
+
+  it('uses a 10s wait when the rate-limit header is non-numeric', async () => {
+    nock(BASE).get('/v1/c').reply(429, '', { 'retry-after': 'later' })
+    await expect(client({ retry: false }).get('c')).rejects.toMatchObject({
       retryAfter: 10,
     })
   })

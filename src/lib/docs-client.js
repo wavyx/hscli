@@ -73,11 +73,10 @@ export function createDocsClient({
       debug('%s %s → %d', method, path, res.status)
 
       if (res.status === 429) {
-        const wait = Number(
-          res.headers.get('x-ratelimit-reset') ||
-            res.headers.get('retry-after') ||
-            10,
-        )
+        const raw =
+          res.headers.get('x-ratelimit-reset') || res.headers.get('retry-after')
+        const parsed = raw == null ? NaN : Number(raw)
+        const wait = Number.isFinite(parsed) && parsed >= 0 ? parsed : 10
         if (!retry) throw new RateLimitError(wait)
         debug('rate limited, waiting %ds', wait)
         await sleep(wait * 1000)
@@ -116,7 +115,10 @@ export function createDocsClient({
       const data = await request('GET', path, { query: { ...query, page } })
       const wrap = data?.[resourceKey] ?? {}
       const items = wrap.items ?? []
-      const totalPages = wrap.pages ?? 1
+      // Guard against a non-numeric/missing `pages` so we never loop forever.
+      const rawPages = Number(wrap.pages)
+      const totalPages =
+        Number.isFinite(rawPages) && rawPages >= 1 ? rawPages : page
       if (opts.onProgress) opts.onProgress({ page, totalPages })
       yield* items
       if (page >= totalPages) break

@@ -124,6 +124,18 @@ describe('createClient', () => {
         expect(err.exitCode).toBe(75)
       }
     })
+
+    it('falls back to 10 when the 429 retry-after header is non-numeric', async () => {
+      nock(API_BASE)
+        .get('/v2/limited')
+        .reply(429, '', { 'x-ratelimit-retry-after': 'soon' })
+      try {
+        await client.get('/v2/limited')
+        expect.unreachable('should have thrown')
+      } catch (err) {
+        expect(err.retryAfter).toBe(10)
+      }
+    })
   })
 
   describe('retry behavior', () => {
@@ -237,6 +249,26 @@ describe('createClient', () => {
   })
 
   describe('paginate', () => {
+    it('terminates when totalPages is non-numeric (no infinite loop)', async () => {
+      const scope = nock(API_BASE)
+        .get('/v2/conversations')
+        .query({ page: '1' })
+        .reply(200, {
+          _embedded: { conversations: [{ id: 1 }] },
+          page: { totalPages: 'lots' },
+        })
+      const items = []
+      for await (const item of client.paginate(
+        '/v2/conversations',
+        {},
+        'conversations',
+      )) {
+        items.push(item)
+      }
+      expect(items).toEqual([{ id: 1 }])
+      expect(scope.isDone()).toBe(true)
+    })
+
     it('yields items across multiple pages', async () => {
       const scope = nock(API_BASE)
         .get('/v2/conversations')
