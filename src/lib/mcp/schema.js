@@ -16,6 +16,9 @@ export const NOISE_FLAGS = new Set([
   'profile',
   'api-key',
   'help',
+  // `yes` is force-injected for destructive tools (no TTY); exposing it as a
+  // settable input would be inert and misleading.
+  'yes',
 ])
 
 function flagSchema(flag) {
@@ -29,7 +32,9 @@ function flagSchema(flag) {
   if (Array.isArray(flag.options) && flag.options.length) {
     s = z.enum(flag.options)
   } else {
-    s = z.string()
+    // Accept numbers too — an LLM will naturally send {limit: 50}, {id: 123}.
+    // toArgv stringifies before spawning, so either form is fine.
+    s = z.union([z.string(), z.number()])
   }
   if (flag.multiple) s = z.array(s)
   if (flag.description) s = s.describe(flag.description)
@@ -37,7 +42,7 @@ function flagSchema(flag) {
 }
 
 function argSchema(arg) {
-  let s = z.string()
+  let s = z.union([z.string(), z.number()])
   if (arg.description) s = s.describe(arg.description)
   return arg.required ? s : s.optional()
 }

@@ -55,8 +55,9 @@ tool is available; when not, write tools simply aren't listed.
 :::note[Two layers of safety]
 Write tools are gated by `--allow-writes`, **and** the destructive ones — `delete`, `remove`,
 and `bulk` operations — carry an MCP `destructiveHint` so the client (e.g. Claude Desktop)
-prompts you before running them. Reads are marked `readOnlyHint` and run without prompting;
-other writes (`create`/`update`) carry no hint either way.
+prompts you before running them. Reads are marked `readOnlyHint`; other writes
+(`create`/`update`) are marked `readOnlyHint:false` + `destructiveHint:false`, so clients
+neither auto-approve nor specially warn on them.
 :::
 
 ## How it maps

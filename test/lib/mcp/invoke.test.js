@@ -23,12 +23,31 @@ const writeEntry = {
 }
 
 describe('toArgv', () => {
-  it('splits the id into a command path and forces --output json', () => {
+  it('splits the id into a command path and forces --output=json', () => {
     const argv = toArgv(readEntry, { status: 'active' })
     expect(argv.slice(0, 2)).toEqual(['conv', 'list'])
-    expect(argv).toContain('--status')
-    expect(argv).toContain('active')
-    expect(argv.slice(-2)).toEqual(['--output', 'json'])
+    expect(argv).toContain('--status=active')
+    expect(argv).toContain('--output=json')
+  })
+
+  it('emits flag values as --name=value so they cannot be read as flags', () => {
+    // A value starting with `-` must not become a CLI flag.
+    const argv = toArgv(readEntry, { status: '--help' })
+    expect(argv).toContain('--status=--help')
+    expect(argv).not.toContain('--help')
+  })
+
+  it('puts positional args after a -- separator', () => {
+    // An arg value starting with `-` must stay a positional.
+    const argv = toArgv(
+      { id: 'conv:get', flags: {}, args: { id: {} } },
+      {
+        id: '--help',
+      },
+    )
+    const sep = argv.indexOf('--')
+    expect(sep).toBeGreaterThan(-1)
+    expect(argv.slice(sep + 1)).toEqual(['--help'])
   })
 
   it('emits a boolean flag only when true', () => {
@@ -36,37 +55,37 @@ describe('toArgv', () => {
     expect(toArgv(readEntry, { verbose: false })).not.toContain('--verbose')
   })
 
-  it('repeats a multiple flag per value', () => {
+  it('repeats a multiple flag per value as --name=value', () => {
     const argv = toArgv(readEntry, { embed: ['threads', 'tags'] })
-    expect(argv.filter((a) => a === '--embed')).toHaveLength(2)
-    expect(argv).toContain('threads')
-    expect(argv).toContain('tags')
+    expect(argv.filter((a) => a.startsWith('--embed='))).toEqual([
+      '--embed=threads',
+      '--embed=tags',
+    ])
   })
 
-  it('passes positional args and auto-appends --yes when the command supports it', () => {
+  it('passes positional args after -- and auto-appends --yes', () => {
     const argv = toArgv(writeEntry, { id: '5abc' })
     expect(argv).toEqual([
       'docs',
       'article',
       'delete',
-      '5abc',
-      '--output',
-      'json',
+      '--output=json',
       '--yes',
+      '--',
+      '5abc',
     ])
   })
 
-  it('omits an optional arg that was not provided', () => {
+  it('omits an optional arg that was not provided (no -- separator)', () => {
     const argv = toArgv({ id: 'conv:get', flags: {}, args: { id: {} } }, {})
-    expect(argv).toEqual(['conv', 'get', '--output', 'json'])
+    expect(argv).toEqual(['conv', 'get', '--output=json'])
   })
 
   it('tolerates entries with no flags/args maps', () => {
     expect(toArgv({ id: 'conv:list' }, { status: null })).toEqual([
       'conv',
       'list',
-      '--output',
-      'json',
+      '--output=json',
     ])
   })
 
@@ -79,7 +98,7 @@ describe('toArgv', () => {
       },
       { id: null, status: null },
     )
-    expect(argv).toEqual(['conv', 'get', '--output', 'json'])
+    expect(argv).toEqual(['conv', 'get', '--output=json'])
   })
 })
 
@@ -162,6 +181,21 @@ describe('runTool', () => {
     expect(res.isError).toBe(true)
     expect(res.content[0].text).toBe('exited 5')
   })
+
+  it('reports a signal-terminated child as an error (not silent success)', async () => {
+    const res = await runTool(
+      readEntry,
+      {},
+      fakeExec({
+        stdout: 'partial output',
+        stderr: '',
+        code: 0,
+        signal: 'SIGKILL',
+      }),
+    )
+    expect(res.isError).toBe(true)
+    expect(res.content[0].text).toContain('SIGKILL')
+  })
 })
 
 describe('makeExec', () => {
@@ -192,6 +226,37 @@ describe('makeExec', () => {
     const r = await exec([])
     expect(r.code).toBe(1)
     expect(r.stderr).toBeTruthy()
+  })
+
+  it('passes env through to the child', async () => {
+    const exec = makeExec({
+      command: process.execPath,
+      args: ['-e', 'process.stdout.write(process.env.HSCLI_PROFILE||"none")'],
+      env: { HSCLI_PROFILE: 'work' },
+    })
+    expect((await exec([])).stdout).toBe('work')
+  })
+
+  it('kills a child that exceeds the timeout', async () => {
+    const exec = makeExec({
+      command: process.execPath,
+      args: ['-e', 'setTimeout(()=>{}, 10000)'],
+      timeout: 150,
+    })
+    expect((await exec([])).signal).toBe('SIGKILL')
+  })
+
+  it('kills a child that exceeds maxBuffer', async () => {
+    const exec = makeExec({
+      command: process.execPath,
+      args: [
+        '-e',
+        'const b="x".repeat(100000); setInterval(()=>process.stdout.write(b), 1)',
+      ],
+      maxBuffer: 50000,
+      timeout: 5000,
+    })
+    expect((await exec([])).signal).toBe('output limit exceeded')
   })
 })
 

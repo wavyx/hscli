@@ -64,10 +64,12 @@ export default class MCPServeCommand extends BaseCommand {
   async run() {
     const { flags } = await this.parse(MCPServeCommand)
     // Each tool call re-invokes this same CLI as a child process, keeping the
-    // parent's stdout (the MCP stdio channel) free of command output.
+    // parent's stdout (the MCP stdio channel) free of command output. Forward
+    // the active profile so tools run under the same account as the server.
     const exec = makeExec({
       command: process.execPath,
       args: [process.argv[1]],
+      env: { HSCLI_PROFILE: this.activeProfile },
     })
     await startMcpServer({
       config: this.config,

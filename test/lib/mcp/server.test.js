@@ -121,7 +121,7 @@ describe('buildServer', () => {
       arguments: { status: 'active' },
     })
     expect(res.structuredContent).toEqual({ results: [{ id: 1 }] })
-    expect(seenArgv).toContain('--status')
+    expect(seenArgv).toContain('--status=active')
     await client.close()
   })
 })
