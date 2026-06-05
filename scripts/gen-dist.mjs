@@ -11,19 +11,18 @@ import { createHash } from 'node:crypto'
 const PKG = '@wavyx/hscli'
 
 /** Render the Homebrew formula (standard node-CLI pattern). */
-export function renderHomebrewFormula({ version, url, sha256 }) {
+export function renderHomebrewFormula({ url, sha256 }) {
   return `class Hscli < Formula
   desc "Command-line interface for Help Scout"
   homepage "https://github.com/wavyx/hscli"
   url "${url}"
   sha256 "${sha256}"
-  version "${version}"
   license "MIT"
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
   end
 
