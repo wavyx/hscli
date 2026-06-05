@@ -45,10 +45,11 @@ describe('selectTools', () => {
 })
 
 describe('annotationsFor', () => {
-  it('flags reads read-only', () => {
+  it('flags reads read-only and idempotent', () => {
     expect(annotationsFor({ kind: 'read', summary: 'x' })).toMatchObject({
       readOnlyHint: true,
       destructiveHint: false,
+      idempotentHint: true,
     })
   })
   it('flags destructive tools destructive', () => {
@@ -59,10 +60,11 @@ describe('annotationsFor', () => {
       },
     )
   })
-  it('flags writes as neither read-only nor destructive', () => {
+  it('flags writes as neither read-only nor destructive nor idempotent', () => {
     expect(annotationsFor({ kind: 'write', summary: 'x' })).toMatchObject({
       readOnlyHint: false,
       destructiveHint: false,
+      idempotentHint: false,
     })
   })
 })

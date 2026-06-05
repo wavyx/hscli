@@ -6,7 +6,9 @@
 // Commands never exposed as MCP tools:
 // - `api` is an arbitrary-request escape hatch that bypasses per-tool gating.
 // - `conv:watch` is a long-running stream that doesn't fit request/response.
-export const EXCLUDED = new Set(['api', 'conv:watch'])
+// - `doctor` is a local-environment diagnostic (live network probe), not useful to an agent.
+// - `mcp:serve` is this server itself — exposing it would let a tool spawn another server.
+export const EXCLUDED = new Set(['api', 'conv:watch', 'doctor', 'mcp:serve'])
 
 // Topics whose every command is read-only.
 const READ_TOPICS = new Set(['report', 'beacon'])

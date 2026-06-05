@@ -9,7 +9,7 @@ export function annotationsFor(entry) {
     title: entry.summary,
     readOnlyHint: entry.kind === 'read',
     destructiveHint: entry.kind === 'destructive',
-    idempotentHint: false,
+    idempotentHint: entry.kind === 'read',
     openWorldHint: true,
   }
 }
