@@ -49,8 +49,11 @@ export default class MCPServeCommand extends BaseCommand {
     '<%= config.bin %> mcp serve --allow-writes',
   ]
 
+  // A long-running server has no use for the output-shaping global flags; keep
+  // only --profile (which auth profile the tools run under).
+  static baseFlags = { profile: BaseCommand.baseFlags.profile }
+
   static flags = {
-    ...BaseCommand.baseFlags,
     'allow-writes': Flags.boolean({
       description:
         'Expose mutating tools (create/update/delete/bulk). Off by default — read-only.',
