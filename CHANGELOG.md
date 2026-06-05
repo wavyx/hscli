@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.1] - 2026-06-05
+
+Stability pass (from an in-depth adversarial review).
+
+### Fixed
+
+- **Reliability:** pagination no longer loops forever on a non-numeric `pages` value (both API clients); the 429 backoff no longer busy-loops when `Retry-After` is non-numeric (e.g. an HTTP-date) — both now fall back to a sane delay / terminate.
+- **MCP — safety & robustness:**
+  - Tool argument values can no longer be reinterpreted as CLI flags (argv injection): flags are passed as `--name=value` and positional args after a `--` separator.
+  - A signal-killed tool subprocess is reported as an error instead of silent success with partial output.
+  - Tool calls now have a timeout and an output-size cap, so a hung or runaway command can't hang or OOM the server.
+  - `mcp serve` forwards the active `--profile` to tool calls (previously they silently ran under the default account).
+  - Integer arguments accept JSON numbers (`{id: 123}`), not only strings.
+  - `auth login/logout/refresh/setup` and `docs auth` are no longer exposed as tools (they manage local credentials and can open a browser / bind a port on the host); `workflow run` is now flagged destructive; the inert `yes` input was removed from delete tools.
+- **Homebrew:** `--jq` now works — the formula depends on `jq` and points node-jq at it (its bundled binary can't be downloaded in the Homebrew sandbox).
+- **Reports:** `--output csv`/`table` now fail with a clear message (reports are nested JSON) instead of emitting nothing.
+- **Docs API:** `--text @missing-file` now reports a clear error instead of a raw stack trace.
+- **Keychain:** a write with no usable keychain (e.g. in a container) gives the friendly "keychain unavailable" guidance instead of a raw `PermissionDenied`.
+
 ## [0.11.0] - 2026-06-05
 
 ### Added
