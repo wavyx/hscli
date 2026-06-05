@@ -68,6 +68,34 @@ describe('hs auth status', () => {
     expect(scope.isDone()).toBe(true)
   })
 
+  it('emits structured JSON with --output json', async () => {
+    mockGetTokens.mockResolvedValue({
+      accessToken: 'test-token',
+      refreshToken: 'test-refresh',
+      expiresAt: Date.now() + 86400000,
+      authMode: 'authorization_code',
+      credentialSource: 'byo',
+    })
+    const scope = nock('https://api.helpscout.net')
+      .get('/v2/users/me')
+      .reply(200, userFixture)
+
+    const out = JSON.parse(await runCmd(StatusCommand, ['--output', 'json']))
+
+    expect(out.profile).toBe('default')
+    expect(out.authenticated).toBe(true)
+    expect(out.token.state).toBe('valid')
+    expect(out.user.email).toBe('jane@example.com')
+    expect(scope.isDone()).toBe(true)
+  })
+
+  it('emits JSON for an unauthenticated profile', async () => {
+    mockGetTokens.mockResolvedValue(null)
+    const out = JSON.parse(await runCmd(StatusCommand, ['--output', 'json']))
+    expect(out.authenticated).toBe(false)
+    expect(out.token).toBeUndefined()
+  })
+
   it('shows not authenticated when no tokens exist', async () => {
     mockGetTokens.mockResolvedValue(null)
 

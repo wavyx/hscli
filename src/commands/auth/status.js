@@ -14,15 +14,42 @@ export default class StatusCommand extends BaseCommand {
   }
 
   async run() {
-    await this.parse(StatusCommand)
+    const { flags } = await this.parse(StatusCommand)
 
     const tokens = await getTokens(this.activeProfile)
-    const keychainType = isKeychainAvailable() ? 'OS keychain' : 'unavailable'
+    const status = {
+      profile: this.activeProfile,
+      keychain: isKeychainAvailable() ? 'OS keychain' : 'unavailable',
+      authenticated: Boolean(tokens),
+    }
+
+    if (tokens) {
+      status.authMode = tokens.authMode
+      status.credentialSource = tokens.credentialSource
+      const now = Date.now()
+      const expiresAt = tokens.expiresAt
+      if (expiresAt <= now) {
+        status.token = { state: 'expired', expiresAt }
+      } else {
+        status.token = {
+          state: 'valid',
+          expiresAt,
+          expiresInMs: expiresAt - now,
+        }
+        const user = await this.#fetchUser(tokens.accessToken)
+        if (user) status.user = user
+      }
+    }
+
+    if (flags.output === 'json') {
+      this.log(JSON.stringify(status, null, 2))
+      return
+    }
 
     this.log(chalk.bold('Auth Status'))
     this.log('')
-    this.log(`  Profile:    ${chalk.cyan(this.activeProfile)}`)
-    this.log(`  Keychain:   ${keychainType}`)
+    this.log(`  Profile:    ${chalk.cyan(status.profile)}`)
+    this.log(`  Keychain:   ${status.keychain}`)
 
     if (!tokens) {
       this.log(`  Status:     ${chalk.red('Not authenticated')}`)
@@ -31,55 +58,45 @@ export default class StatusCommand extends BaseCommand {
       return
     }
 
-    this.log(`  Auth mode:  ${tokens.authMode}`)
-    this.log(`  Credential: ${tokens.credentialSource}`)
+    this.log(`  Auth mode:  ${status.authMode}`)
+    this.log(`  Credential: ${status.credentialSource}`)
 
-    const now = Date.now()
-    const expiresAt = tokens.expiresAt
-
-    if (expiresAt <= now) {
+    if (status.token.state === 'expired') {
       this.log(`  Token:      ${chalk.red('Expired')}`)
     } else {
-      const remaining = expiresAt - now
-      const humanExpiry = formatDuration(remaining)
       this.log(
-        `  Token:      ${chalk.green('Valid')} (expires in ${humanExpiry})`,
+        `  Token:      ${chalk.green('Valid')} (expires in ${formatDuration(status.token.expiresInMs)})`,
       )
     }
 
-    // Try fetching user info if token is still valid
-    if (expiresAt > now) {
-      await this.#showUserInfo(tokens.accessToken)
+    if (status.user) {
+      this.log('')
+      this.log(chalk.bold('  Authenticated User'))
+      if (status.user.name) this.log(`  Name:       ${status.user.name}`)
+      if (status.user.email) this.log(`  Email:      ${status.user.email}`)
     }
   }
 
   /**
-   * Fetch and display the authenticated user's identity.
+   * Fetch the authenticated user's identity (best-effort).
    * @param {string} accessToken
+   * @returns {Promise<{name?: string, email?: string} | null>}
    */
-  async #showUserInfo(accessToken) {
+  async #fetchUser(accessToken) {
     try {
       const res = await fetch('https://api.helpscout.net/v2/users/me', {
         headers: { authorization: `Bearer ${accessToken}` },
       })
-
-      if (!res.ok) return
-
+      if (!res.ok) return null
       const data = await res.json()
-      this.log('')
-      this.log(chalk.bold('  Authenticated User'))
-
-      if (data.firstName || data.lastName) {
-        this.log(
-          `  Name:       ${[data.firstName, data.lastName].filter(Boolean).join(' ')}`,
-        )
-      }
-
-      if (data.email) {
-        this.log(`  Email:      ${data.email}`)
-      }
+      const user = {}
+      const name = [data.firstName, data.lastName].filter(Boolean).join(' ')
+      if (name) user.name = name
+      if (data.email) user.email = data.email
+      return user
     } catch {
-      // Silently ignore network errors — user info is best-effort
+      // Network errors are non-fatal — user info is best-effort.
+      return null
     }
   }
 }
