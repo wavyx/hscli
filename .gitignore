@@ -12,3 +12,7 @@ docs/superpowers/
 website/node_modules/
 website/dist/
 website/.astro/
+
+# Generated dist artifacts (live in the tap/bucket repos)
+packaging/homebrew/hscli.rb
+packaging/scoop/hscli.json

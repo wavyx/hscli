@@ -24,10 +24,14 @@ Codex, and similar) — no SDK glue required.
 ## Install
 
 ```bash
-npm install -g @wavyx/hscli
+npm install -g @wavyx/hscli                 # npm (Node.js 20+)
+brew tap wavyx/tap && brew install hscli    # Homebrew (macOS/Linux)
+scoop bucket add hscli https://github.com/wavyx/scoop-hscli && scoop install hscli  # Scoop (Windows)
+docker run --rm ghcr.io/wavyx/hscli --help  # Docker (no local Node)
 ```
 
-Requires Node.js 20+. The binary is `hscli`.
+The binary is `hscli`. The Docker image has no OS keychain, so use it for Docs
+(`HSCLI_DOCS_API_KEY`), `api`, and stateless utilities rather than Mailbox OAuth.
 
 > **Credential storage:** hscli stores OAuth tokens only in your operating system
 > keychain (macOS Keychain, Windows Credential Manager, or libsecret on Linux).

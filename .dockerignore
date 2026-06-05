@@ -1,0 +1,2 @@
+# The image installs hscli from npm, so the build needs no repo files.
+*

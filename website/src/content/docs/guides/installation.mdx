@@ -14,6 +14,34 @@ npm install -g @wavyx/hscli
 Requires **Node.js 20 or newer**. The installed command is `hscli`.
 :::
 
+## Other ways to install
+
+**Homebrew** (macOS / Linux):
+
+```bash frame="terminal"
+brew tap wavyx/tap
+brew install hscli
+```
+
+**Scoop** (Windows):
+
+```bash frame="terminal"
+scoop bucket add hscli https://github.com/wavyx/scoop-hscli
+scoop install hscli
+```
+
+**Docker** — run without a local Node install:
+
+```bash frame="terminal"
+docker run --rm -e HSCLI_DOCS_API_KEY ghcr.io/wavyx/hscli docs site list
+```
+
+:::note
+The container has no OS keychain, so `hscli auth login` can't store Mailbox
+OAuth tokens there. Use the image for Docs (`HSCLI_DOCS_API_KEY`), the `api`
+escape hatch, and stateless utilities like `beacon sign`.
+:::
+
 ## Verify
 
 ```bash frame="terminal" title="verify"
