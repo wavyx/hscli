@@ -51,6 +51,9 @@ hscli backup --out ~/hs-backup            # Full account backup (incremental on 
 # Docs knowledge base (separate per-user API key: `hscli docs auth` or HSCLI_DOCS_API_KEY)
 hscli docs auth                           # Store your Docs API key in the keychain
 hscli docs article search "refund"        # Search the knowledge base
+
+# Run as an MCP server so AI agents call hscli as native tools (read-only by default)
+hscli mcp serve                           # add --allow-writes to expose mutations
 ```
 
 For CI/CD, use the non-interactive client-credentials flow:
@@ -79,6 +82,7 @@ HSCLI_APP_ID=... HSCLI_APP_SECRET=... hscli auth login --client-credentials
 | `hscli alias`    | `set`, `list`, `unset` — custom command shortcuts                                                                                                                                         |
 | `hscli backup`   | Full account dump with incremental refresh, resume, deletion detection, attachments                                                                                                       |
 | `hscli api`      | Raw API escape hatch: `hscli api GET /v2/conversations` (locked to `api.helpscout.net`)                                                                                                   |
+| `hscli mcp`      | `serve` — run hscli as an MCP server so AI agents call commands as tools (read-only by default; `--allow-writes` to enable mutations)                                                     |
 | `hscli doctor`   | Diagnostic checks                                                                                                                                                                         |
 | `hscli version`  | Version info                                                                                                                                                                              |
 

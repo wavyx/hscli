@@ -1,0 +1,71 @@
+/**
+ * Maps oclif commands to an MCP tool catalog, classifying each by how much it
+ * can mutate so the server can gate writes behind `--allow-writes`.
+ */
+
+// Commands never exposed as MCP tools:
+// - `api` is an arbitrary-request escape hatch that bypasses per-tool gating.
+// - `conv:watch` is a long-running stream that doesn't fit request/response.
+export const EXCLUDED = new Set(['api', 'conv:watch'])
+
+// Topics whose every command is read-only.
+const READ_TOPICS = new Set(['report', 'beacon'])
+
+// Leaf verbs that never mutate remote or local state.
+const READ_LEAVES = new Set([
+  'list',
+  'get',
+  'search',
+  'count',
+  'version',
+  'doctor',
+  'current',
+  'threads',
+  'attachments',
+  'conversations',
+  'fields',
+  'folders',
+  'usage',
+  'me',
+  'validate',
+  'status',
+])
+
+// Read-leaf commands that can actually mutate and must stay gated.
+const WRITE_OVERRIDE = new Set(['conv:status'])
+
+/**
+ * @param {string} id oclif command id (e.g. `docs:article:delete-draft`)
+ * @returns {'read'|'write'|'destructive'}
+ */
+export function classifyKind(id) {
+  if (/(^|:)(delete|remove)(-|$)/.test(id)) return 'destructive'
+  if (WRITE_OVERRIDE.has(id)) return 'write'
+  const [topic] = id.split(':')
+  const leaf = id.split(':').pop()
+  if (READ_TOPICS.has(topic) || READ_LEAVES.has(leaf)) return 'read'
+  return 'write'
+}
+
+/** Turn a command id into a valid MCP tool name. */
+export function toolName(id) {
+  return id.replace(/[:-]/g, '_')
+}
+
+/**
+ * Build the tool catalog from a list of oclif command descriptors.
+ * @param {Array<{id: string, summary?: string, description?: string, hidden?: boolean, flags?: object, args?: object}>} commands
+ */
+export function buildCatalog(commands) {
+  return commands
+    .filter((c) => !c.hidden && !EXCLUDED.has(c.id))
+    .map((c) => ({
+      id: c.id,
+      toolName: toolName(c.id),
+      summary: c.summary || c.description || c.id,
+      kind: classifyKind(c.id),
+      args: c.args || {},
+      flags: c.flags || {},
+    }))
+    .sort((a, b) => (a.id < b.id ? -1 : 1))
+}
