@@ -53,9 +53,10 @@ claude mcp add hscli -- hscli mcp serve --allow-writes
 tool is available; when not, write tools simply aren't listed.
 
 :::note[Two layers of safety]
-Write tools are gated by `--allow-writes`, **and** each carries an MCP `destructiveHint` so
-the client (e.g. Claude Desktop) prompts you to approve a `delete` or `bulk` call before it
-runs. Reads are marked `readOnlyHint` and run without prompting.
+Write tools are gated by `--allow-writes`, **and** the destructive ones — `delete`, `remove`,
+and `bulk` operations — carry an MCP `destructiveHint` so the client (e.g. Claude Desktop)
+prompts you before running them. Reads are marked `readOnlyHint` and run without prompting;
+other writes (`create`/`update`) carry no hint either way.
 :::
 
 ## How it maps

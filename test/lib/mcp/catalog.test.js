@@ -11,6 +11,7 @@ describe('classifyKind', () => {
     ['conv:delete', 'destructive'],
     ['docs:article:delete-draft', 'destructive'],
     ['webhook:delete', 'destructive'],
+    ['conv:bulk-status', 'destructive'], // bulk ops hit many records — flag for confirm
     ['conv:status', 'write'], // can mutate via --set, so gated
     ['conv:reply', 'write'],
     ['backup', 'write'],
