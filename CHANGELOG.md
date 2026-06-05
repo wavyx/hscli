@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-06-05
+
+### Added
+
+- **MCP server — `hscli mcp serve`.** Run hscli as a [Model Context Protocol](https://modelcontextprotocol.io) server over stdio so AI agents (Claude Desktop, Claude Code, …) drive Help Scout through native tools. One tool per command, generated from the command manifest so it stays in sync.
+  - **Reads by default, writes opt-in.** Only read-only tools are exposed unless started with `--allow-writes`; mutating tools carry MCP `destructiveHint`/`readOnlyHint` annotations so clients can confirm dangerous calls.
+  - Each tool call runs the CLI as a child process (keeping the stdio protocol channel clean) and returns the command's JSON as `structuredContent`. The `api` escape hatch, streaming `conv watch`, and bundled oclif plugin commands are not exposed.
+  - Reuses the existing OS-keychain OAuth token and Docs API key — the server runs as you.
+- New MCP guide with Claude Desktop / Claude Code configuration.
+
 ## [0.9.0] - 2026-06-04
 
 ### Added
