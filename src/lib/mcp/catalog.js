@@ -39,10 +39,14 @@ const WRITE_OVERRIDE = new Set(['conv:status'])
  * @returns {'read'|'write'|'destructive'}
  */
 export function classifyKind(id) {
-  if (/(^|:)(delete|remove)(-|$)/.test(id)) return 'destructive'
-  if (WRITE_OVERRIDE.has(id)) return 'write'
   const [topic] = id.split(':')
   const leaf = id.split(':').pop()
+  // delete/remove and bulk operations hit data destructively — flag them so MCP
+  // clients prompt before running them.
+  if (/^(delete|remove)(-|$)/.test(leaf) || leaf.startsWith('bulk')) {
+    return 'destructive'
+  }
+  if (WRITE_OVERRIDE.has(id)) return 'write'
   if (READ_TOPICS.has(topic) || READ_LEAVES.has(leaf)) return 'read'
   return 'write'
 }
