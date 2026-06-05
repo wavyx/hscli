@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-06-05
+
+### Added
+
+- **Distribution beyond npm:**
+  - **Docker** — `docker run --rm ghcr.io/wavyx/hscli --help`. Built and pushed to GHCR by the release workflow.
+  - **Homebrew** — `brew tap wavyx/tap && brew install hscli` (macOS/Linux).
+  - **Scoop** — `scoop bucket add hscli https://github.com/wavyx/scoop-hscli && scoop install hscli` (Windows).
+  - npm stays the source of truth; `scripts/gen-dist.mjs` regenerates the Homebrew formula + Scoop manifest from the published tarball (with its sha256).
+- `auth status --output json` emits a structured status object (profile, keychain, token state, user) — handy for scripts and as a structured MCP tool result.
+
+### Changed
+
+- MCP: `mcp serve` no longer advertises the output-shaping global flags (`--output`/`--jq`/`--fields`/`--timeout`/`--no-retry`/`--verbose`/`--no-color`) it never uses; it keeps `--profile` and `--allow-writes`.
+
 ## [0.10.2] - 2026-06-05
 
 ### Added
