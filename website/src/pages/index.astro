@@ -245,6 +245,56 @@ const description =
         </div>
       </section>
 
+      <!-- ============ INSTALL ============ -->
+      <section class="install-band">
+        <div class="section">
+          <div class="sec-head center">
+            <p class="sec-eyebrow">Install</p>
+            <h2 class="sec-title">Get it your way.</h2>
+            <p class="sec-desc">npm is the source of truth — Homebrew, Scoop, and Docker track every release.</p>
+          </div>
+          <div class="install-grid">
+            <article class="install-card">
+              <div class="install-card__head"><span class="install-card__name">npm</span><span class="install-card__os">any OS · Node 20+</span></div>
+              <div class="install-line">
+                <span class="dollar">$</span><span class="install-card__cmd">npm i -g <span class="pkg">@wavyx/hscli</span></span>
+                <button class="install-copy" data-copy="npm i -g @wavyx/hscli" aria-label="Copy npm install">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+                </button>
+              </div>
+            </article>
+            <article class="install-card">
+              <div class="install-card__head"><span class="install-card__name">Homebrew</span><span class="install-card__os">macOS · Linux</span></div>
+              <div class="install-line">
+                <span class="dollar">$</span><span class="install-card__cmd">brew install <span class="pkg">wavyx/tap/hscli</span></span>
+                <button class="install-copy" data-copy="brew install wavyx/tap/hscli" aria-label="Copy Homebrew install">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+                </button>
+              </div>
+            </article>
+            <article class="install-card">
+              <div class="install-card__head"><span class="install-card__name">Scoop</span><span class="install-card__os">Windows</span></div>
+              <div class="install-line">
+                <span class="dollar">$</span><span class="install-card__cmd">scoop install <span class="pkg">hscli</span></span>
+                <button class="install-copy" data-copy="scoop bucket add hscli https://github.com/wavyx/scoop-hscli && scoop install hscli" aria-label="Copy Scoop install">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+                </button>
+              </div>
+            </article>
+            <article class="install-card">
+              <div class="install-card__head"><span class="install-card__name">Docker</span><span class="install-card__os">no local Node</span></div>
+              <div class="install-line">
+                <span class="dollar">$</span><span class="install-card__cmd">docker run <span class="pkg">ghcr.io/wavyx/hscli</span></span>
+                <button class="install-copy" data-copy="docker run --rm ghcr.io/wavyx/hscli --help" aria-label="Copy Docker run">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+                </button>
+              </div>
+            </article>
+          </div>
+          <p class="install-note">Then <a href={`${base}guides/authentication/`}>authenticate</a> and run <code>hscli conv list</code> — or see the <a href={`${base}guides/installation/`}>installation guide</a>.</p>
+        </div>
+      </section>
+
       <!-- ============ CTA ============ -->
       <section class="cta-band">
         <div class="cta-card section">
