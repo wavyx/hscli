@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.2] - 2026-07-08
+
+Dependency refresh — no functional changes.
+
+### Changed
+
+- **Dependencies:** js-yaml 4 → 5 (now ESM-only with named exports; internal import updated, YAML output unchanged), oclif framework updates (`@oclif/core` 4.11.14 and plugins), `undici` 8.7.0, `tar` 7.5.19, `ora` 9.4.1, and `hono` 4.12.28 (transitive, via the MCP SDK). Dev tooling (eslint, prettier, vitest, nock) and website deps (astro, starlight, esbuild) refreshed alongside.
+- **Build:** every dependency in `package.json` is now pinned to an exact version (removed the last caret ranges on `js-yaml`, `@modelcontextprotocol/sdk`, and `zod`).
+- **CI:** workflows now use `actions/checkout` v7.
+
 ## [0.11.1] - 2026-06-05
 
 Stability pass (from an in-depth adversarial review).
