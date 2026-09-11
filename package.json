@@ -139,7 +139,7 @@
     "nock": "14.0.16",
     "oclif": "4.23.27",
     "prettier": "3.9.4",
-    "vitest": "4.1.10"
+    "vitest": "4.1.11"
   },
   "scripts": {
     "build": "oclif manifest",
